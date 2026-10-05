@@ -1,0 +1,760 @@
+<!DOCTYPE html>
+<html lang="es" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Luxury Scents - Catálogo Exclusivo</title>
+    <style>
+        :root {
+            --bg-base: #060913;
+            --bg-card: rgba(20, 27, 45, 0.85);
+            --text-primary: #ffffff;
+            --text-secondary: #cbd5e1;
+            --accent-pink: #ff007f;
+            --accent-cyan: #00f0ff;
+            --accent-purple: #9d4edd;
+            --accent-gradient: linear-gradient(135deg, #ff007f, #9d4edd, #00f0ff);
+            --gold-gradient: linear-gradient(135deg, #fff176, #ffd700, #ff9100, #b76e79);
+            --border-color: rgba(0, 240, 255, 0.25);
+            --blur-val: blur(25px);
+        }
+
+        [data-theme="light"] {
+            --bg-base: #f0f4f8;
+            --bg-card: rgba(255, 255, 255, 0.9);
+            --text-primary: #0f172a;
+            --text-secondary: #334155;
+            --border-color: rgba(255, 0, 127, 0.2);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            transition: background 0.4s ease, color 0.3s ease, border-color 0.3s ease;
+        }
+
+        body {
+            background-color: var(--bg-base);
+            color: var(--text-primary);
+            min-height: 100vh;
+            padding-bottom: 60px;
+        }
+
+        header {
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            background: var(--bg-card);
+            backdrop-filter: var(--blur-val);
+            -webkit-backdrop-filter: var(--blur-val);
+            border-bottom: 2px solid var(--border-color);
+            padding: 1rem 1.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 4px 30px rgba(0, 240, 255, 0.2);
+        }
+
+        .logo {
+            font-size: 1.7rem;
+            font-weight: 900;
+            letter-spacing: 1.5px;
+            background: var(--gold-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 0 0 25px rgba(255, 215, 0, 0.6);
+            text-transform: uppercase;
+        }
+
+        .nav-actions {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        button {
+            cursor: pointer;
+            border: none;
+            padding: 10px 18px;
+            border-radius: 14px;
+            font-weight: 800;
+            transition: transform 0.2s, opacity 0.2s, box-shadow 0.2s;
+        }
+
+        button:active { transform: scale(0.95); }
+
+        .btn-primary { background: var(--accent-gradient); color: white; box-shadow: 0 0 20px rgba(255, 0, 127, 0.5); }
+        .btn-secondary { background: rgba(255, 255, 255, 0.12); color: var(--text-primary); border: 1px solid var(--border-color); }
+        .btn-gold { background: var(--gold-gradient); color: #060913; box-shadow: 0 0 20px rgba(255, 215, 0, 0.5); }
+        .btn-ws { background: linear-gradient(135deg, #25d366, #128c7e); color: white; box-shadow: 0 0 20px rgba(37, 211, 102, 0.5); font-size: 1rem; }
+        .btn-danger { background: #ff2a6d; color: white; }
+
+        .cart-btn-container { position: relative; }
+        .cart-count {
+            position: absolute;
+            top: -6px;
+            right: -6px;
+            background: var(--accent-pink);
+            color: white;
+            font-size: 0.8rem;
+            font-weight: 900;
+            width: 22px;
+            height: 22px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 2px solid var(--bg-base);
+            box-shadow: 0 0 10px var(--accent-pink);
+        }
+
+        .container { max-width: 1200px; margin: 2rem auto; padding: 0 1rem; }
+        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(270px, 1fr)); gap: 1.5rem; }
+
+        .card {
+            background: var(--bg-card);
+            backdrop-filter: var(--blur-val);
+            -webkit-backdrop-filter: var(--blur-val);
+            border: 1px solid var(--border-color);
+            border-radius: 24px;
+            padding: 1.2rem;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.4);
+            position: relative;
+            overflow: hidden;
+            cursor: pointer;
+        }
+
+        .card:hover { transform: translateY(-6px); border-color: var(--accent-cyan); box-shadow: 0 12px 40px rgba(0, 240, 255, 0.4); }
+        .card.out-of-stock { opacity: 0.55; filter: grayscale(0.6); }
+
+        .card img { width: 100%; height: 210px; object-fit: cover; border-radius: 18px; border: 1px solid rgba(255,255,255,0.1); }
+        .card-title { font-size: 1.2rem; font-weight: 800; }
+        .card-price { font-size: 1.5rem; font-weight: 900; color: var(--accent-cyan); text-shadow: 0 0 12px rgba(0, 240, 255, 0.6); }
+
+        .badge-out {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: #ff2a6d;
+            color: white;
+            font-weight: 900;
+            padding: 4px 12px;
+            border-radius: 10px;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            box-shadow: 0 0 10px #ff2a6d;
+        }
+
+        .variants-container { margin-top: 4px; display: flex; flex-direction: column; gap: 6px; }
+        .variant-group-title { font-size: 0.75rem; text-transform: uppercase; color: var(--accent-cyan); font-weight: 800; letter-spacing: 0.5px; }
+        .variant-badge {
+            display: inline-block;
+            background: rgba(255, 0, 127, 0.2);
+            color: #ff77bc;
+            padding: 4px 10px;
+            border-radius: 8px;
+            font-size: 0.8rem;
+            margin: 2px;
+            border: 1px solid rgba(255, 0, 127, 0.4);
+            font-weight: 700;
+        }
+
+        .modal-overlay {
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0, 0, 0, 0.85);
+            backdrop-filter: blur(12px);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+        }
+
+        .modal-overlay.active { opacity: 1; pointer-events: auto; }
+        .modal {
+            background: var(--bg-base);
+            border: 2px solid var(--border-color);
+            padding: 2rem;
+            border-radius: 28px;
+            width: 92%;
+            max-width: 560px;
+            max-height: 85vh;
+            overflow-y: auto;
+            box-shadow: 0 0 50px rgba(0, 240, 255, 0.3);
+        }
+
+        .modal h2, .modal h3 { margin-bottom: 0.8rem; }
+        .form-group { margin-bottom: 1rem; display: flex; flex-direction: column; gap: 6px; }
+
+        input, select, textarea {
+            padding: 12px;
+            border-radius: 14px;
+            border: 1px solid var(--border-color);
+            background: var(--bg-card);
+            color: var(--text-primary);
+            outline: none;
+            font-size: 0.95rem;
+        }
+
+        input:focus, select:focus { border-color: var(--accent-pink); box-shadow: 0 0 12px rgba(255, 0, 127, 0.4); }
+
+        .cart-item { display: flex; align-items: center; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid var(--border-color); gap: 10px; }
+        .cart-item img { width: 55px; height: 55px; border-radius: 12px; object-fit: cover; }
+        .cart-controls { display: flex; align-items: center; gap: 8px; }
+        .pay-option-box { background: var(--bg-card); border: 1px solid var(--border-color); padding: 12px; border-radius: 14px; margin-top: 10px; }
+
+        .admin-item { display: flex; justify-content: space-between; align-items: center; padding: 10px 0; border-bottom: 1px solid var(--border-color); gap: 10px; }
+        .admin-item-controls { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
+        .admin-item input[type="number"] { width: 70px; }
+
+        .divider { border: none; border-top: 1px solid var(--border-color); margin: 1.5rem 0; }
+    </style>
+
+    <!-- FIREBASE SDKS -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+        import { getFirestore, collection, doc, onSnapshot, setDoc, updateDoc, addDoc, deleteDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+        // CONFIGURACIÓN REAL DE FIREBASE DE LUXURY SCENTS
+        const firebaseConfig = {
+            apiKey: "AIzaSyC3Y5WGoergKWNTXdvrYzzVC1rcgL_VStc",
+            authDomain: "luxury-scents-51574.firebaseapp.com",
+            projectId: "luxury-scents-51574",
+            storageBucket: "luxury-scents-51574.firebasestorage.app",
+            messagingSenderId: "262786356218",
+            appId: "1:262786356218:web:21c6963531412dadc60a43"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+        window.db = db;
+        window.collection = collection;
+        window.doc = doc;
+        window.onSnapshot = onSnapshot;
+        window.setDoc = setDoc;
+        window.updateDoc = updateDoc;
+        window.addDoc = addDoc;
+        window.deleteDoc = deleteDoc;
+    </script>
+</head>
+<body>
+
+    <header>
+        <div class="logo">Luxury Scents</div>
+        <div class="nav-actions">
+            <div class="cart-btn-container">
+                <button class="btn-primary" onclick="openCartModal()">🛒 Carrito</button>
+                <div class="cart-count" id="cart-count">0</div>
+            </div>
+            <button class="btn-secondary" onclick="toggleTheme()">🌗 Modo</button>
+            <button class="btn-gold" onclick="openAdminModal()">Panel Vendedor</button>
+        </div>
+    </header>
+
+    <div class="container">
+        <h1 style="margin-bottom: 1.5rem; font-size: 1.8rem; text-shadow: 0 0 20px rgba(0, 240, 255, 0.5);">Colección Exclusiva</h1>
+        <div class="grid" id="catalog-grid"></div>
+    </div>
+
+    <!-- Modal Detalle -->
+    <div class="modal-overlay" id="detail-modal">
+        <div class="modal">
+            <div id="detail-content"></div>
+            <button class="btn-secondary" style="margin-top: 1rem; width: 100%;" onclick="closeDetailModal()">Cerrar</button>
+        </div>
+    </div>
+
+    <!-- Modal Carrito -->
+    <div class="modal-overlay" id="cart-modal">
+        <div class="modal">
+            <h2>🛒 Carrito de Perfumes</h2>
+            <div id="cart-items-container" style="max-height: 220px; overflow-y: auto; margin-bottom: 1rem;"></div>
+            
+            <div style="font-size: 1.4rem; font-weight: 900; text-align: right; margin-bottom: 1rem; color: var(--accent-cyan);">
+                Total: $<span id="cart-total-price">0.00</span>
+            </div>
+
+            <hr class="divider">
+
+            <h3>💳 Método de Pago</h3>
+            <div class="form-group">
+                <label>¿Cómo deseas pagar?</label>
+                <select id="cart-pay-method" onchange="handlePayMethodChange()"></select>
+            </div>
+
+            <div id="pay-details-pm" class="pay-option-box" style="display:none;">
+                <h4>📲 Datos para Pago Móvil</h4>
+                <p style="font-size:0.9rem; color: var(--text-secondary); margin-top: 5px;">
+                    <strong>Banco:</strong> <span id="pm-banco-lbl">-</span><br>
+                    <strong>Teléfono:</strong> <span id="pm-telf-lbl">-</span><br>
+                    <strong>Cédula:</strong> <span id="pm-cedula-lbl">-</span>
+                </p>
+            </div>
+
+            <div id="pay-details-cuotas" class="pay-option-box" style="display:none;">
+                <h4>📅 Plan de Pago Financiado</h4>
+                <p style="font-size:0.9rem; color: var(--text-secondary); margin-top: 5px;">
+                    • <strong>Inicial Requerida (<span id="cuotas-pct-lbl">30</span>%):</strong> $<span id="cuotas-inicial-val">0.00</span><br>
+                    • <strong>Restante en:</strong> <span id="cuotas-num-lbl">4</span> cuotas <span id="cuotas-frec-lbl">Quincenal</span><br>
+                    • <strong>Monto por cuota:</strong> $<span id="cuotas-monto-val">0.00</span>
+                </p>
+            </div>
+
+            <div id="pay-details-efectivo" class="pay-option-box" style="display:none;">
+                <h4>💵 Pago en Físico / Efectivo</h4>
+                <p style="font-size:0.9rem; color: var(--text-secondary); margin-top: 5px;">
+                    Entrega directa del dinero en divisas al momento de recibir el pedido.
+                </p>
+            </div>
+
+            <button class="btn-primary" style="width: 100%; margin-top: 1.2rem;" onclick="processOrder()">Confirmar Pedido</button>
+            <button class="btn-ws" style="width: 100%; margin-top: 10px;" onclick="buyNowWhatsApp()">
+                💬 Comprar Ya por WhatsApp
+            </button>
+            <button class="btn-secondary" style="width: 100%; margin-top: 8px;" onclick="closeCartModal()">Seguir Viendo</button>
+        </div>
+    </div>
+
+    <!-- Modal Login -->
+    <div class="modal-overlay" id="login-modal">
+        <div class="modal">
+            <h2>🔐 Acceso Vendedor</h2>
+            <div class="form-group">
+                <label>Ingresa tu PIN de 8 dígitos:</label>
+                <input type="password" id="admin-pass-input" maxlength="8" placeholder="********">
+            </div>
+            <button class="btn-gold" style="width: 100%; margin-top: 1rem;" onclick="loginWithPass()">Entrar al Panel</button>
+            <button class="btn-secondary" style="margin-top: 10px; width: 100%;" onclick="closeLoginModal()">Cancelar</button>
+        </div>
+    </div>
+
+    <!-- Modal Panel Admin -->
+    <div class="modal-overlay" id="admin-panel">
+        <div class="modal">
+            <h2>Panel de Control del Vendedor</h2>
+
+            <h3>➕ Agregar Nueva Colonia</h3>
+            <div class="form-group"><label>Nombre:</label><input type="text" id="new-name" placeholder="Ej: Sauvage Elixir"></div>
+            <div class="form-group"><label>Precio ($):</label><input type="number" id="new-price" step="0.5" placeholder="6.5"></div>
+            <div class="form-group"><label>Nota / Descripción corta:</label><input type="text" id="new-note" placeholder="Ej: 100 ml / Edición limitada"></div>
+            <div class="form-group"><label>URL de la Imagen:</label><input type="text" id="new-img-url" placeholder="https://ejemplo.com/imagen.jpg"></div>
+            <button class="btn-primary" style="width: 100%; margin-bottom: 1rem;" onclick="addNewProduct()">Guardar en la Nube</button>
+
+            <hr class="divider">
+
+            <h3>💳 Métodos de Pago</h3>
+            <div style="display:flex; flex-direction:column; gap:8px; margin-bottom:1rem;">
+                <label><input type="checkbox" id="cfg-pay-pm"> Permitir Pago Móvil</label>
+                <label><input type="checkbox" id="cfg-pay-efectivo"> Permitir Efectivo / Físico</label>
+                <label><input type="checkbox" id="cfg-pay-cuotas"> Permitir Cuotas</label>
+            </div>
+
+            <h4>Datos Pago Móvil:</h4>
+            <div class="form-group"><label>Banco:</label><input type="text" id="cfg-pm-banco"></div>
+            <div class="form-group"><label>Teléfono:</label><input type="text" id="cfg-pm-telf"></div>
+            <div class="form-group"><label>Cédula / RIF:</label><input type="text" id="cfg-pm-cedula"></div>
+            <button class="btn-secondary" style="width: 100%; margin-bottom: 1rem;" onclick="savePayMethodsConfig()">Guardar Métodos</button>
+
+            <hr class="divider">
+
+            <h3>📦 Inventario en Nube</h3>
+            <div id="admin-price-list" style="margin-bottom: 1rem; max-height: 220px; overflow-y: auto;"></div>
+
+            <hr class="divider">
+
+            <h3>⚙️ Parámetros de Cuotas</h3>
+            <div class="form-group"><label>% Inicial:</label><input type="number" id="cfg-inicial-porcentaje"></div>
+            <div class="form-group"><label>N° Cuotas:</label><input type="number" id="cfg-num-cuotas"></div>
+            <div class="form-group"><label>Frecuencia:</label><input type="text" id="cfg-frecuencia"></div>
+            <button class="btn-secondary" style="margin-bottom: 1rem; width: 100%;" onclick="saveCuotasConfig()">Guardar Cuotas</button>
+
+            <hr class="divider">
+
+            <h3>🔒 Seguridad</h3>
+            <div class="form-group"><label>Nuevo PIN (8 dígitos):</label><input type="password" id="new-pass-input" maxlength="8"></div>
+            <button class="btn-secondary" style="width: 100%;" onclick="changePassword()">Cambiar PIN</button>
+
+            <button class="btn-gold" style="margin-top: 1.5rem; width: 100%;" onclick="closeAdminPanel()">Cerrar Panel</button>
+        </div>
+    </div>
+
+    <!-- Modal Editar Colonia -->
+    <div class="modal-overlay" id="edit-product-modal" style="z-index: 1100;">
+        <div class="modal">
+            <h2>✏️ Editar Colonia en la Nube</h2>
+            <input type="hidden" id="edit-prod-id">
+
+            <div class="form-group"><label>Nombre:</label><input type="text" id="edit-name"></div>
+            <div class="form-group"><label>Precio ($):</label><input type="number" step="0.5" id="edit-price"></div>
+            <div class="form-group"><label>Nota / Especificaciones:</label><input type="text" id="edit-note"></div>
+            <div class="form-group"><label>URL de Imagen:</label><input type="text" id="edit-img-url"></div>
+            <div class="form-group"><label>Opciones Mujer (comas):</label><input type="text" id="edit-var-mujer"></div>
+            <div class="form-group"><label>Opciones Hombre (comas):</label><input type="text" id="edit-var-hombre"></div>
+
+            <button class="btn-primary" style="width: 100%; margin-top: 1rem;" onclick="saveProductEdits()">Guardar Cambios Nube</button>
+            <button class="btn-secondary" style="width: 100%; margin-top: 8px;" onclick="closeEditModal()">Cancelar</button>
+        </div>
+    </div>
+
+    <script>
+        let products = [];
+        let adminPass = "12345678";
+        let cuotasConfig = { inicialPct: 30, numCuotas: 4, frecuencia: "Quincenal" };
+        let payConfig = { pm: true, efectivo: true, cuotas: true, pmBanco: "Banesco", pmTelf: "04120000000", pmCedula: "V-00000000" };
+        let cart = [];
+
+        // Escuchar datos en tiempo real desde Firebase
+        window.addEventListener('load', () => {
+            const checkFirebase = setInterval(() => {
+                if (window.db) {
+                    clearInterval(checkFirebase);
+                    initFirebaseListeners();
+                }
+            }, 100);
+        });
+
+        function initFirebaseListeners() {
+            // Sincronizar Productos
+            window.onSnapshot(window.collection(window.db, "products"), (snapshot) => {
+                products = [];
+                snapshot.forEach(doc => {
+                    products.push({ id: doc.id, ...doc.data() });
+                });
+                renderCatalog();
+                renderAdminInventory();
+            });
+
+            // Sincronizar Configuración de Cuotas
+            window.onSnapshot(window.doc(window.db, "config", "cuotas"), (docSnap) => {
+                if(docSnap.exists()) cuotasConfig = docSnap.data();
+            });
+
+            // Sincronizar Configuración de Pago Móvil
+            window.onSnapshot(window.doc(window.db, "config", "pay"), (docSnap) => {
+                if(docSnap.exists()) payConfig = docSnap.data();
+            });
+
+            // Sincronizar PIN Vendedor
+            window.onSnapshot(window.doc(window.db, "config", "security"), (docSnap) => {
+                if(docSnap.exists()) adminPass = docSnap.data().pin || "12345678";
+            });
+        }
+
+        function renderCatalog() {
+            const grid = document.getElementById('catalog-grid');
+            grid.innerHTML = '';
+
+            products.forEach(p => {
+                const card = document.createElement('div');
+                card.className = `card ${p.available === false ? 'out-of-stock' : ''}`;
+                card.onclick = () => openDetailModal(p.id);
+
+                let variantsHTML = '';
+                if(p.variants && ((p.variants.mujer && p.variants.mujer.length) || (p.variants.hombre && p.variants.hombre.length))) {
+                    variantsHTML = `<div class="variants-container">`;
+                    if(p.variants.mujer && p.variants.mujer.length) variantsHTML += `<span class="variant-group-title">Opciones Mujer:</span><div>${p.variants.mujer.map(v => `<span class="variant-badge">${v}</span>`).join('')}</div>`;
+                    if(p.variants.hombre && p.variants.hombre.length) variantsHTML += `<span class="variant-group-title">Opciones Hombre:</span><div>${p.variants.hombre.map(v => `<span class="variant-badge">${v}</span>`).join('')}</div>`;
+                    variantsHTML += `</div>`;
+                }
+
+                card.innerHTML = `
+                    ${p.available === false ? '<div class="badge-out">Agotado</div>' : ''}
+                    <img src="${p.img || 'https://images.unsplash.com/photo-1592945403244-b3fbafd7f539?w=400'}" alt="${p.name}">
+                    <div class="card-title">${p.name}</div>
+                    ${p.note ? `<div style="font-size:0.85rem; color: var(--text-secondary);">${p.note}</div>` : ''}
+                    ${variantsHTML}
+                    <div style="display:flex; justify-content:space-between; align-items:center; margin-top: auto;">
+                        <div class="card-price">$${parseFloat(p.price).toFixed(2)}</div>
+                        <button class="btn-primary" style="padding: 6px 12px; font-size: 0.85rem;" onclick="event.stopPropagation(); addToCart('${p.id}')">
+                            + Añadir
+                        </button>
+                    </div>
+                `;
+                grid.appendChild(card);
+            });
+        }
+
+        function openDetailModal(id) {
+            const p = products.find(prod => prod.id === id);
+            if(!p) return;
+
+            const container = document.getElementById('detail-content');
+            let variantsHTML = '';
+            if(p.variants) {
+                if(p.variants.mujer && p.variants.mujer.length) variantsHTML += `<p style="margin-top:10px;"><strong>Opciones Mujer:</strong></p><div>${p.variants.mujer.map(v => `<span class="variant-badge">${v}</span>`).join('')}</div>`;
+                if(p.variants.hombre && p.variants.hombre.length) variantsHTML += `<p style="margin-top:10px;"><strong>Opciones Hombre:</strong></p><div>${p.variants.hombre.map(v => `<span class="variant-badge">${v}</span>`).join('')}</div>`;
+            }
+
+            container.innerHTML = `
+                <img src="${p.img}" style="width:100%; height:260px; object-fit:cover; border-radius:20px; margin-bottom:1rem;">
+                <h2 style="font-size:1.6rem;">${p.name}</h2>
+                <div style="font-size:1.6rem; font-weight:900; color:var(--accent-cyan); margin: 8px 0;">$${parseFloat(p.price).toFixed(2)}</div>
+                <p style="color:var(--text-secondary);">${p.note || 'Fragancia importada de alta concentración.'}</p>
+                ${variantsHTML}
+                <button class="btn-primary" style="width:100%; margin-top:1.5rem;" onclick="addToCart('${p.id}'); closeDetailModal();">🛒 Agregar al Carrito</button>
+            `;
+            document.getElementById('detail-modal').classList.add('active');
+        }
+
+        function closeDetailModal() { document.getElementById('detail-modal').classList.remove('active'); }
+
+        function addToCart(id) {
+            const p = products.find(prod => prod.id === id);
+            if(!p) return;
+            if(p.available === false) { alert("Esta colonia está agotada."); return; }
+
+            const existing = cart.find(item => item.id === id);
+            if(existing) existing.qty++;
+            else cart.push({ id: p.id, name: p.name, price: p.price, img: p.img, qty: 1 });
+            updateCartUI();
+        }
+
+        function updateCartUI() {
+            document.getElementById('cart-count').innerText = cart.reduce((sum, item) => sum + item.qty, 0);
+            const container = document.getElementById('cart-items-container');
+            container.innerHTML = '';
+
+            let totalPrice = 0;
+            cart.forEach((item, index) => {
+                const subtotal = item.price * item.qty;
+                totalPrice += subtotal;
+                const row = document.createElement('div');
+                row.className = 'cart-item';
+                row.innerHTML = `
+                    <img src="${item.img}">
+                    <div style="flex:1;"><div style="font-weight:700;">${item.name}</div><div style="font-size:0.85rem; color:var(--text-secondary);">$${parseFloat(item.price).toFixed(2)} c/u</div></div>
+                    <div class="cart-controls">
+                        <button class="btn-secondary" style="padding:2px 8px;" onclick="changeQty(${index}, -1)">-</button>
+                        <span>${item.qty}</span>
+                        <button class="btn-secondary" style="padding:2px 8px;" onclick="changeQty(${index}, 1)">+</button>
+                    </div>
+                `;
+                container.appendChild(row);
+            });
+
+            document.getElementById('cart-total-price').innerText = totalPrice.toFixed(2);
+            updatePayMethodUI(totalPrice);
+        }
+
+        function changeQty(index, delta) {
+            cart[index].qty += delta;
+            if(cart[index].qty <= 0) cart.splice(index, 1);
+            updateCartUI();
+        }
+
+        function openCartModal() { updateCartUI(); document.getElementById('cart-modal').classList.add('active'); }
+        function closeCartModal() { document.getElementById('cart-modal').classList.remove('active'); }
+
+        function updatePayMethodUI(total) {
+            const select = document.getElementById('cart-pay-method');
+            select.innerHTML = '';
+            if(payConfig.pm) select.innerHTML += `<option value="pm">Pago Móvil</option>`;
+            if(payConfig.efectivo) select.innerHTML += `<option value="efectivo">Efectivo / Físico</option>`;
+            if(payConfig.cuotas) select.innerHTML += `<option value="cuotas">Cuotas Financiadas</option>`;
+            handlePayMethodChange();
+        }
+
+        function handlePayMethodChange() {
+            const val = document.getElementById('cart-pay-method').value;
+            document.getElementById('pay-details-pm').style.display = val === 'pm' ? 'block' : 'none';
+            document.getElementById('pay-details-efectivo').style.display = val === 'efectivo' ? 'block' : 'none';
+            document.getElementById('pay-details-cuotas').style.display = val === 'cuotas' ? 'block' : 'none';
+
+            if(val === 'pm') {
+                document.getElementById('pm-banco-lbl').innerText = payConfig.pmBanco;
+                document.getElementById('pm-telf-lbl').innerText = payConfig.pmTelf;
+                document.getElementById('pm-cedula-lbl').innerText = payConfig.pmCedula;
+            } else if(val === 'cuotas') {
+                const total = parseFloat(document.getElementById('cart-total-price').innerText) || 0;
+                const inicial = (total * (cuotasConfig.inicialPct / 100)).toFixed(2);
+                const cuotaMonto = ((total - inicial) / cuotasConfig.numCuotas).toFixed(2);
+                document.getElementById('cuotas-pct-lbl').innerText = cuotasConfig.inicialPct;
+                document.getElementById('cuotas-inicial-val').innerText = inicial;
+                document.getElementById('cuotas-num-lbl').innerText = cuotasConfig.numCuotas;
+                document.getElementById('cuotas-frec-lbl').innerText = cuotasConfig.frecuencia;
+                document.getElementById('cuotas-monto-val').innerText = cuotaMonto;
+            }
+        }
+
+        function processOrder() {
+            if(cart.length === 0) return alert("El carrito está vacío.");
+            alert("¡Pedido registrado exitosamente!");
+            cart = [];
+            updateCartUI();
+            closeCartModal();
+        }
+
+        function buyNowWhatsApp() {
+            if(cart.length === 0) return alert("Tu carrito está vacío.");
+            const methodSelect = document.getElementById('cart-pay-method');
+            const methodText = methodSelect.options[methodSelect.selectedIndex] ? methodSelect.options[methodSelect.selectedIndex].text : "No seleccionado";
+            const totalPrice = document.getElementById('cart-total-price').innerText;
+
+            let msg = `✨ *NUEVO PEDIDO - LUXURY SCENTS* ✨\n\n📋 *Detalle del Pedido:*\n`;
+            cart.forEach((item, i) => { msg += `${i + 1}. *${item.name}* x${item.qty} - $${(item.price * item.qty).toFixed(2)}\n`; });
+            msg += `\n💰 *Total:* $${totalPrice}\n💳 *Método de Pago:* ${methodText}\n\nQuedo atento para coordinar. ¡Gracias!`;
+
+            window.open(`https://wa.me/?text=${encodeURIComponent(msg)}`, '_blank');
+        }
+
+        function toggleTheme() {
+            const html = document.documentElement;
+            html.setAttribute('data-theme', html.getAttribute('data-theme') === 'dark' ? 'light' : 'dark');
+        }
+
+        function openAdminModal() { document.getElementById('login-modal').classList.add('active'); }
+        function closeLoginModal() { document.getElementById('login-modal').classList.remove('active'); document.getElementById('admin-pass-input').value = ''; }
+
+        function loginWithPass() {
+            if(document.getElementById('admin-pass-input').value === adminPass) {
+                closeLoginModal();
+                showAdminPanel();
+            } else alert("PIN incorrecto.");
+        }
+
+        function showAdminPanel() {
+            document.getElementById('admin-panel').classList.add('active');
+            renderAdminInventory();
+
+            document.getElementById('cfg-pay-pm').checked = payConfig.pm;
+            document.getElementById('cfg-pay-efectivo').checked = payConfig.efectivo;
+            document.getElementById('cfg-pay-cuotas').checked = payConfig.cuotas;
+            document.getElementById('cfg-pm-banco').value = payConfig.pmBanco || '';
+            document.getElementById('cfg-pm-telf').value = payConfig.pmTelf || '';
+            document.getElementById('cfg-pm-cedula').value = payConfig.pmCedula || '';
+
+            document.getElementById('cfg-inicial-porcentaje').value = cuotasConfig.inicialPct;
+            document.getElementById('cfg-num-cuotas').value = cuotasConfig.numCuotas;
+            document.getElementById('cfg-frecuencia').value = cuotasConfig.frecuencia;
+        }
+
+        function closeAdminPanel() { document.getElementById('admin-panel').classList.remove('active'); }
+
+        function renderAdminInventory() {
+            const priceList = document.getElementById('admin-price-list');
+            priceList.innerHTML = '';
+            products.forEach((p, idx) => {
+                const row = document.createElement('div');
+                row.className = 'admin-item';
+                const isAvailable = p.available !== false;
+                row.innerHTML = `
+                    <span style="font-weight: 600; flex:1;">${p.name}</span>
+                    <div class="admin-item-controls">
+                        <input type="number" step="0.5" value="${p.price}" onchange="updatePrice('${p.id}', this.value)">
+                        <button class="btn-secondary" style="font-size: 0.8rem; padding: 6px 10px;" onclick="openEditModal('${p.id}')">✏️ Editar</button>
+                        <button class="${isAvailable ? 'btn-secondary' : 'btn-danger'}" style="font-size: 0.8rem; padding: 6px 10px;" onclick="toggleStock('${p.id}', ${isAvailable})">
+                            ${isAvailable ? '✅ Disponible' : '❌ Agotado'}
+                        </button>
+                    </div>
+                `;
+                priceList.appendChild(row);
+            });
+        }
+
+        // GUARDAR EN LA NUBE (FIREBASE)
+        async function addNewProduct() {
+            const name = document.getElementById('new-name').value.trim();
+            const price = parseFloat(document.getElementById('new-price').value);
+            const note = document.getElementById('new-note').value.trim();
+            const urlImg = document.getElementById('new-img-url').value.trim();
+
+            if (!name || isNaN(price)) return alert("Nombre y precio requeridos.");
+
+            await window.addDoc(window.collection(window.db, "products"), {
+                name, price, note, available: true, img: urlImg || "https://images.unsplash.com/photo-1592945403244-b3fbafd7f539?w=400"
+            });
+            alert("¡Colonia guardada en la Nube!");
+            document.getElementById('new-name').value = '';
+            document.getElementById('new-price').value = '';
+            document.getElementById('new-note').value = '';
+            document.getElementById('new-img-url').value = '';
+        }
+
+        async function updatePrice(id, newPrice) {
+            await window.updateDoc(window.doc(window.db, "products", id), { price: parseFloat(newPrice) || 0 });
+        }
+
+        async function toggleStock(id, currentStatus) {
+            await window.updateDoc(window.doc(window.db, "products", id), { available: !currentStatus });
+        }
+
+        function openEditModal(id) {
+            const p = products.find(item => item.id === id);
+            document.getElementById('edit-prod-id').value = id;
+            document.getElementById('edit-name').value = p.name || '';
+            document.getElementById('edit-price').value = p.price || 0;
+            document.getElementById('edit-note').value = p.note || '';
+            document.getElementById('edit-img-url').value = p.img || '';
+            document.getElementById('edit-var-mujer').value = p.variants && p.variants.mujer ? p.variants.mujer.join(', ') : '';
+            document.getElementById('edit-var-hombre').value = p.variants && p.variants.hombre ? p.variants.hombre.join(', ') : '';
+            document.getElementById('edit-product-modal').classList.add('active');
+        }
+
+        function closeEditModal() { document.getElementById('edit-product-modal').classList.remove('active'); }
+
+        async function saveProductEdits() {
+            const id = document.getElementById('edit-prod-id').value;
+            const name = document.getElementById('edit-name').value.trim();
+            const price = parseFloat(document.getElementById('edit-price').value);
+            const note = document.getElementById('edit-note').value.trim();
+            const img = document.getElementById('edit-img-url').value.trim();
+            const varMujerStr = document.getElementById('edit-var-mujer').value.trim();
+            const varHombreStr = document.getElementById('edit-var-hombre').value.trim();
+
+            const mujerArr = varMujerStr ? varMujerStr.split(',').map(s => s.trim()).filter(Boolean) : [];
+            const hombreArr = varHombreStr ? varHombreStr.split(',').map(s => s.trim()).filter(Boolean) : [];
+
+            let data = { name, price, note, img };
+            if(mujerArr.length > 0 || hombreArr.length > 0) {
+                data.variants = { mujer: mujerArr, hombre: hombreArr };
+            }
+
+            await window.updateDoc(window.doc(window.db, "products", id), data);
+            closeEditModal();
+            alert("¡Cambios guardados en la nube!");
+        }
+
+        async function savePayMethodsConfig() {
+            const data = {
+                pm: document.getElementById('cfg-pay-pm').checked,
+                efectivo: document.getElementById('cfg-pay-efectivo').checked,
+                cuotas: document.getElementById('cfg-pay-cuotas').checked,
+                pmBanco: document.getElementById('cfg-pm-banco').value,
+                pmTelf: document.getElementById('cfg-pm-telf').value,
+                pmCedula: document.getElementById('cfg-pm-cedula').value
+            };
+            await window.setDoc(window.doc(window.db, "config", "pay"), data);
+            alert("Métodos de pago guardados en la nube.");
+        }
+
+        async function saveCuotasConfig() {
+            const data = {
+                inicialPct: parseFloat(document.getElementById('cfg-inicial-porcentaje').value) || 0,
+                numCuotas: parseInt(document.getElementById('cfg-num-cuotas').value) || 1,
+                frecuencia: document.getElementById('cfg-frecuencia').value
+            };
+            await window.setDoc(window.doc(window.db, "config", "cuotas"), data);
+            alert("Parámetros de cuotas guardados en la nube.");
+        }
+
+        async function changePassword() {
+            const newPass = document.getElementById('new-pass-input').value;
+            if(newPass.length === 8) {
+                await window.setDoc(window.doc(window.db, "config", "security"), { pin: newPass });
+                alert("PIN de acceso actualizado en la nube.");
+                document.getElementById('new-pass-input').value = '';
+            } else alert("El PIN debe ser de 8 dígitos.");
+        }
+    </script>
+</body>
+</html>
