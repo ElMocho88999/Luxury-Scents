@@ -160,16 +160,18 @@
 
         .container { max-width: 1200px; margin: 2rem auto; padding: 0 1.5rem; }
 
-        /* BANNER NOVEDADES SLIDER */
+        /* BANNER SLIDERS Y DESLIZAMIENTO MANUAL */
         .banner-slider-container {
             width: 100%;
             height: 220px;
             border-radius: var(--radius-main);
             overflow: hidden;
             position: relative;
-            margin-bottom: 2.5rem;
+            margin-bottom: 1.5rem;
             border: 1px solid var(--border-highlight);
             box-shadow: var(--glass-shadow);
+            touch-action: pan-y;
+            user-select: none;
         }
 
         .slide-item {
@@ -187,7 +189,7 @@
 
         .slide-overlay {
             width: 100%; height: 100%;
-            background: linear-gradient(90deg, rgba(10,14,23,0.9) 0%, rgba(10,14,23,0.4) 60%, transparent 100%);
+            background: linear-gradient(90deg, rgba(10,14,23,0.95) 0%, rgba(10,14,23,0.5) 60%, transparent 100%);
             padding: 2.5rem;
             display: flex;
             flex-direction: column;
@@ -207,9 +209,38 @@
             margin-bottom: 8px;
         }
 
+        .slide-badge-offer { background: #ef4444; color: #fff; }
+
         .slide-title { font-family: 'Playfair Display', serif; font-size: 1.8rem; font-weight: 700; color: #fff; }
 
+        .countdown-timer {
+            font-size: 0.95rem;
+            font-weight: 800;
+            color: #f87171;
+            background: rgba(239, 68, 68, 0.15);
+            padding: 4px 10px;
+            border-radius: 8px;
+            border: 1px solid rgba(239, 68, 68, 0.3);
+            width: fit-content;
+            margin-top: 6px;
+        }
+
+        /* CATÁLOGO Y MODOS DE VISTA (GRILLA VS HORIZONTAL) */
         .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 1.75rem; }
+
+        .grid.horizontal-layout {
+            display: flex;
+            overflow-x: auto;
+            gap: 1.5rem;
+            padding-bottom: 1rem;
+            scroll-snap-type: x mandatory;
+            scroll-behavior: smooth;
+        }
+
+        .grid.horizontal-layout .card {
+            flex: 0 0 280px;
+            scroll-snap-align: start;
+        }
 
         .card {
             background: var(--bg-card);
@@ -260,6 +291,7 @@
 
         .card-title { font-size: 1.1rem; font-weight: 700; }
         .card-price { font-size: 1.35rem; font-weight: 800; color: var(--accent-gold); }
+        .old-price { text-decoration: line-through; color: var(--text-secondary); font-size: 1rem; margin-right: 6px; }
 
         .subvariants-box { display: flex; flex-direction: column; gap: 6px; margin-top: 6px; }
 
@@ -358,6 +390,9 @@
     </header>
 
     <div class="container">
+        <!-- BANNER DE OFERTAS CON TIEMPO LÍMITE -->
+        <div id="offer-slider" class="banner-slider-container" style="display:none;"></div>
+
         <!-- BANNER DE NOVEDADES -->
         <div id="banner-slider" class="banner-slider-container" style="display:none;"></div>
 
@@ -468,12 +503,32 @@
 
             <hr class="divider">
 
+            <h3>Diseño de Inicio</h3>
+            <div class="form-group">
+                <label>Diseño del Catálogo en Inicio:</label>
+                <select id="cfg-layout-mode">
+                    <option value="grid">Grilla Tradicional</option>
+                    <option value="horizontal">Horizontal (Deslizable)</option>
+                </select>
+            </div>
+            <button class="btn-secondary" style="width: 100%; margin-bottom: 1rem;" onclick="saveLayoutConfig()">Guardar Diseño</button>
+
+            <hr class="divider">
+
             <h3>Agregar Colonia</h3>
             <div class="form-group"><label>Nombre del Producto / Marca:</label><input type="text" id="new-name" placeholder="Ej: Colección Yara"></div>
             <div class="form-group"><label>Precio Base / General ($):</label><input type="number" id="new-price" step="0.5" placeholder="6.5"></div>
             <div class="form-group"><label>Cuota Inicial Individual ($):</label><input type="number" id="new-initial" step="0.5" placeholder="5.0"></div>
             <div class="form-group"><label>Nota / Descripción corta:</label><input type="text" id="new-note" placeholder="Ej: Fragancias orientales Lattafa"></div>
             <div class="form-group"><label><input type="checkbox" id="new-is-new"> Marcar como Novedad / Banner</label></div>
+            
+            <div class="form-group" style="background:rgba(239, 68, 68, 0.05); padding:10px; border-radius:10px; border:1px dashed rgba(239, 68, 68, 0.3);">
+                <label><input type="checkbox" id="new-is-offer" onchange="toggleOfferFields('new')"> 🔥 Activar Oferta Especial (Banner)</label>
+                <div id="new-offer-box" style="display:none; margin-top:8px;">
+                    <div class="form-group"><label>Precio Anterior ($):</label><input type="number" id="new-old-price" step="0.5" placeholder="10.0"></div>
+                    <div class="form-group"><label>Fecha y Hora Límite:</label><input type="datetime-local" id="new-offer-until"></div>
+                </div>
+            </div>
 
             <div class="form-group">
                 <label>Variantes / Presentaciones:</label>
@@ -538,6 +593,14 @@
             <div class="form-group"><label>Nota / Especificaciones:</label><input type="text" id="edit-note"></div>
             <div class="form-group"><label><input type="checkbox" id="edit-is-new"> Destacar como Novedad / Banner</label></div>
 
+            <div class="form-group" style="background:rgba(239, 68, 68, 0.05); padding:10px; border-radius:10px; border:1px dashed rgba(239, 68, 68, 0.3);">
+                <label><input type="checkbox" id="edit-is-offer" onchange="toggleOfferFields('edit')"> 🔥 Activar Oferta Especial (Banner)</label>
+                <div id="edit-offer-box" style="display:none; margin-top:8px;">
+                    <div class="form-group"><label>Precio Anterior ($):</label><input type="number" id="edit-old-price" step="0.5"></div>
+                    <div class="form-group"><label>Fecha y Hora Límite:</label><input type="datetime-local" id="edit-offer-until"></div>
+                </div>
+            </div>
+
             <div class="form-group">
                 <label>Editar / Agregar Variantes:</label>
                 <div id="edit-subvariants-container"></div>
@@ -559,6 +622,7 @@
         let products = [];
         let orders = [];
         let adminPass = "12345678";
+        let layoutMode = "grid";
         let cuotasConfig = { numCuotas: 4, frecuencia: "Quincenal" };
         let payConfig = { pm: true, efectivo: true, cuotas: true, pmBanco: "Banesco", pmTelf: "04120000000", pmCedula: "V-00000000" };
         let cart = JSON.parse(localStorage.getItem('ls_cart')) || [];
@@ -569,6 +633,8 @@
         let logoClickCount = 0;
         let logoClickTimer = null;
         let sliderInterval = null;
+        let offerSliderInterval = null;
+        let countdownTimers = [];
 
         function handleLogoClick(e) {
             e.preventDefault();
@@ -606,6 +672,11 @@
         function saveCartLocal() { localStorage.setItem('ls_cart', JSON.stringify(cart)); }
         function saveFavLocal() { localStorage.setItem('ls_favs', JSON.stringify(favorites)); }
 
+        function toggleOfferFields(prefix) {
+            const isOffer = document.getElementById(`${prefix}-is-offer`).checked;
+            document.getElementById(`${prefix}-offer-box`).style.display = isOffer ? 'block' : 'none';
+        }
+
         function initFirebaseListeners() {
             window.onSnapshot(window.collection(window.db, "products"), (snapshot) => {
                 products = [];
@@ -614,6 +685,7 @@
                 renderCatalog();
                 renderAdminInventory();
                 initBannerSlider();
+                initOfferSlider();
             });
 
             window.onSnapshot(window.collection(window.db, "orders"), (snapshot) => {
@@ -633,6 +705,25 @@
             window.onSnapshot(window.doc(window.db, "config", "security"), (docSnap) => {
                 if(docSnap.exists()) adminPass = docSnap.data().pin || "12345678";
             });
+
+            window.onSnapshot(window.doc(window.db, "config", "layout"), (docSnap) => {
+                if(docSnap.exists()) {
+                    layoutMode = docSnap.data().mode || "grid";
+                    renderCatalog();
+                }
+            });
+        }
+
+        function setupSwipeSupport(container, nextFn, prevFn) {
+            let startX = 0;
+            container.ontouchstart = (e) => { startX = e.touches[0].clientX; };
+            container.ontouchend = (e) => {
+                let diffX = startX - e.changedTouches[0].clientX;
+                if (Math.abs(diffX) > 40) {
+                    if (diffX > 0) nextFn();
+                    else prevFn();
+                }
+            };
         }
 
         function initBannerSlider() {
@@ -663,14 +754,106 @@
                 sliderContainer.appendChild(slide);
             });
 
+            let currentSlide = 0;
+            const slides = sliderContainer.querySelectorAll('.slide-item');
+
+            const nextSlide = () => {
+                slides[currentSlide].classList.remove('active');
+                currentSlide = (currentSlide + 1) % slides.length;
+                slides[currentSlide].classList.add('active');
+            };
+
+            const prevSlide = () => {
+                slides[currentSlide].classList.remove('active');
+                currentSlide = (currentSlide - 1 + slides.length) % slides.length;
+                slides[currentSlide].classList.add('active');
+            };
+
+            setupSwipeSupport(sliderContainer, nextSlide, prevSlide);
+
             if (newProducts.length >= 2) {
-                let currentSlide = 0;
-                const slides = sliderContainer.querySelectorAll('.slide-item');
-                sliderInterval = setInterval(() => {
-                    slides[currentSlide].classList.remove('active');
-                    currentSlide = (currentSlide + 1) % slides.length;
-                    slides[currentSlide].classList.add('active');
-                }, 5000);
+                sliderInterval = setInterval(nextSlide, 5000);
+            }
+        }
+
+        function initOfferSlider() {
+            const sliderContainer = document.getElementById('offer-slider');
+            const offerProducts = products.filter(p => p.isOffer);
+
+            if (offerSliderInterval) clearInterval(offerSliderInterval);
+            countdownTimers.forEach(t => clearInterval(t));
+            countdownTimers = [];
+
+            if (offerProducts.length === 0) {
+                sliderContainer.style.display = 'none';
+                return;
+            }
+
+            sliderContainer.style.display = 'block';
+            sliderContainer.innerHTML = '';
+
+            offerProducts.forEach((p, idx) => {
+                const slide = document.createElement('div');
+                slide.className = `slide-item ${idx === 0 ? 'active' : ''}`;
+                slide.style.backgroundImage = `url('${p.img}')`;
+                
+                const timerId = `timer-${p.id}`;
+
+                slide.innerHTML = `
+                    <div class="slide-overlay">
+                        <span class="slide-badge slide-badge-offer">🔥 Oferta Limitada</span>
+                        <div class="slide-title">${p.name}</div>
+                        <p style="margin-top:4px;">
+                            <span class="old-price">$${parseFloat(p.oldPrice || p.price).toFixed(2)}</span>
+                            <span style="color: var(--accent-gold); font-weight:800; font-size:1.3rem;">$${parseFloat(p.price).toFixed(2)}</span>
+                        </p>
+                        ${p.offerUntil ? `<div class="countdown-timer" id="${timerId}">⏳ Cargando tiempo...</div>` : ''}
+                    </div>
+                `;
+                sliderContainer.appendChild(slide);
+
+                if (p.offerUntil) {
+                    const updateCountdown = () => {
+                        const now = new Date().getTime();
+                        const target = new Date(p.offerUntil).getTime();
+                        const diff = target - now;
+
+                        const timerEl = document.getElementById(timerId);
+                        if (!timerEl) return;
+
+                        if (diff <= 0) {
+                            timerEl.innerHTML = "⏰ Oferta Finalizada";
+                        } else {
+                            const h = Math.floor(diff / (1000 * 60 * 60));
+                            const m = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+                            const s = Math.floor((diff % (1000 * 60)) / 1000);
+                            timerEl.innerHTML = `⏳ Termina en: ${h}h ${m}m ${s}s`;
+                        }
+                    };
+                    updateCountdown();
+                    countdownTimers.push(setInterval(updateCountdown, 1000));
+                }
+            });
+
+            let currentSlide = 0;
+            const slides = sliderContainer.querySelectorAll('.slide-item');
+
+            const nextSlide = () => {
+                slides[currentSlide].classList.remove('active');
+                currentSlide = (currentSlide + 1) % slides.length;
+                slides[currentSlide].classList.add('active');
+            };
+
+            const prevSlide = () => {
+                slides[currentSlide].classList.remove('active');
+                currentSlide = (currentSlide - 1 + slides.length) % slides.length;
+                slides[currentSlide].classList.add('active');
+            };
+
+            setupSwipeSupport(sliderContainer, nextSlide, prevSlide);
+
+            if (offerProducts.length >= 2) {
+                offerSliderInterval = setInterval(nextSlide, 6000);
             }
         }
 
@@ -737,6 +920,12 @@
             const grid = document.getElementById('catalog-grid');
             grid.innerHTML = '';
 
+            if (layoutMode === 'horizontal') {
+                grid.classList.add('horizontal-layout');
+            } else {
+                grid.classList.remove('horizontal-layout');
+            }
+
             products.forEach(p => {
                 const card = document.createElement('div');
                 card.className = 'card';
@@ -763,7 +952,10 @@
                     ${p.note ? `<div style="font-size:0.85rem; color: var(--text-secondary);">${p.note}</div>` : ''}
                     ${subvariantsHTML}
                     <div style="display:flex; justify-content:space-between; align-items:center; margin-top: auto; padding-top: 8px;">
-                        <div class="card-price">$${parseFloat(p.price).toFixed(2)}</div>
+                        <div class="card-price">
+                            ${p.isOffer && p.oldPrice ? `<span class="old-price">$${parseFloat(p.oldPrice).toFixed(2)}</span>` : ''}
+                            $${parseFloat(p.price).toFixed(2)}
+                        </div>
                         <button class="btn-primary" style="padding: 6px 14px; font-size: 0.85rem;" onclick="event.stopPropagation(); addToCartWithVariant('${p.id}')">
                             + Añadir
                         </button>
@@ -781,7 +973,10 @@
             container.innerHTML = `
                 <img src="${p.img}" style="width:100%; height:260px; object-fit:cover; border-radius:16px; margin-bottom:1rem;">
                 <h2 style="font-size:1.5rem; font-family:'Playfair Display', serif;">${p.name}</h2>
-                <div style="font-size:1.5rem; font-weight:800; color:var(--accent-gold); margin: 6px 0;">$${parseFloat(p.price).toFixed(2)}</div>
+                <div style="font-size:1.5rem; font-weight:800; color:var(--accent-gold); margin: 6px 0;">
+                    ${p.isOffer && p.oldPrice ? `<span class="old-price">$${parseFloat(p.oldPrice).toFixed(2)}</span>` : ''}
+                    $${parseFloat(p.price).toFixed(2)}
+                </div>
                 ${p.initialPay ? `<div style="font-size:0.85rem; color:var(--text-secondary);">Cuota inicial desde: $${parseFloat(p.initialPay).toFixed(2)}</div>` : ''}
                 <p style="color:var(--text-secondary); line-height: 1.5; margin-top:8px;">${p.note || 'Fragancia importada de alta concentración.'}</p>
                 <button class="btn-primary" style="width:100%; margin-top:1.5rem;" onclick="addToCartWithVariant('${p.id}'); closeDetailModal();">Agregar al Carrito</button>
@@ -878,7 +1073,6 @@
             } else if(val === 'cuotas') {
                 const total = parseFloat(document.getElementById('cart-total-price').innerText) || 0;
                 
-                // Cálculo de cuota inicial según productos seleccionados
                 let requiredInitial = cart.reduce((sum, item) => sum + (parseFloat(item.initialPay || 0) * item.qty), 0);
                 
                 const restante = Math.max(0, total - requiredInitial);
@@ -940,6 +1134,8 @@
             renderAdminInventory();
             renderAdminOrders();
 
+            document.getElementById('cfg-layout-mode').value = layoutMode;
+
             document.getElementById('cfg-pay-pm').checked = payConfig.pm;
             document.getElementById('cfg-pay-efectivo').checked = payConfig.efectivo;
             document.getElementById('cfg-pay-cuotas').checked = payConfig.cuotas;
@@ -952,6 +1148,12 @@
         }
 
         function closeAdminPanel() { document.getElementById('admin-panel').classList.remove('active'); }
+
+        async function saveLayoutConfig() {
+            const mode = document.getElementById('cfg-layout-mode').value;
+            await window.setDoc(window.doc(window.db, "config", "layout"), { mode });
+            alert("Diseño del catálogo guardado.");
+        }
 
         function renderAdminOrders() {
             const container = document.getElementById('admin-orders-list');
@@ -1037,6 +1239,10 @@
             const note = document.getElementById('new-note').value.trim();
             const isNew = document.getElementById('new-is-new').checked;
 
+            const isOffer = document.getElementById('new-is-offer').checked;
+            const oldPrice = parseFloat(document.getElementById('new-old-price').value) || 0;
+            const offerUntil = document.getElementById('new-offer-until').value || "";
+
             if (!name || isNaN(price)) return alert("Nombre y precio requeridos.");
 
             const subvariantRows = document.querySelectorAll('#subvariants-container .subvariant-row');
@@ -1051,7 +1257,7 @@
             const img = tempBase64Image || "https://images.unsplash.com/photo-1592945403244-b3fbafd7f539?w=400";
 
             await window.addDoc(window.collection(window.db, "products"), {
-                name, price, initialPay, note, isNew, img, subvariants, order: products.length
+                name, price, initialPay, note, isNew, isOffer, oldPrice, offerUntil, img, subvariants, order: products.length
             });
 
             alert("¡Colonia agregada!");
@@ -1060,6 +1266,10 @@
             document.getElementById('new-initial').value = '';
             document.getElementById('new-note').value = '';
             document.getElementById('new-is-new').checked = false;
+            document.getElementById('new-is-offer').checked = false;
+            document.getElementById('new-old-price').value = '';
+            document.getElementById('new-offer-until').value = '';
+            document.getElementById('new-offer-box').style.display = 'none';
             document.getElementById('subvariants-container').innerHTML = '';
             document.getElementById('new-img-preview').innerHTML = 'Vista Previa';
             tempBase64Image = "";
@@ -1080,6 +1290,11 @@
             document.getElementById('edit-note').value = p.note || '';
             document.getElementById('edit-is-new').checked = !!p.isNew;
             
+            document.getElementById('edit-is-offer').checked = !!p.isOffer;
+            document.getElementById('edit-old-price').value = p.oldPrice || '';
+            document.getElementById('edit-offer-until').value = p.offerUntil || '';
+            toggleOfferFields('edit');
+
             const subContainer = document.getElementById('edit-subvariants-container');
             subContainer.innerHTML = '';
             if(p.subvariants && p.subvariants.length > 0) {
@@ -1102,6 +1317,10 @@
             const note = document.getElementById('edit-note').value.trim();
             const isNew = document.getElementById('edit-is-new').checked;
 
+            const isOffer = document.getElementById('edit-is-offer').checked;
+            const oldPrice = parseFloat(document.getElementById('edit-old-price').value) || 0;
+            const offerUntil = document.getElementById('edit-offer-until').value || "";
+
             const subvariantRows = document.querySelectorAll('#edit-subvariants-container .subvariant-row');
             let subvariants = [];
             subvariantRows.forEach(row => {
@@ -1111,7 +1330,7 @@
                 if(subName) subvariants.push({ name: subName, price: subPrice, initialPay: subInitial });
             });
 
-            let data = { name, price, initialPay, note, isNew, subvariants };
+            let data = { name, price, initialPay, note, isNew, isOffer, oldPrice, offerUntil, subvariants };
             if (tempBase64Image) data.img = tempBase64Image;
 
             await window.updateDoc(window.doc(window.db, "products", id), data);
@@ -1138,7 +1357,7 @@
                 numCuotas: parseInt(document.getElementById('cfg-num-cuotas').value) || 1,
                 frecuencia: document.getElementById('cfg-frecuencia').value
             };
-            await window.setDoc(window.doc(window.db, "config", "cuotas"), data);
+            await window.setDoc(window.doc(window.doc(window.db, "config", "cuotas"), data));
             alert("Parámetros de cuotas guardados.");
         }
 
