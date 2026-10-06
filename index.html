@@ -76,6 +76,8 @@
             align-items: center;
             gap: 12px;
             text-decoration: none;
+            cursor: pointer;
+            user-select: none;
         }
 
         .logo-mark {
@@ -244,6 +246,22 @@
             object-fit: cover; 
         }
 
+        .fav-btn-card {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            background: rgba(0,0,0,0.5);
+            border-radius: 50%;
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            border: 1px solid rgba(255,255,255,0.2);
+            font-size: 0.9rem;
+        }
+
         .card-title { 
             font-size: 1.1rem; 
             font-weight: 700;
@@ -272,18 +290,11 @@
             letter-spacing: 0.5px;
         }
 
-        .variants-container { margin-top: 4px; display: flex; flex-direction: column; gap: 6px; }
-        .variant-group-title { font-size: 0.7rem; text-transform: uppercase; color: var(--text-secondary); font-weight: 700; letter-spacing: 0.5px; }
-        .variant-badge {
-            display: inline-block;
-            background: rgba(255, 255, 255, 0.05);
-            color: var(--text-primary);
-            padding: 3px 8px;
-            border-radius: 6px;
-            font-size: 0.75rem;
-            margin: 2px;
-            border: 1px solid var(--border-color);
-            font-weight: 500;
+        .subvariants-box {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            margin-top: 6px;
         }
 
         .modal-overlay {
@@ -369,6 +380,10 @@
         .admin-item input[type="number"] { width: 80px; padding: 6px 8px; }
 
         .divider { border: none; border-top: 1px solid var(--border-color); margin: 1.5rem 0; }
+        
+        .subvariant-row { display: flex; gap: 8px; align-items: center; margin-bottom: 6px; }
+        .subvariant-row input[type="text"] { flex: 2; }
+        .subvariant-row input[type="number"] { flex: 1; }
     </style>
 
     <!-- FIREBASE SDKS -->
@@ -401,20 +416,20 @@
 <body>
 
     <header>
-        <a href="#" class="logo-container">
+        <div class="logo-container" onclick="handleLogoClick(event)">
             <div class="logo-mark">LS</div>
             <div class="logo-text">
                 <span class="logo-title">Luxury Scents</span>
                 <span class="logo-subtitle">Alta Perfumería</span>
             </div>
-        </a>
+        </div>
         <div class="nav-actions">
+            <button class="btn-secondary" onclick="openFavoritesModal()">❤️ <span id="fav-count">0</span></button>
             <button class="btn-secondary" onclick="toggleTheme()">🌗</button>
             <div class="cart-btn-container">
                 <button class="btn-primary" onclick="openCartModal()">Carrito</button>
                 <div class="cart-count" id="cart-count">0</div>
             </div>
-            <button class="btn-gold" onclick="openAdminModal()">Panel</button>
         </div>
     </header>
 
@@ -423,6 +438,28 @@
             <h1 class="section-title">Colección Exclusiva</h1>
         </div>
         <div class="grid" id="catalog-grid"></div>
+    </div>
+
+    <!-- Modal Registro Nombre Cliente -->
+    <div class="modal-overlay" id="user-modal">
+        <div class="modal">
+            <h2>¡Bienvenido a Luxury Scents!</h2>
+            <p style="color:var(--text-secondary); margin-bottom:1rem; font-size:0.9rem;">Por favor ingresa tu nombre para personalizar tu pedido:</p>
+            <div class="form-group">
+                <label>Nombre y Apellido:</label>
+                <input type="text" id="client-name-input" placeholder="Ej: Juan Pérez">
+            </div>
+            <button class="btn-gold" style="width:100%; margin-top:0.5rem;" onclick="saveClientName()">Ingresar a la tienda</button>
+        </div>
+    </div>
+
+    <!-- Modal Favoritos -->
+    <div class="modal-overlay" id="fav-modal">
+        <div class="modal">
+            <h2>❤️ Mis Favoritos</h2>
+            <div id="fav-items-container" style="max-height: 300px; overflow-y: auto; margin-bottom: 1rem;"></div>
+            <button class="btn-secondary" style="width: 100%;" onclick="closeFavoritesModal()">Cerrar</button>
+        </div>
     </div>
 
     <!-- Modal Detalle -->
@@ -501,11 +538,22 @@
         <div class="modal">
             <h2>Panel de Control</h2>
 
+            <h3>📦 Pedidos de Clientes</h3>
+            <div id="admin-orders-list" style="margin-bottom: 1rem; max-height: 200px; overflow-y: auto;"></div>
+
+            <hr class="divider">
+
             <h3>Agregar Colonia</h3>
-            <div class="form-group"><label>Nombre:</label><input type="text" id="new-name" placeholder="Ej: Sauvage Elixir"></div>
-            <div class="form-group"><label>Precio ($):</label><input type="number" id="new-price" step="0.5" placeholder="6.5"></div>
-            <div class="form-group"><label>Nota / Descripción corta:</label><input type="text" id="new-note" placeholder="Ej: 100 ml / Edición limitada"></div>
+            <div class="form-group"><label>Nombre del Producto / Marca:</label><input type="text" id="new-name" placeholder="Ej: Colección Yara"></div>
+            <div class="form-group"><label>Precio Base / General ($):</label><input type="number" id="new-price" step="0.5" placeholder="6.5"></div>
+            <div class="form-group"><label>Nota / Descripción corta:</label><input type="text" id="new-note" placeholder="Ej: Fragancias orientales Lattafa"></div>
             
+            <div class="form-group">
+                <label>Variantes / Presentaciones (Opcional - Ej: Yara Rosa, Yara Tous):</label>
+                <div id="subvariants-container"></div>
+                <button class="btn-secondary" type="button" style="padding:4px 10px; font-size:0.8rem; margin-top:4px;" onclick="addSubvariantField()">+ Agregar Variante</button>
+            </div>
+
             <div class="form-group">
                 <label>Imagen del Producto:</label>
                 <div class="file-input-wrapper">
@@ -561,7 +609,7 @@
             <input type="hidden" id="edit-prod-id">
 
             <div class="form-group"><label>Nombre:</label><input type="text" id="edit-name"></div>
-            <div class="form-group"><label>Precio ($):</label><input type="number" step="0.5" id="edit-price"></div>
+            <div class="form-group"><label>Precio Base ($):</label><input type="number" step="0.5" id="edit-price"></div>
             <div class="form-group"><label>Nota / Especificaciones:</label><input type="text" id="edit-note"></div>
             
             <div class="form-group">
@@ -572,9 +620,6 @@
                 </div>
             </div>
 
-            <div class="form-group"><label>Opciones Mujer (separadas por comas):</label><input type="text" id="edit-var-mujer"></div>
-            <div class="form-group"><label>Opciones Hombre (separadas por comas):</label><input type="text" id="edit-var-hombre"></div>
-
             <button class="btn-primary" style="width: 100%; margin-top: 1rem;" onclick="saveProductEdits()">Guardar Cambios</button>
             <button class="btn-secondary" style="width: 100%; margin-top: 8px;" onclick="closeEditModal()">Cancelar</button>
         </div>
@@ -582,13 +627,39 @@
 
     <script>
         let products = [];
+        let orders = [];
         let adminPass = "12345678";
         let cuotasConfig = { inicialMonto: 5, numCuotas: 4, frecuencia: "Quincenal" };
         let payConfig = { pm: true, efectivo: true, cuotas: true, pmBanco: "Banesco", pmTelf: "04120000000", pmCedula: "V-00000000" };
-        let cart = [];
+        let cart = JSON.parse(localStorage.getItem('ls_cart')) || [];
+        let favorites = JSON.parse(localStorage.getItem('ls_favs')) || [];
+        let clientName = localStorage.getItem('ls_client_name') || "";
         let tempBase64Image = "";
 
+        let logoClickCount = 0;
+        let logoClickTimer = null;
+
+        function handleLogoClick(e) {
+            e.preventDefault();
+            logoClickCount++;
+            if (logoClickCount === 1) {
+                logoClickTimer = setTimeout(() => {
+                    logoClickCount = 0;
+                }, 1000);
+            } else if (logoClickCount >= 3) {
+                clearTimeout(logoClickTimer);
+                logoClickCount = 0;
+                openAdminModal();
+            }
+        }
+
         window.addEventListener('load', () => {
+            if(!clientName) {
+                document.getElementById('user-modal').classList.add('active');
+            }
+            updateCartUI();
+            updateFavUI();
+
             const checkFirebase = setInterval(() => {
                 if (window.db) {
                     clearInterval(checkFirebase);
@@ -596,6 +667,22 @@
                 }
             }, 100);
         });
+
+        function saveClientName() {
+            const val = document.getElementById('client-name-input').value.trim();
+            if(!val) return alert("Ingresa tu nombre por favor.");
+            clientName = val;
+            localStorage.setItem('ls_client_name', clientName);
+            document.getElementById('user-modal').classList.remove('active');
+        }
+
+        function saveCartLocal() {
+            localStorage.setItem('ls_cart', JSON.stringify(cart));
+        }
+
+        function saveFavLocal() {
+            localStorage.setItem('ls_favs', JSON.stringify(favorites));
+        }
 
         function initFirebaseListeners() {
             window.onSnapshot(window.collection(window.db, "products"), (snapshot) => {
@@ -605,6 +692,14 @@
                 });
                 renderCatalog();
                 renderAdminInventory();
+            });
+
+            window.onSnapshot(window.collection(window.db, "orders"), (snapshot) => {
+                orders = [];
+                snapshot.forEach(doc => {
+                    orders.push({ id: doc.id, ...doc.data() });
+                });
+                renderAdminOrders();
             });
 
             window.onSnapshot(window.doc(window.db, "config", "cuotas"), (docSnap) => {
@@ -633,6 +728,52 @@
             }
         }
 
+        function addSubvariantField() {
+            const container = document.getElementById('subvariants-container');
+            const row = document.createElement('div');
+            row.className = 'subvariant-row';
+            row.innerHTML = `
+                <input type="text" placeholder="Opción (Ej: Yara Rosa)" class="sub-name">
+                <input type="number" placeholder="Precio $" step="0.5" class="sub-price">
+                <button type="button" class="btn-danger" style="padding:6px 10px;" onclick="this.parentElement.remove()">X</button>
+            `;
+            container.appendChild(row);
+        }
+
+        function toggleFavorite(id, event) {
+            if(event) event.stopPropagation();
+            const index = favorites.indexOf(id);
+            if(index > -1) favorites.splice(index, 1);
+            else favorites.push(id);
+            saveFavLocal();
+            updateFavUI();
+            renderCatalog();
+        }
+
+        function updateFavUI() {
+            document.getElementById('fav-count').innerText = favorites.length;
+            const container = document.getElementById('fav-items-container');
+            if(!container) return;
+            container.innerHTML = '';
+
+            favorites.forEach(id => {
+                const p = products.find(prod => prod.id === id);
+                if(p) {
+                    const row = document.createElement('div');
+                    row.className = 'cart-item';
+                    row.innerHTML = `
+                        <img src="${p.img}">
+                        <div style="flex:1;"><div style="font-weight:600;">${p.name}</div><div style="font-size:0.85rem; color:var(--text-secondary);">$${parseFloat(p.price).toFixed(2)}</div></div>
+                        <button class="btn-primary" style="padding:4px 10px; font-size:0.8rem;" onclick="addToCart('${p.id}')">+ Añadir</button>
+                    `;
+                    container.appendChild(row);
+                }
+            });
+        }
+
+        function openFavoritesModal() { updateFavUI(); document.getElementById('fav-modal').classList.add('active'); }
+        function closeFavoritesModal() { document.getElementById('fav-modal').classList.remove('active'); }
+
         function renderCatalog() {
             const grid = document.getElementById('catalog-grid');
             grid.innerHTML = '';
@@ -642,25 +783,30 @@
                 card.className = `card ${p.available === false ? 'out-of-stock' : ''}`;
                 card.onclick = () => openDetailModal(p.id);
 
-                let variantsHTML = '';
-                if(p.variants && ((p.variants.mujer && p.variants.mujer.length) || (p.variants.hombre && p.variants.hombre.length))) {
-                    variantsHTML = `<div class="variants-container">`;
-                    if(p.variants.mujer && p.variants.mujer.length) variantsHTML += `<span class="variant-group-title">Opciones Mujer:</span><div>${p.variants.mujer.map(v => `<span class="variant-badge">${v}</span>`).join('')}</div>`;
-                    if(p.variants.hombre && p.variants.hombre.length) variantsHTML += `<span class="variant-group-title">Opciones Hombre:</span><div>${p.variants.hombre.map(v => `<span class="variant-badge">${v}</span>`).join('')}</div>`;
-                    variantsHTML += `</div>`;
+                const isFav = favorites.includes(p.id);
+
+                let subvariantsHTML = '';
+                if(p.subvariants && p.subvariants.length > 0) {
+                    subvariantsHTML = `<div class="subvariants-box" onclick="event.stopPropagation();">
+                        <label style="font-size:0.75rem; color:var(--text-secondary); font-weight:600;">Seleccionar Opción:</label>
+                        <select id="select-variant-${p.id}" style="padding:6px 8px; font-size:0.85rem;">
+                            ${p.subvariants.map((sv, idx) => `<option value="${idx}">${sv.name} -$${parseFloat(sv.price).toFixed(2)}</option>`).join('')}
+                        </select>
+                    </div>`;
                 }
 
                 card.innerHTML = `
                     ${p.available === false ? '<div class="badge-out">Agotado</div>' : ''}
                     <div class="card-img-wrapper">
+                        <div class="fav-btn-card" onclick="toggleFavorite('${p.id}', event)">${isFav ? '❤️' : '🤍'}</div>
                         <img src="${p.img || 'https://images.unsplash.com/photo-1592945403244-b3fbafd7f539?w=400'}" alt="${p.name}">
                     </div>
                     <div class="card-title">${p.name}</div>
                     ${p.note ? `<div style="font-size:0.85rem; color: var(--text-secondary);">${p.note}</div>` : ''}
-                    ${variantsHTML}
+                    ${subvariantsHTML}
                     <div style="display:flex; justify-content:space-between; align-items:center; margin-top: auto; padding-top: 8px;">
                         <div class="card-price">$${parseFloat(p.price).toFixed(2)}</div>
-                        <button class="btn-primary" style="padding: 6px 14px; font-size: 0.85rem;" onclick="event.stopPropagation(); addToCart('${p.id}')">
+                        <button class="btn-primary" style="padding: 6px 14px; font-size: 0.85rem;" onclick="event.stopPropagation(); addToCartWithVariant('${p.id}')">
                             + Añadir
                         </button>
                     </div>
@@ -674,34 +820,45 @@
             if(!p) return;
 
             const container = document.getElementById('detail-content');
-            let variantsHTML = '';
-            if(p.variants) {
-                if(p.variants.mujer && p.variants.mujer.length) variantsHTML += `<p style="margin-top:10px;"><strong>Opciones Mujer:</strong></p><div>${p.variants.mujer.map(v => `<span class="variant-badge">${v}</span>`).join('')}</div>`;
-                if(p.variants.hombre && p.variants.hombre.length) variantsHTML += `<p style="margin-top:10px;"><strong>Opciones Hombre:</strong></p><div>${p.variants.hombre.map(v => `<span class="variant-badge">${v}</span>`).join('')}</div>`;
-            }
-
             container.innerHTML = `
                 <img src="${p.img}" style="width:100%; height:260px; object-fit:cover; border-radius:16px; margin-bottom:1rem;">
                 <h2 style="font-size:1.5rem;">${p.name}</h2>
                 <div style="font-size:1.5rem; font-weight:800; color:var(--accent-gold); margin: 6px 0;">$${parseFloat(p.price).toFixed(2)}</div>
                 <p style="color:var(--text-secondary); line-height: 1.5;">${p.note || 'Fragancia importada de alta concentración.'}</p>
-                ${variantsHTML}
-                <button class="btn-primary" style="width:100%; margin-top:1.5rem;" onclick="addToCart('${p.id}'); closeDetailModal();">Agregar al Carrito</button>
+                <button class="btn-primary" style="width:100%; margin-top:1.5rem;" onclick="addToCartWithVariant('${p.id}'); closeDetailModal();">Agregar al Carrito</button>
             `;
             document.getElementById('detail-modal').classList.add('active');
         }
 
         function closeDetailModal() { document.getElementById('detail-modal').classList.remove('active'); }
 
-        function addToCart(id) {
+        function addToCartWithVariant(id) {
             const p = products.find(prod => prod.id === id);
             if(!p) return;
             if(p.available === false) { alert("Esta colonia está agotada."); return; }
 
-            const existing = cart.find(item => item.id === id);
+            let itemName = p.name;
+            let itemPrice = p.price;
+
+            const selectEl = document.getElementById(`select-variant-${p.id}`);
+            if(selectEl && p.subvariants && p.subvariants[selectEl.value]) {
+                const selectedSub = p.subvariants[selectEl.value];
+                itemName = `${p.name} (${selectedSub.name})`;
+                itemPrice = selectedSub.price;
+            }
+
+            const itemKey = `${p.id}_${itemName}`;
+            const existing = cart.find(item => item.key === itemKey);
+            
             if(existing) existing.qty++;
-            else cart.push({ id: p.id, name: p.name, price: p.price, img: p.img, qty: 1 });
+            else cart.push({ key: itemKey, id: p.id, name: itemName, price: itemPrice, img: p.img, qty: 1 });
+            
+            saveCartLocal();
             updateCartUI();
+        }
+
+        function addToCart(id) {
+            addToCartWithVariant(id);
         }
 
         function updateCartUI() {
@@ -734,6 +891,7 @@
         function changeQty(index, delta) {
             cart[index].qty += delta;
             if(cart[index].qty <= 0) cart.splice(index, 1);
+            saveCartLocal();
             updateCartUI();
         }
 
@@ -772,13 +930,28 @@
             }
         }
 
-        function buyNowWhatsApp() {
+        async function buyNowWhatsApp() {
             if(cart.length === 0) return alert("Tu carrito está vacío.");
+            if(!clientName) {
+                document.getElementById('user-modal').classList.add('active');
+                return;
+            }
+
             const methodSelect = document.getElementById('cart-pay-method');
             const methodText = methodSelect.options[methodSelect.selectedIndex] ? methodSelect.options[methodSelect.selectedIndex].text : "No seleccionado";
             const totalPrice = document.getElementById('cart-total-price').innerText;
 
-            let msg = `✨ *NUEVO PEDIDO - LUXURY SCENTS* ✨\n\n📋 *Detalle del Pedido:*\n`;
+            const orderData = {
+                clientName,
+                items: cart,
+                totalPrice,
+                payMethod: methodText,
+                date: new Date().toLocaleString()
+            };
+
+            await window.addDoc(window.collection(window.db, "orders"), orderData);
+
+            let msg = `✨ *NUEVO PEDIDO - LUXURY SCENTS* ✨\n👤 *Cliente:* ${clientName}\n\n📋 *Detalle del Pedido:*\n`;
             cart.forEach((item, i) => { msg += `${i + 1}. *${item.name}* x${item.qty} - $${(item.price * item.qty).toFixed(2)}\n`; });
             msg += `\n💰 *Total:* $${totalPrice}\n💳 *Método de Pago:* ${methodText}\n\nQuedo atento para coordinar. ¡Gracias!`;
 
@@ -803,6 +976,7 @@
         function showAdminPanel() {
             document.getElementById('admin-panel').classList.add('active');
             renderAdminInventory();
+            renderAdminOrders();
 
             document.getElementById('cfg-pay-pm').checked = payConfig.pm;
             document.getElementById('cfg-pay-efectivo').checked = payConfig.efectivo;
@@ -817,6 +991,32 @@
         }
 
         function closeAdminPanel() { document.getElementById('admin-panel').classList.remove('active'); }
+
+        function renderAdminOrders() {
+            const container = document.getElementById('admin-orders-list');
+            if(!container) return;
+            container.innerHTML = '';
+
+            if(orders.length === 0) {
+                container.innerHTML = '<div style="font-size:0.85rem; color:var(--text-secondary);">No hay pedidos registrados aún.</div>';
+                return;
+            }
+
+            orders.forEach(o => {
+                const card = document.createElement('div');
+                card.style.cssText = 'background:rgba(255,255,255,0.03); border:1px solid var(--border-color); padding:10px; border-radius:10px; margin-bottom:8px; font-size:0.85rem;';
+                
+                let itemsList = o.items ? o.items.map(i => `${i.name} (x${i.qty})`).join(', ') : '';
+                
+                card.innerHTML = `
+                    <div style="font-weight:700; color:var(--accent-gold);">👤 ${o.clientName || 'Cliente'}</div>
+                    <div><strong>Items:</strong> ${itemsList}</div>
+                    <div><strong>Total:</strong> $${o.totalPrice} | <strong>Pago:</strong> ${o.payMethod}</div>
+                    <div style="font-size:0.75rem; color:var(--text-secondary); margin-top:4px;">📅 ${o.date || ''}</div>
+                `;
+                container.appendChild(card);
+            });
+        }
 
         function renderAdminInventory() {
             const priceList = document.getElementById('admin-price-list');
@@ -846,10 +1046,18 @@
 
             if (!name || isNaN(price)) return alert("Nombre y precio requeridos.");
 
+            const subvariantRows = document.querySelectorAll('#subvariants-container .subvariant-row');
+            let subvariants = [];
+            subvariantRows.forEach(row => {
+                const subName = row.querySelector('.sub-name').value.trim();
+                const subPrice = parseFloat(row.querySelector('.sub-price').value) || price;
+                if(subName) subvariants.push({ name: subName, price: subPrice });
+            });
+
             const img = tempBase64Image || "https://images.unsplash.com/photo-1592945403244-b3fbafd7f539?w=400";
 
             await window.addDoc(window.collection(window.db, "products"), {
-                name, price, note, available: true, img
+                name, price, note, available: true, img, subvariants
             });
 
             alert("¡Colonia guardada en la Nube!");
@@ -857,12 +1065,13 @@
             document.getElementById('new-price').value = '';
             document.getElementById('new-note').value = '';
             document.getElementById('new-img-file').value = '';
+            document.getElementById('subvariants-container').innerHTML = '';
             document.getElementById('new-img-preview').innerHTML = 'Vista previa de imagen';
             tempBase64Image = "";
         }
 
         async function updatePrice(id, newPrice) {
-            await window.updateDoc(window.doc(window.doc(window.db, "products", id)), { price: parseFloat(newPrice) || 0 });
+            await window.updateDoc(window.doc(window.db, "products", id), { price: parseFloat(newPrice) || 0 });
         }
 
         async function toggleStock(id, currentStatus) {
@@ -875,8 +1084,6 @@
             document.getElementById('edit-name').value = p.name || '';
             document.getElementById('edit-price').value = p.price || 0;
             document.getElementById('edit-note').value = p.note || '';
-            document.getElementById('edit-var-mujer').value = p.variants && p.variants.mujer ? p.variants.mujer.join(', ') : '';
-            document.getElementById('edit-var-hombre').value = p.variants && p.variants.hombre ? p.variants.hombre.join(', ') : '';
             
             const preview = document.getElementById('edit-img-preview');
             if (p.img) {
@@ -895,19 +1102,10 @@
             const name = document.getElementById('edit-name').value.trim();
             const price = parseFloat(document.getElementById('edit-price').value);
             const note = document.getElementById('edit-note').value.trim();
-            const varMujerStr = document.getElementById('edit-var-mujer').value.trim();
-            const varHombreStr = document.getElementById('edit-var-hombre').value.trim();
-
-            const mujerArr = varMujerStr ? varMujerStr.split(',').map(s => s.trim()).filter(Boolean) : [];
-            const hombreArr = varHombreStr ? varHombreStr.split(',').map(s => s.trim()).filter(Boolean) : [];
 
             let data = { name, price, note };
             if (tempBase64Image) {
                 data.img = tempBase64Image;
-            }
-
-            if(mujerArr.length > 0 || hombreArr.length > 0) {
-                data.variants = { mujer: mujerArr, hombre: hombreArr };
             }
 
             await window.updateDoc(window.doc(window.db, "products", id), data);
@@ -935,14 +1133,14 @@
                 numCuotas: parseInt(document.getElementById('cfg-num-cuotas').value) || 1,
                 frecuencia: document.getElementById('cfg-frecuencia').value
             };
-            await window.setDoc(window.doc(window.doc(window.db, "config", "cuotas")), data);
+            await window.setDoc(window.doc(window.db, "config", "cuotas"), data);
             alert("Parámetros de cuotas guardados en la nube.");
         }
 
         async function changePassword() {
             const newPass = document.getElementById('new-pass-input').value;
             if(newPass.length === 8) {
-                await window.setDoc(window.doc(window.db, "config", "security"), { pin: newPass });
+                await window.setDoc(window.doc(window.doc(window.db, "config", "security")), { pin: newPass });
                 alert("PIN de acceso actualizado en la nube.");
                 document.getElementById('new-pass-input').value = '';
             } else alert("El PIN debe ser de 8 dígitos.");
