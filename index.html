@@ -225,7 +225,31 @@
             margin-top: 6px;
         }
 
-        /* CATÁLOGO Y MODOS DE VISTA (GRILLA VS HORIZONTAL) */
+        /* CATÁLOGO Y MODOS DE VISTA */
+        .catalog-header {
+            margin-bottom: 1.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .sort-container {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .sort-select {
+            padding: 8px 12px;
+            font-size: 0.85rem;
+            border-radius: var(--radius-btn);
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            color: var(--text-primary);
+        }
+
         .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 1.75rem; }
 
         .grid.horizontal-layout {
@@ -396,8 +420,17 @@
         <!-- BANNER DE NOVEDADES -->
         <div id="banner-slider" class="banner-slider-container" style="display:none;"></div>
 
-        <div style="margin-bottom: 1.5rem; display: flex; justify-content: space-between; align-items: flex-end;">
+        <div class="catalog-header">
             <h1 style="font-family:'Playfair Display', serif; font-size:2rem; font-weight:700;">Colección Exclusiva</h1>
+            <div class="sort-container">
+                <label for="sort-select" style="font-size:0.85rem; color:var(--text-secondary); font-weight:600;">Ordenar por:</label>
+                <select id="sort-select" class="sort-select" onchange="renderCatalog()">
+                    <option value="default">Orden predeterminado</option>
+                    <option value="price-asc">Precio: Menor a Mayor</option>
+                    <option value="price-desc">Precio: Mayor a Menor</option>
+                    <option value="name-asc">Nombre (A - Z)</option>
+                </select>
+            </div>
         </div>
         <div class="grid" id="catalog-grid"></div>
     </div>
@@ -517,15 +550,15 @@
 
             <h3>Agregar Colonia</h3>
             <div class="form-group"><label>Nombre del Producto / Marca:</label><input type="text" id="new-name" placeholder="Ej: Colección Yara"></div>
-            <div class="form-group"><label>Precio Base / General ($):</label><input type="number" id="new-price" step="0.5" placeholder="6.5"></div>
+            <div class="form-group"><label>Precio Normal / Base ($):</label><input type="number" id="new-price" step="0.5" placeholder="6.5"></div>
             <div class="form-group"><label>Cuota Inicial Individual ($):</label><input type="number" id="new-initial" step="0.5" placeholder="5.0"></div>
             <div class="form-group"><label>Nota / Descripción corta:</label><input type="text" id="new-note" placeholder="Ej: Fragancias orientales Lattafa"></div>
             <div class="form-group"><label><input type="checkbox" id="new-is-new"> Marcar como Novedad / Banner</label></div>
             
             <div class="form-group" style="background:rgba(239, 68, 68, 0.05); padding:10px; border-radius:10px; border:1px dashed rgba(239, 68, 68, 0.3);">
-                <label><input type="checkbox" id="new-is-offer" onchange="toggleOfferFields('new')"> 🔥 Activar Oferta Especial (Banner)</label>
+                <label><input type="checkbox" id="new-is-offer" onchange="toggleOfferFields('new')"> 🔥 Activar Oferta Especial (Tacha el precio base)</label>
                 <div id="new-offer-box" style="display:none; margin-top:8px;">
-                    <div class="form-group"><label>Precio Anterior ($):</label><input type="number" id="new-old-price" step="0.5" placeholder="10.0"></div>
+                    <div class="form-group"><label>Precio en Oferta ($):</label><input type="number" id="new-offer-price" step="0.5" placeholder="5.0"></div>
                     <div class="form-group"><label>Fecha y Hora Límite:</label><input type="datetime-local" id="new-offer-until"></div>
                 </div>
             </div>
@@ -588,15 +621,15 @@
             <input type="hidden" id="edit-prod-id">
 
             <div class="form-group"><label>Nombre:</label><input type="text" id="edit-name"></div>
-            <div class="form-group"><label>Precio Base ($):</label><input type="number" step="0.5" id="edit-price"></div>
+            <div class="form-group"><label>Precio Normal / Base ($):</label><input type="number" step="0.5" id="edit-price"></div>
             <div class="form-group"><label>Inicial para Cuota Individual ($):</label><input type="number" step="0.5" id="edit-initial"></div>
             <div class="form-group"><label>Nota / Especificaciones:</label><input type="text" id="edit-note"></div>
             <div class="form-group"><label><input type="checkbox" id="edit-is-new"> Destacar como Novedad / Banner</label></div>
 
             <div class="form-group" style="background:rgba(239, 68, 68, 0.05); padding:10px; border-radius:10px; border:1px dashed rgba(239, 68, 68, 0.3);">
-                <label><input type="checkbox" id="edit-is-offer" onchange="toggleOfferFields('edit')"> 🔥 Activar Oferta Especial (Banner)</label>
+                <label><input type="checkbox" id="edit-is-offer" onchange="toggleOfferFields('edit')"> 🔥 Activar Oferta Especial (Tacha el precio base)</label>
                 <div id="edit-offer-box" style="display:none; margin-top:8px;">
-                    <div class="form-group"><label>Precio Anterior ($):</label><input type="number" id="edit-old-price" step="0.5"></div>
+                    <div class="form-group"><label>Precio en Oferta ($):</label><input type="number" id="edit-offer-price" step="0.5"></div>
                     <div class="form-group"><label>Fecha y Hora Límite:</label><input type="datetime-local" id="edit-offer-until"></div>
                 </div>
             </div>
@@ -635,6 +668,10 @@
         let sliderInterval = null;
         let offerSliderInterval = null;
         let countdownTimers = [];
+
+        function getEffectivePrice(p) {
+            return (p.isOffer && p.offerPrice) ? parseFloat(p.offerPrice) : parseFloat(p.price);
+        }
 
         function handleLogoClick(e) {
             e.preventDefault();
@@ -741,6 +778,7 @@
             sliderContainer.innerHTML = '';
 
             newProducts.forEach((p, idx) => {
+                const effectivePrice = getEffectivePrice(p);
                 const slide = document.createElement('div');
                 slide.className = `slide-item ${idx === 0 ? 'active' : ''}`;
                 slide.style.backgroundImage = `url('${p.img}')`;
@@ -748,7 +786,7 @@
                     <div class="slide-overlay">
                         <span class="slide-badge">✨ Novedad Exclusiva</span>
                         <div class="slide-title">${p.name}</div>
-                        <p style="color: var(--accent-gold); font-weight:700; font-size:1.2rem; margin-top:4px;">$${parseFloat(p.price).toFixed(2)}</p>
+                        <p style="color: var(--accent-gold); font-weight:700; font-size:1.2rem; margin-top:4px;">$${effectivePrice.toFixed(2)}</p>
                     </div>
                 `;
                 sliderContainer.appendChild(slide);
@@ -804,8 +842,8 @@
                         <span class="slide-badge slide-badge-offer">🔥 Oferta Limitada</span>
                         <div class="slide-title">${p.name}</div>
                         <p style="margin-top:4px;">
-                            <span class="old-price">$${parseFloat(p.oldPrice || p.price).toFixed(2)}</span>
-                            <span style="color: var(--accent-gold); font-weight:800; font-size:1.3rem;">$${parseFloat(p.price).toFixed(2)}</span>
+                            <span class="old-price">$${parseFloat(p.price).toFixed(2)}</span>
+                            <span style="color: var(--accent-gold); font-weight:800; font-size:1.3rem;">$${parseFloat(p.offerPrice || p.price).toFixed(2)}</span>
                         </p>
                         ${p.offerUntil ? `<div class="countdown-timer" id="${timerId}">⏳ Cargando tiempo...</div>` : ''}
                     </div>
@@ -901,11 +939,12 @@
             favorites.forEach(id => {
                 const p = products.find(prod => prod.id === id);
                 if(p) {
+                    const priceShow = getEffectivePrice(p);
                     const row = document.createElement('div');
                     row.className = 'cart-item';
                     row.innerHTML = `
                         <img src="${p.img}">
-                        <div style="flex:1;"><div style="font-weight:600;">${p.name}</div><div style="font-size:0.85rem; color:var(--text-secondary);">$${parseFloat(p.price).toFixed(2)}</div></div>
+                        <div style="flex:1;"><div style="font-weight:600;">${p.name}</div><div style="font-size:0.85rem; color:var(--text-secondary);">$${priceShow.toFixed(2)}</div></div>
                         <button class="btn-primary" style="padding:4px 10px; font-size:0.8rem;" onclick="addToCart('${p.id}')">+ Añadir</button>
                     `;
                     container.appendChild(row);
@@ -926,7 +965,18 @@
                 grid.classList.remove('horizontal-layout');
             }
 
-            products.forEach(p => {
+            let displayProducts = [...products];
+            const sortMode = document.getElementById('sort-select') ? document.getElementById('sort-select').value : 'default';
+
+            if (sortMode === 'price-asc') {
+                displayProducts.sort((a, b) => getEffectivePrice(a) - getEffectivePrice(b));
+            } else if (sortMode === 'price-desc') {
+                displayProducts.sort((a, b) => getEffectivePrice(b) - getEffectivePrice(a));
+            } else if (sortMode === 'name-asc') {
+                displayProducts.sort((a, b) => a.name.localeCompare(b.name));
+            }
+
+            displayProducts.forEach(p => {
                 const card = document.createElement('div');
                 card.className = 'card';
                 card.onclick = () => openDetailModal(p.id);
@@ -943,6 +993,10 @@
                     </div>`;
                 }
 
+                const priceDisplay = p.isOffer && p.offerPrice ? 
+                    `<span class="old-price">$${parseFloat(p.price).toFixed(2)}</span>$${parseFloat(p.offerPrice).toFixed(2)}` : 
+                    `$${parseFloat(p.price).toFixed(2)}`;
+
                 card.innerHTML = `
                     <div class="card-img-wrapper">
                         <div class="fav-btn-card" onclick="toggleFavorite('${p.id}', event)">${isFav ? '❤️' : '🤍'}</div>
@@ -953,8 +1007,7 @@
                     ${subvariantsHTML}
                     <div style="display:flex; justify-content:space-between; align-items:center; margin-top: auto; padding-top: 8px;">
                         <div class="card-price">
-                            ${p.isOffer && p.oldPrice ? `<span class="old-price">$${parseFloat(p.oldPrice).toFixed(2)}</span>` : ''}
-                            $${parseFloat(p.price).toFixed(2)}
+                            ${priceDisplay}
                         </div>
                         <button class="btn-primary" style="padding: 6px 14px; font-size: 0.85rem;" onclick="event.stopPropagation(); addToCartWithVariant('${p.id}')">
                             + Añadir
@@ -969,13 +1022,16 @@
             const p = products.find(prod => prod.id === id);
             if(!p) return;
 
+            const priceDisplay = p.isOffer && p.offerPrice ? 
+                `<span class="old-price">$${parseFloat(p.price).toFixed(2)}</span>$${parseFloat(p.offerPrice).toFixed(2)}` : 
+                `$${parseFloat(p.price).toFixed(2)}`;
+
             const container = document.getElementById('detail-content');
             container.innerHTML = `
                 <img src="${p.img}" style="width:100%; height:260px; object-fit:cover; border-radius:16px; margin-bottom:1rem;">
                 <h2 style="font-size:1.5rem; font-family:'Playfair Display', serif;">${p.name}</h2>
                 <div style="font-size:1.5rem; font-weight:800; color:var(--accent-gold); margin: 6px 0;">
-                    ${p.isOffer && p.oldPrice ? `<span class="old-price">$${parseFloat(p.oldPrice).toFixed(2)}</span>` : ''}
-                    $${parseFloat(p.price).toFixed(2)}
+                    ${priceDisplay}
                 </div>
                 ${p.initialPay ? `<div style="font-size:0.85rem; color:var(--text-secondary);">Cuota inicial desde: $${parseFloat(p.initialPay).toFixed(2)}</div>` : ''}
                 <p style="color:var(--text-secondary); line-height: 1.5; margin-top:8px;">${p.note || 'Fragancia importada de alta concentración.'}</p>
@@ -991,7 +1047,7 @@
             if(!p) return;
 
             let itemName = p.name;
-            let itemPrice = p.price;
+            let itemPrice = getEffectivePrice(p);
             let itemInitial = p.initialPay || 0;
 
             const selectEl = document.getElementById(`select-variant-${p.id}`);
@@ -1240,7 +1296,7 @@
             const isNew = document.getElementById('new-is-new').checked;
 
             const isOffer = document.getElementById('new-is-offer').checked;
-            const oldPrice = parseFloat(document.getElementById('new-old-price').value) || 0;
+            const offerPrice = parseFloat(document.getElementById('new-offer-price').value) || 0;
             const offerUntil = document.getElementById('new-offer-until').value || "";
 
             if (!name || isNaN(price)) return alert("Nombre y precio requeridos.");
@@ -1257,7 +1313,7 @@
             const img = tempBase64Image || "https://images.unsplash.com/photo-1592945403244-b3fbafd7f539?w=400";
 
             await window.addDoc(window.collection(window.db, "products"), {
-                name, price, initialPay, note, isNew, isOffer, oldPrice, offerUntil, img, subvariants, order: products.length
+                name, price, initialPay, note, isNew, isOffer, offerPrice, offerUntil, img, subvariants, order: products.length
             });
 
             alert("¡Colonia agregada!");
@@ -1267,7 +1323,7 @@
             document.getElementById('new-note').value = '';
             document.getElementById('new-is-new').checked = false;
             document.getElementById('new-is-offer').checked = false;
-            document.getElementById('new-old-price').value = '';
+            document.getElementById('new-offer-price').value = '';
             document.getElementById('new-offer-until').value = '';
             document.getElementById('new-offer-box').style.display = 'none';
             document.getElementById('subvariants-container').innerHTML = '';
@@ -1291,7 +1347,7 @@
             document.getElementById('edit-is-new').checked = !!p.isNew;
             
             document.getElementById('edit-is-offer').checked = !!p.isOffer;
-            document.getElementById('edit-old-price').value = p.oldPrice || '';
+            document.getElementById('edit-offer-price').value = p.offerPrice || '';
             document.getElementById('edit-offer-until').value = p.offerUntil || '';
             toggleOfferFields('edit');
 
@@ -1318,7 +1374,7 @@
             const isNew = document.getElementById('edit-is-new').checked;
 
             const isOffer = document.getElementById('edit-is-offer').checked;
-            const oldPrice = parseFloat(document.getElementById('edit-old-price').value) || 0;
+            const offerPrice = parseFloat(document.getElementById('edit-offer-price').value) || 0;
             const offerUntil = document.getElementById('edit-offer-until').value || "";
 
             const subvariantRows = document.querySelectorAll('#edit-subvariants-container .subvariant-row');
@@ -1330,7 +1386,7 @@
                 if(subName) subvariants.push({ name: subName, price: subPrice, initialPay: subInitial });
             });
 
-            let data = { name, price, initialPay, note, isNew, isOffer, oldPrice, offerUntil, subvariants };
+            let data = { name, price, initialPay, note, isNew, isOffer, offerPrice, offerUntil, subvariants };
             if (tempBase64Image) data.img = tempBase64Image;
 
             await window.updateDoc(window.doc(window.db, "products", id), data);
@@ -1357,7 +1413,7 @@
                 numCuotas: parseInt(document.getElementById('cfg-num-cuotas').value) || 1,
                 frecuencia: document.getElementById('cfg-frecuencia').value
             };
-            await window.setDoc(window.doc(window.doc(window.db, "config", "cuotas"), data));
+            await window.setDoc(window.doc(window.db, "config", "cuotas"), data);
             alert("Parámetros de cuotas guardados.");
         }
 
