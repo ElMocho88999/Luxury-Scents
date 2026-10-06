@@ -694,7 +694,7 @@
     </div>
 
     <script>
-        // SISTEMA SINTETIZADOR DE SONIDO ELEGANTE Y DISCRETO (WEB AUDIO API)
+        // SISTEMA SINTETIZADOR DE SONIDO (WEB AUDIO API)
         let audioCtx = null;
         function getAudioContext() {
             if (!audioCtx) {
@@ -712,8 +712,7 @@
                 const now = ctx.currentTime;
 
                 if (type === 'spray') {
-                    // Vaporización ultra suave y refinada
-                    const bufferSize = ctx.sampleRate * 0.18; 
+                    const bufferSize = ctx.sampleRate * 0.25; 
                     const buffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
                     const output = buffer.getChannelData(0);
                     for (let i = 0; i < bufferSize; i++) {
@@ -725,72 +724,76 @@
 
                     const filter = ctx.createBiquadFilter();
                     filter.type = 'bandpass';
-                    filter.frequency.setValueAtTime(4500, now);
-                    filter.Q.setValueAtTime(0.8, now);
+                    filter.frequency.setValueAtTime(3000, now);
+                    filter.Q.setValueAtTime(1.2, now);
 
                     const gain = ctx.createGain();
-                    gain.gain.setValueAtTime(0.001, now);
-                    gain.gain.linearRampToValueAtTime(0.06, now + 0.03);
-                    gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.17);
+                    gain.gain.setValueAtTime(0.01, now);
+                    gain.gain.linearRampToValueAtTime(0.25, now + 0.04);
+                    gain.gain.exponentialRampToValueAtTime(0.001, now + 0.22);
 
                     whiteNoise.connect(filter);
                     filter.connect(gain);
                     gain.connect(ctx.destination);
 
                     whiteNoise.start(now);
-                    whiteNoise.stop(now + 0.18);
+                    whiteNoise.stop(now + 0.23);
                 } else if (type === 'click') {
-                    // Micro-pulsación acústica sutil (sensación háptica/táctil)
                     const osc = ctx.createOscillator();
                     const gain = ctx.createGain();
                     osc.type = 'sine';
-                    osc.frequency.setValueAtTime(120, now);
-                    osc.frequency.exponentialRampToValueAtTime(40, now + 0.02);
-                    gain.gain.setValueAtTime(0.04, now);
-                    gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.02);
+                    osc.frequency.setValueAtTime(600, now);
+                    osc.frequency.exponentialRampToValueAtTime(800, now + 0.05);
+                    gain.gain.setValueAtTime(0.1, now);
+                    gain.gain.exponentialRampToValueAtTime(0.001, now + 0.05);
                     osc.connect(gain);
                     gain.connect(ctx.destination);
                     osc.start(now);
-                    osc.stop(now + 0.02);
+                    osc.stop(now + 0.05);
                 } else if (type === 'add') {
-                    // Calidez armónica suave al añadir al carrito
                     const osc = ctx.createOscillator();
                     const gain = ctx.createGain();
-                    osc.type = 'sine';
-                    osc.frequency.setValueAtTime(329.63, now); // Mi4 (E4)
-                    osc.frequency.exponentialRampToValueAtTime(440, now + 0.08); // La4 (A4)
-                    gain.gain.setValueAtTime(0.05, now);
-                    gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.1);
+                    osc.type = 'triangle';
+                    osc.frequency.setValueAtTime(440, now);
+                    osc.frequency.exponentialRampToValueAtTime(880, now + 0.12);
+                    gain.gain.setValueAtTime(0.15, now);
+                    gain.gain.exponentialRampToValueAtTime(0.001, now + 0.12);
                     osc.connect(gain);
                     gain.connect(ctx.destination);
                     osc.start(now);
-                    osc.stop(now + 0.1);
+                    osc.stop(now + 0.12);
                 } else if (type === 'fav') {
-                    // Resonancia tenue tipo cristal de copa
-                    const osc = ctx.createOscillator();
+                    const osc1 = ctx.createOscillator();
+                    const osc2 = ctx.createOscillator();
                     const gain = ctx.createGain();
-                    osc.type = 'sine';
-                    osc.frequency.setValueAtTime(880, now);
-                    gain.gain.setValueAtTime(0.03, now);
-                    gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.25);
-                    osc.connect(gain);
+                    osc1.type = 'sine';
+                    osc2.type = 'sine';
+                    osc1.frequency.setValueAtTime(523.25, now);
+                    osc1.frequency.exponentialRampToValueAtTime(659.25, now + 0.15);
+                    osc2.frequency.setValueAtTime(659.25, now + 0.08);
+                    osc2.frequency.exponentialRampToValueAtTime(783.99, now + 0.2);
+                    gain.gain.setValueAtTime(0.12, now);
+                    gain.gain.exponentialRampToValueAtTime(0.001, now + 0.22);
+                    osc1.connect(gain);
+                    osc2.connect(gain);
                     gain.connect(ctx.destination);
-                    osc.start(now);
-                    osc.stop(now + 0.25);
+                    osc1.start(now);
+                    osc2.start(now + 0.05);
+                    osc1.stop(now + 0.18);
+                    osc2.stop(now + 0.22);
                 } else if (type === 'buy') {
-                    // Arpegio delicado y cálido estilo campana de lujo
-                    [440, 554.37, 659.25].forEach((freq, idx) => {
+                    [523.25, 659.25, 783.99, 1046.50].forEach((freq, idx) => {
                         const osc = ctx.createOscillator();
                         const gain = ctx.createGain();
-                        const startTime = now + (idx * 0.05);
+                        const startTime = now + (idx * 0.06);
                         osc.type = 'sine';
                         osc.frequency.setValueAtTime(freq, startTime);
-                        gain.gain.setValueAtTime(0.04, startTime);
-                        gain.gain.exponentialRampToValueAtTime(0.0001, startTime + 0.25);
+                        gain.gain.setValueAtTime(0.15, startTime);
+                        gain.gain.exponentialRampToValueAtTime(0.001, startTime + 0.15);
                         osc.connect(gain);
                         gain.connect(ctx.destination);
                         osc.start(startTime);
-                        osc.stop(startTime + 0.25);
+                        osc.stop(startTime + 0.15);
                     });
                 }
             } catch (e) {
@@ -1369,8 +1372,12 @@
             cart.forEach((item, i) => { msg += `${i + 1}. *${item.name}* x${item.qty} - $${(item.price * item.qty).toFixed(2)}\n`; });
             msg += `\n💰 *Total:* $${totalPrice}\n💳 *Método de Pago:* ${methodText}\n\nQuedo atento para coordinar. ¡Gracias!`;
 
+            // CORRECCIÓN: Uso del enlace universal de la API de WhatsApp para compatibilidad móvil perfecta
+            const phone = "584249327643";
+            const waUrl = `https://api.whatsapp.com/send?phone=${phone}&text=${encodeURIComponent(msg)}`;
+
             setTimeout(() => {
-                window.open(`https://wa.me/584249327643?text=${encodeURIComponent(msg)}`, '_blank');
+                window.location.href = waUrl;
             }, 300);
         }
 
@@ -1639,7 +1646,7 @@
                 numCuotas: parseInt(document.getElementById('cfg-num-cuotas').value) || 1,
                 frecuencia: document.getElementById('cfg-frecuencia').value
             };
-            await window.setDoc(window.doc(window.doc(window.db, "config", "cuotas"), data));
+            await window.setDoc(window.doc(window.db, "config", "cuotas"), data);
             alert("Parámetros de cuotas guardados.");
         }
 
