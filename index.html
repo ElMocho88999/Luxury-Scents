@@ -54,6 +54,7 @@
             min-height: 100vh;
             padding-bottom: 60px;
             background-image: radial-gradient(circle at 50% 0%, rgba(226, 183, 20, 0.05), transparent 40%);
+            overflow-x: hidden;
         }
 
         header {
@@ -382,29 +383,47 @@
         .badge-paid { background: rgba(34, 197, 94, 0.2); color: #4ade80; border: 1px solid rgba(34, 197, 94, 0.4); }
         .badge-pending { background: rgba(234, 179, 8, 0.2); color: #facc15; border: 1px solid rgba(234, 179, 8, 0.4); }
 
-        /* ANIMACIONES Y EFECTOS */
-        .floating-emoji {
+        /* ANIMACIONES DE CORAZONES CON BAMBOLEO */
+        .wobble-heart {
             position: fixed;
             pointer-events: none;
             z-index: 9999;
-            font-size: 1.6rem;
+            font-size: 1.5rem;
             user-select: none;
-            animation: floatUpStraight 1.2s linear forwards;
+            animation: wobbleFloat 1.2s cubic-bezier(0.25, 1, 0.5, 1) forwards;
         }
 
-        @keyframes floatUpStraight {
+        @keyframes wobbleFloat {
             0% {
                 opacity: 1;
-                transform: translateY(0) scale(0.8);
+                transform: translate(0, 0) scale(0.6) rotate(0deg);
+            }
+            25% {
+                transform: translate(calc(var(--wobble-x) * 0.5), -40px) scale(1.2) rotate(-15deg);
             }
             50% {
-                opacity: 1;
-                transform: translateY(-80px) scale(1.2);
+                transform: translate(calc(var(--wobble-x) * -0.3), -80px) scale(1.1) rotate(15deg);
+            }
+            75% {
+                opacity: 0.8;
+                transform: translate(calc(var(--wobble-x) * 0.2), -120px) scale(1) rotate(-8deg);
             }
             100% {
                 opacity: 0;
-                transform: translateY(-160px) scale(1);
+                transform: translate(0, -160px) scale(0.6) rotate(0deg);
             }
+        }
+
+        /* ELEMENTO FLOTANTE DE IMAGEN VOLADORA AL CARRITO */
+        .flying-product {
+            position: fixed;
+            z-index: 10000;
+            pointer-events: none;
+            border-radius: 12px;
+            object-fit: cover;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5), 0 0 15px rgba(226, 183, 20, 0.5);
+            border: 2px solid var(--accent-gold);
+            transition: transform 0.8s cubic-bezier(0.2, 0.8, 0.2, 1), opacity 0.8s linear;
         }
     </style>
 
@@ -449,7 +468,7 @@
             <button class="btn-secondary" onclick="openFavoritesModal()">❤️ <span id="fav-count">0</span></button>
             <button class="btn-secondary" onclick="toggleTheme()">🌗</button>
             <div class="cart-btn-container">
-                <button class="btn-primary" onclick="openCartModal()">Carrito</button>
+                <button class="btn-primary" id="header-cart-btn" onclick="openCartModal()">Carrito</button>
                 <div class="cart-count" id="cart-count">0</div>
             </div>
         </div>
@@ -835,20 +854,60 @@
             return parseFloat(sv.price || parentProduct.price);
         }
 
+        // FUNCIONALIDAD N°3: EFECTO DE CORAZONES BAMBOLEANTES (WOBBLE)
         function spawnFloatingEmojis(x, y) {
-            for (let i = 0; i < 6; i++) {
+            for (let i = 0; i < 7; i++) {
                 const el = document.createElement('div');
-                el.className = 'floating-emoji';
+                el.className = 'wobble-heart';
                 el.innerText = '❤️';
                 
-                const offsetX = (Math.random() - 0.5) * 30;
+                const offsetX = (Math.random() - 0.5) * 60;
+                const wobbleDistance = (Math.random() - 0.5) * 80;
 
                 el.style.left = `${x + offsetX}px`;
                 el.style.top = `${y}px`;
+                el.style.setProperty('--wobble-x', `${wobbleDistance}px`);
 
                 document.body.appendChild(el);
                 setTimeout(() => el.remove(), 1200);
             }
+        }
+
+        // FUNCIONALIDAD N°2: ANIMACIÓN DE VUELO DE IMAGEN DIRECTO AL CARRITO
+        function animateFlyToCart(imgSrc, startElement) {
+            const cartBtn = document.getElementById('header-cart-btn');
+            if (!cartBtn) return;
+
+            const startRect = startElement ? startElement.getBoundingClientRect() : { left: window.innerWidth / 2, top: window.innerHeight / 2, width: 50, height: 50 };
+            const cartRect = cartBtn.getBoundingClientRect();
+
+            const flyer = document.createElement('img');
+            flyer.src = imgSrc || 'https://images.unsplash.com/photo-1592945403244-b3fbafd7f539?w=400';
+            flyer.className = 'flying-product';
+            
+            const startX = startRect.left + (startRect.width / 2) - 30;
+            const startY = startRect.top + (startRect.height / 2) - 30;
+
+            flyer.style.left = `${startX}px`;
+            flyer.style.top = `${startY}px`;
+            flyer.style.width = '60px';
+            flyer.style.height = '60px';
+
+            document.body.appendChild(flyer);
+
+            const targetX = cartRect.left + (cartRect.width / 2) - 15;
+            const targetY = cartRect.top + (cartRect.height / 2) - 15;
+
+            requestAnimationFrame(() => {
+                flyer.style.transform = `translate(${targetX - startX}px, ${targetY - startY}px) scale(0.2) rotate(360deg)`;
+                flyer.style.opacity = '0.3';
+            });
+
+            setTimeout(() => {
+                flyer.remove();
+                cartBtn.style.transform = 'scale(1.2)';
+                setTimeout(() => cartBtn.style.transform = 'none', 200);
+            }, 800);
         }
 
         function handleLogoClick(e) {
@@ -992,6 +1051,7 @@
             }
         }
 
+        // FUNCIONALIDAD N°1: ELIMINACIÓN AUTOMÁTICA DE LA OFERTA AL VENCER EL RELOJ
         function initOfferSlider() {
             const sliderContainer = document.getElementById('offer-slider');
             const offerProducts = products.filter(p => p.isOffer);
@@ -1035,15 +1095,23 @@
                         const diff = target - now;
 
                         const timerEl = document.getElementById(timerId);
-                        if (!timerEl) return;
 
                         if (diff <= 0) {
-                            timerEl.innerHTML = "⏰ Oferta Finalizada";
+                            if (timerEl) timerEl.innerHTML = "⏰ Oferta Finalizada";
+                            // Desactivación automática de la oferta en la base de datos
+                            if (window.db && p.id) {
+                                window.updateDoc(window.doc(window.db, "products", p.id), {
+                                    isOffer: false,
+                                    offerUntil: ""
+                                }).catch(err => console.log("Error al desactivar oferta automáticamente:", err));
+                            }
                         } else {
-                            const h = Math.floor(diff / (1000 * 60 * 60));
-                            const m = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
-                            const s = Math.floor((diff % (1000 * 60)) / 1000);
-                            timerEl.innerHTML = `⏳ Termina en: ${h}h ${m}m ${s}s`;
+                            if (timerEl) {
+                                const h = Math.floor(diff / (1000 * 60 * 60));
+                                const m = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+                                const s = Math.floor((diff % (1000 * 60)) / 1000);
+                                timerEl.innerHTML = `⏳ Termina en: ${h}h ${m}m ${s}s`;
+                            }
                         }
                     };
                     updateCountdown();
@@ -1055,12 +1123,14 @@
             const slides = sliderContainer.querySelectorAll('.slide-item');
 
             const nextSlide = () => {
+                if (!slides || slides.length === 0) return;
                 slides[currentSlide].classList.remove('active');
                 currentSlide = (currentSlide + 1) % slides.length;
                 slides[currentSlide].classList.add('active');
             };
 
             const prevSlide = () => {
+                if (!slides || slides.length === 0) return;
                 slides[currentSlide].classList.remove('active');
                 currentSlide = (currentSlide - 1 + slides.length) % slides.length;
                 slides[currentSlide].classList.add('active');
@@ -1174,6 +1244,7 @@
             displayProducts.forEach(p => {
                 const card = document.createElement('div');
                 card.className = 'card';
+                card.id = `card-product-${p.id}`;
                 card.onclick = () => openDetailModal(p.id);
 
                 const isFav = favorites.includes(p.id);
@@ -1199,7 +1270,7 @@
                 card.innerHTML = `
                     <div class="card-img-wrapper">
                         <div class="fav-btn-card ${isFav ? 'active' : ''}" onclick="toggleFavorite('${p.id}', event)">${isFav ? '❤️' : '🤍'}</div>
-                        <img src="${p.img || 'https://images.unsplash.com/photo-1592945403244-b3fbafd7f539?w=400'}" alt="${p.name}">
+                        <img id="img-product-${p.id}" src="${p.img || 'https://images.unsplash.com/photo-1592945403244-b3fbafd7f539?w=400'}" alt="${p.name}">
                     </div>
                     <div class="card-title">${p.name}</div>
                     ${p.note ? `<div style="font-size:0.85rem; color: var(--text-secondary);">${p.note}</div>` : ''}
@@ -1208,7 +1279,7 @@
                         <div class="card-price">
                             ${priceDisplay}
                         </div>
-                        <button class="btn-primary" style="padding: 6px 14px; font-size: 0.85rem;" onclick="event.stopPropagation(); addToCartWithVariant('${p.id}')">
+                        <button class="btn-primary" style="padding: 6px 14px; font-size: 0.85rem;" onclick="event.stopPropagation(); addToCartWithVariant('${p.id}', this)">
                             + Añadir
                         </button>
                     </div>
@@ -1227,24 +1298,28 @@
 
             const container = document.getElementById('detail-content');
             container.innerHTML = `
-                <img src="${p.img}" style="width:100%; height:260px; object-fit:cover; border-radius:16px; margin-bottom:1rem;">
+                <img id="detail-img-${p.id}" src="${p.img}" style="width:100%; height:260px; object-fit:cover; border-radius:16px; margin-bottom:1rem;">
                 <h2 style="font-size:1.5rem; font-family:'Playfair Display', serif;">${p.name}</h2>
                 <div style="font-size:1.5rem; font-weight:800; color:var(--accent-gold); margin: 6px 0;">
                     ${priceDisplay}
                 </div>
                 ${p.initialPay ? `<div style="font-size:0.85rem; color:var(--text-secondary);">Cuota inicial desde: $${parseFloat(p.initialPay).toFixed(2)}</div>` : ''}
                 <p style="color:var(--text-secondary); line-height: 1.5; margin-top:8px;">${p.note || 'Fragancia importada de alta concentración.'}</p>
-                <button class="btn-primary" style="width:100%; margin-top:1.5rem;" onclick="addToCartWithVariant('${p.id}'); closeDetailModal();">Agregar al Carrito</button>
+                <button class="btn-primary" style="width:100%; margin-top:1.5rem;" onclick="addToCartWithVariant('${p.id}', this); closeDetailModal();">Agregar al Carrito</button>
             `;
             document.getElementById('detail-modal').classList.add('active');
         }
 
         function closeDetailModal() { document.getElementById('detail-modal').classList.remove('active'); }
 
-        function addToCartWithVariant(id) {
+        function addToCartWithVariant(id, btnElement) {
             playSound('spray');
             const p = products.find(prod => prod.id === id);
             if(!p) return;
+
+            // Disparar animación de imagen volando
+            const imgEl = document.getElementById(`img-product-${p.id}`) || document.getElementById(`detail-img-${p.id}`);
+            animateFlyToCart(p.img, imgEl || btnElement);
 
             let itemName = p.name;
             let itemPrice = getEffectivePrice(p);
@@ -1653,7 +1728,7 @@
         async function changePassword() {
             const newPass = document.getElementById('new-pass-input').value;
             if(newPass.length === 8) {
-                await window.setDoc(window.doc(window.db, "config", "security"), { pin: newPass });
+                await window.setDoc(window.doc(window.doc(window.db, "config", "security"), { pin: newPass }));
                 alert("PIN de acceso actualizado.");
                 document.getElementById('new-pass-input').value = '';
             } else alert("El PIN debe ser de 8 dígitos.");
