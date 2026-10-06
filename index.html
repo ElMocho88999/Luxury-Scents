@@ -358,12 +358,47 @@
 
         .divider { border: none; border-top: 1px solid var(--border-color); margin: 1.5rem 0; }
         
-        .subvariant-row { display: flex; gap: 8px; align-items: center; margin-bottom: 6px; }
-        .subvariant-row input { flex: 1; }
+        .subvariant-row { 
+            display: flex; 
+            flex-direction: column;
+            gap: 6px; 
+            margin-bottom: 10px; 
+            padding: 10px;
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+        }
+        .subvariant-row-inputs { display: flex; gap: 6px; align-items: center; }
+        .subvariant-row-inputs input { flex: 1; }
 
         .order-badge { padding: 4px 8px; border-radius: 6px; font-size: 0.75rem; font-weight: 700; display: inline-block; }
         .badge-paid { background: rgba(34, 197, 94, 0.2); color: #4ade80; border: 1px solid rgba(34, 197, 94, 0.4); }
         .badge-pending { background: rgba(234, 179, 8, 0.2); color: #facc15; border: 1px solid rgba(234, 179, 8, 0.4); }
+
+        /* ANIMACIONES Y EFECTOS */
+        .floating-emoji {
+            position: fixed;
+            pointer-events: none;
+            z-index: 9999;
+            font-size: 1.5rem;
+            user-select: none;
+            animation: floatUpAndFade 1.2s cubic-bezier(0.25, 1, 0.5, 1) forwards;
+        }
+
+        @keyframes floatUpAndFade {
+            0% {
+                opacity: 1;
+                transform: translate(0, 0) scale(0.6) rotate(0deg);
+            }
+            50% {
+                opacity: 0.9;
+                transform: translate(var(--dx), -60px) scale(1.3) rotate(var(--dr));
+            }
+            100% {
+                opacity: 0;
+                transform: translate(calc(var(--dx) * 1.5), -120px) scale(0.8) rotate(calc(var(--dr) * 2));
+            }
+        }
     </style>
 
     <!-- FIREBASE SDKS -->
@@ -507,7 +542,7 @@
             </div>
 
             <div style="display: flex; flex-direction: column; gap: 8px; margin-top: 1.5rem;">
-                <button class="btn-ws" onclick="buyNowWhatsApp()">Comprar por WhatsApp</button>
+                <button class="btn-ws" onclick="buyNowWhatsApp(event)">Comprar por WhatsApp</button>
                 <button class="btn-secondary" style="width: 100%;" onclick="closeCartModal()">Seguir Viendo</button>
             </div>
         </div>
@@ -548,7 +583,7 @@
 
             <hr class="divider">
 
-            <h3>Agregar Colonia</h3>
+            <h3>Agregar Colonia / Set</h3>
             <div class="form-group"><label>Nombre del Producto / Marca:</label><input type="text" id="new-name" placeholder="Ej: Colección Yara"></div>
             <div class="form-group"><label>Precio Normal / Base ($):</label><input type="number" id="new-price" step="0.5" placeholder="6.5"></div>
             <div class="form-group"><label>Cuota Inicial Individual ($):</label><input type="number" id="new-initial" step="0.5" placeholder="5.0"></div>
@@ -564,9 +599,9 @@
             </div>
 
             <div class="form-group">
-                <label>Variantes / Presentaciones:</label>
+                <label>Variantes / Presentaciones / Sets:</label>
                 <div id="subvariants-container"></div>
-                <button class="btn-secondary" type="button" style="padding:4px 10px; font-size:0.8rem; margin-top:4px;" onclick="addSubvariantField('subvariants-container')">+ Agregar Variante</button>
+                <button class="btn-secondary" type="button" style="padding:4px 10px; font-size:0.8rem; margin-top:4px;" onclick="addSubvariantField('subvariants-container')">+ Agregar Variante / Set</button>
             </div>
 
             <div class="form-group">
@@ -617,7 +652,7 @@
     <!-- Modal Editar Colonia Completo -->
     <div class="modal-overlay" id="edit-product-modal" style="z-index: 1100;">
         <div class="modal">
-            <h2 style="font-family:'Playfair Display', serif;">Editar Colonia / Variante</h2>
+            <h2 style="font-family:'Playfair Display', serif;">Editar Colonia / Variante / Set</h2>
             <input type="hidden" id="edit-prod-id">
 
             <div class="form-group"><label>Nombre:</label><input type="text" id="edit-name"></div>
@@ -635,9 +670,9 @@
             </div>
 
             <div class="form-group">
-                <label>Editar / Agregar Variantes:</label>
+                <label>Editar / Agregar Variantes o Sets:</label>
                 <div id="edit-subvariants-container"></div>
-                <button class="btn-secondary" type="button" style="padding:4px 10px; font-size:0.8rem; margin-top:4px;" onclick="addSubvariantField('edit-subvariants-container')">+ Agregar Variante</button>
+                <button class="btn-secondary" type="button" style="padding:4px 10px; font-size:0.8rem; margin-top:4px;" onclick="addSubvariantField('edit-subvariants-container')">+ Agregar Variante / Set</button>
             </div>
             
             <div class="form-group">
@@ -652,6 +687,92 @@
     </div>
 
     <script>
+        // SISTEMA SINTETIZADOR DE SONIDO (WEB AUDIO API)
+        let audioCtx = null;
+        function getAudioContext() {
+            if (!audioCtx) {
+                audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            }
+            if (audioCtx.state === 'suspended') {
+                audioCtx.resume();
+            }
+            return audioCtx;
+        }
+
+        function playSound(type) {
+            try {
+                const ctx = getAudioContext();
+                const now = ctx.currentTime;
+
+                if (type === 'click') {
+                    const osc = ctx.createOscillator();
+                    const gain = ctx.createGain();
+                    osc.type = 'sine';
+                    osc.frequency.setValueAtTime(600, now);
+                    osc.frequency.exponentialRampToValueAtTime(800, now + 0.05);
+                    gain.gain.setValueAtTime(0.1, now);
+                    gain.gain.exponentialRampToValueAtTime(0.001, now + 0.05);
+                    osc.connect(gain);
+                    gain.connect(ctx.destination);
+                    osc.start(now);
+                    osc.stop(now + 0.05);
+                } else if (type === 'add') {
+                    const osc = ctx.createOscillator();
+                    const gain = ctx.createGain();
+                    osc.type = 'triangle';
+                    osc.frequency.setValueAtTime(440, now);
+                    osc.frequency.exponentialRampToValueAtTime(880, now + 0.12);
+                    gain.gain.setValueAtTime(0.15, now);
+                    gain.gain.exponentialRampToValueAtTime(0.001, now + 0.12);
+                    osc.connect(gain);
+                    gain.connect(ctx.destination);
+                    osc.start(now);
+                    osc.stop(now + 0.12);
+                } else if (type === 'fav') {
+                    const osc1 = ctx.createOscillator();
+                    const osc2 = ctx.createOscillator();
+                    const gain = ctx.createGain();
+                    osc1.type = 'sine';
+                    osc2.type = 'sine';
+                    osc1.frequency.setValueAtTime(523.25, now);
+                    osc1.frequency.exponentialRampToValueAtTime(659.25, now + 0.15);
+                    osc2.frequency.setValueAtTime(659.25, now + 0.08);
+                    osc2.frequency.exponentialRampToValueAtTime(783.99, now + 0.2);
+                    gain.gain.setValueAtTime(0.12, now);
+                    gain.gain.exponentialRampToValueAtTime(0.001, now + 0.22);
+                    osc1.connect(gain);
+                    osc2.connect(gain);
+                    gain.connect(ctx.destination);
+                    osc1.start(now);
+                    osc2.start(now + 0.05);
+                    osc1.stop(now + 0.18);
+                    osc2.stop(now + 0.22);
+                } else if (type === 'buy') {
+                    [523.25, 659.25, 783.99, 1046.50].forEach((freq, idx) => {
+                        const osc = ctx.createOscillator();
+                        const gain = ctx.createGain();
+                        const startTime = now + (idx * 0.06);
+                        osc.type = 'sine';
+                        osc.frequency.setValueAtTime(freq, startTime);
+                        gain.gain.setValueAtTime(0.15, startTime);
+                        gain.gain.exponentialRampToValueAtTime(0.001, startTime + 0.15);
+                        osc.connect(gain);
+                        gain.connect(ctx.destination);
+                        osc.start(startTime);
+                        osc.stop(startTime + 0.15);
+                    });
+                }
+            } catch (e) {
+                console.log("Audio no permitido aún por interacción de usuario.");
+            }
+        }
+
+        document.addEventListener('click', (e) => {
+            if (e.target.tagName === 'BUTTON' || e.target.closest('button') || e.target.tagName === 'A' || e.target.classList.contains('card')) {
+                playSound('click');
+            }
+        });
+
         let products = [];
         let orders = [];
         let adminPass = "12345678";
@@ -671,6 +792,34 @@
 
         function getEffectivePrice(p) {
             return (p.isOffer && p.offerPrice) ? parseFloat(p.offerPrice) : parseFloat(p.price);
+        }
+
+        function getSubvariantEffectivePrice(sv, parentProduct) {
+            if (sv.isOffer && sv.offerPrice) {
+                return parseFloat(sv.offerPrice);
+            }
+            return parseFloat(sv.price || parentProduct.price);
+        }
+
+        function spawnFloatingEmojis(x, y, emojis) {
+            for (let i = 0; i < 8; i++) {
+                const el = document.createElement('div');
+                el.className = 'floating-emoji';
+                el.innerText = emojis[Math.floor(Math.random() * emojis.length)];
+                
+                const offsetX = (Math.random() - 0.5) * 40;
+                const offsetY = (Math.random() - 0.5) * 20;
+                const dx = (Math.random() - 0.5) * 80;
+                const dr = (Math.random() - 0.5) * 180;
+
+                el.style.left = `${x + offsetX}px`;
+                el.style.top = `${y + offsetY}px`;
+                el.style.setProperty('--dx', `${dx}px`);
+                el.style.setProperty('--dr', `${dr}deg`);
+
+                document.body.appendChild(el);
+                setTimeout(() => el.remove(), 1200);
+            }
         }
 
         function handleLogoClick(e) {
@@ -907,21 +1056,38 @@
             }
         }
 
-        function addSubvariantField(containerId, name = '', price = '', initial = '') {
+        function addSubvariantField(containerId, name = '', price = '', initial = '', isOffer = false, offerPrice = '') {
             const container = document.getElementById(containerId);
             const row = document.createElement('div');
             row.className = 'subvariant-row';
             row.innerHTML = `
-                <input type="text" placeholder="Variante (Ej: Yara Rosa)" class="sub-name" value="${name}">
-                <input type="number" placeholder="Precio $" step="0.5" class="sub-price" value="${price}">
-                <input type="number" placeholder="Inicial $" step="0.5" class="sub-initial" value="${initial}">
-                <button type="button" class="btn-danger" style="padding:6px 10px;" onclick="this.parentElement.remove()">X</button>
+                <div class="subvariant-row-inputs">
+                    <input type="text" placeholder="Variante / Set (Ej: Set 3 Perfumes)" class="sub-name" value="${name}">
+                    <input type="number" placeholder="Precio $" step="0.5" class="sub-price" value="${price}">
+                    <input type="number" placeholder="Inicial $" step="0.5" class="sub-initial" value="${initial}">
+                    <button type="button" class="btn-danger" style="padding:6px 10px;" onclick="this.parentElement.parentElement.remove()">X</button>
+                </div>
+                <div style="display:flex; align-items:center; gap:8px; font-size:0.8rem; background:rgba(0,0,0,0.2); padding:6px 8px; border-radius:8px;">
+                    <label style="display:flex; align-items:center; gap:4px; font-weight:600; cursor:pointer;">
+                        <input type="checkbox" class="sub-is-offer" ${isOffer ? 'checked' : ''} onchange="this.parentElement.nextElementSibling.style.display = this.checked ? 'flex' : 'none'"> 🔥 En Oferta
+                    </label>
+                    <div style="display:${isOffer ? 'flex' : 'none'}; align-items:center; gap:4px; flex:1;">
+                        <span style="color:var(--text-secondary);">Precio Oferta $:</span>
+                        <input type="number" placeholder="Oferta $" step="0.5" class="sub-offer-price" value="${offerPrice}" style="padding:4px 8px; font-size:0.8rem; flex:1;">
+                    </div>
+                </div>
             `;
             container.appendChild(row);
         }
 
         function toggleFavorite(id, event) {
             if(event) event.stopPropagation();
+            playSound('fav');
+            
+            const clientX = event ? event.clientX : window.innerWidth / 2;
+            const clientY = event ? event.clientY : window.innerHeight / 2;
+            spawnFloatingEmojis(clientX, clientY, ['❤️', '💖', '💕', '✨', '😍']);
+
             const index = favorites.indexOf(id);
             if(index > -1) favorites.splice(index, 1);
             else favorites.push(id);
@@ -986,9 +1152,13 @@
                 let subvariantsHTML = '';
                 if(p.subvariants && p.subvariants.length > 0) {
                     subvariantsHTML = `<div class="subvariants-box" onclick="event.stopPropagation();">
-                        <label style="font-size:0.75rem; color:var(--text-secondary); font-weight:600;">Seleccionar Variante:</label>
+                        <label style="font-size:0.75rem; color:var(--text-secondary); font-weight:600;">Seleccionar Variante / Set:</label>
                         <select id="select-variant-${p.id}" style="padding:6px 8px; font-size:0.85rem;">
-                            ${p.subvariants.map((sv, idx) => `<option value="${idx}">${sv.name} -$${parseFloat(sv.price).toFixed(2)}</option>`).join('')}
+                            ${p.subvariants.map((sv, idx) => {
+                                const effPrice = getSubvariantEffectivePrice(sv, p);
+                                const isSvOffer = sv.isOffer && sv.offerPrice;
+                                return `<option value="${idx}">${sv.name} - ${isSvOffer ? '🔥 ' : ''}$${effPrice.toFixed(2)}</option>`;
+                            }).join('')}
                         </select>
                     </div>`;
                 }
@@ -999,7 +1169,7 @@
 
                 card.innerHTML = `
                     <div class="card-img-wrapper">
-                        <div class="fav-btn-card" onclick="toggleFavorite('${p.id}', event)">${isFav ? '❤️' : '🤍'}</div>
+                        <div class="fav-btn-card" onclick="toggleFavorite('${p.id}', event)">${isFav ? '❤' : '🤍'}</div>
                         <img src="${p.img || 'https://images.unsplash.com/photo-1592945403244-b3fbafd7f539?w=400'}" alt="${p.name}">
                     </div>
                     <div class="card-title">${p.name}</div>
@@ -1043,6 +1213,7 @@
         function closeDetailModal() { document.getElementById('detail-modal').classList.remove('active'); }
 
         function addToCartWithVariant(id) {
+            playSound('add');
             const p = products.find(prod => prod.id === id);
             if(!p) return;
 
@@ -1054,7 +1225,7 @@
             if(selectEl && p.subvariants && p.subvariants[selectEl.value]) {
                 const selectedSub = p.subvariants[selectEl.value];
                 itemName = `${p.name} (${selectedSub.name})`;
-                itemPrice = selectedSub.price;
+                itemPrice = getSubvariantEffectivePrice(selectedSub, p);
                 itemInitial = selectedSub.initialPay || itemInitial;
             }
 
@@ -1141,12 +1312,17 @@
             }
         }
 
-        async function buyNowWhatsApp() {
+        async function buyNowWhatsApp(event) {
             if(cart.length === 0) return alert("Tu carrito está vacío.");
             if(!clientName) {
                 document.getElementById('user-modal').classList.add('active');
                 return;
             }
+
+            playSound('buy');
+            const clientX = event ? event.clientX : window.innerWidth / 2;
+            const clientY = event ? event.clientY : window.innerHeight / 2;
+            spawnFloatingEmojis(clientX, clientY, ['💸', '💵', '💰', '🤑', '✨']);
 
             const methodSelect = document.getElementById('cart-pay-method');
             const methodText = methodSelect.options[methodSelect.selectedIndex] ? methodSelect.options[methodSelect.selectedIndex].text : "No seleccionado";
@@ -1167,7 +1343,9 @@
             cart.forEach((item, i) => { msg += `${i + 1}. *${item.name}* x${item.qty} - $${(item.price * item.qty).toFixed(2)}\n`; });
             msg += `\n💰 *Total:* $${totalPrice}\n💳 *Método de Pago:* ${methodText}\n\nQuedo atento para coordinar. ¡Gracias!`;
 
-            window.open(`https://wa.me/584249327643?text=${encodeURIComponent(msg)}`, '_blank');
+            setTimeout(() => {
+                window.open(`https://wa.me/584249327643?text=${encodeURIComponent(msg)}`, '_blank');
+            }, 300);
         }
 
         function toggleTheme() {
@@ -1307,7 +1485,18 @@
                 const subName = row.querySelector('.sub-name').value.trim();
                 const subPrice = parseFloat(row.querySelector('.sub-price').value) || price;
                 const subInitial = parseFloat(row.querySelector('.sub-initial').value) || initialPay;
-                if(subName) subvariants.push({ name: subName, price: subPrice, initialPay: subInitial });
+                const subIsOffer = row.querySelector('.sub-is-offer') ? row.querySelector('.sub-is-offer').checked : false;
+                const subOfferPrice = row.querySelector('.sub-offer-price') ? parseFloat(row.querySelector('.sub-offer-price').value) || 0 : 0;
+                
+                if(subName) {
+                    subvariants.push({ 
+                        name: subName, 
+                        price: subPrice, 
+                        initialPay: subInitial,
+                        isOffer: subIsOffer,
+                        offerPrice: subOfferPrice
+                    });
+                }
             });
 
             const img = tempBase64Image || "https://images.unsplash.com/photo-1592945403244-b3fbafd7f539?w=400";
@@ -1354,7 +1543,7 @@
             const subContainer = document.getElementById('edit-subvariants-container');
             subContainer.innerHTML = '';
             if(p.subvariants && p.subvariants.length > 0) {
-                p.subvariants.forEach(sv => addSubvariantField('edit-subvariants-container', sv.name, sv.price, sv.initialPay));
+                p.subvariants.forEach(sv => addSubvariantField('edit-subvariants-container', sv.name, sv.price, sv.initialPay, sv.isOffer, sv.offerPrice));
             }
 
             const preview = document.getElementById('edit-img-preview');
@@ -1383,7 +1572,18 @@
                 const subName = row.querySelector('.sub-name').value.trim();
                 const subPrice = parseFloat(row.querySelector('.sub-price').value) || price;
                 const subInitial = parseFloat(row.querySelector('.sub-initial').value) || initialPay;
-                if(subName) subvariants.push({ name: subName, price: subPrice, initialPay: subInitial });
+                const subIsOffer = row.querySelector('.sub-is-offer') ? row.querySelector('.sub-is-offer').checked : false;
+                const subOfferPrice = row.querySelector('.sub-offer-price') ? parseFloat(row.querySelector('.sub-offer-price').value) || 0 : 0;
+                
+                if(subName) {
+                    subvariants.push({ 
+                        name: subName, 
+                        price: subPrice, 
+                        initialPay: subInitial,
+                        isOffer: subIsOffer,
+                        offerPrice: subOfferPrice
+                    });
+                }
             });
 
             let data = { name, price, initialPay, note, isNew, isOffer, offerPrice, offerUntil, subvariants };
@@ -1413,7 +1613,7 @@
                 numCuotas: parseInt(document.getElementById('cfg-num-cuotas').value) || 1,
                 frecuencia: document.getElementById('cfg-frecuencia').value
             };
-            await window.setDoc(window.doc(window.db, "config", "cuotas"), data);
+            await window.setDoc(window.doc(window.doc(window.db, "config", "cuotas"), data));
             alert("Parámetros de cuotas guardados.");
         }
 
