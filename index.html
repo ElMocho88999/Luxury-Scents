@@ -1448,22 +1448,20 @@
 
         // CONTROL ADMINISTRATIVO Y MÓDULO BACKEND
         function openAdminModal() { document.getElementById('login-modal').classList.add('active'); }
-        function closeLoginModal() { document.getElementById('login-modal').classList.remove('active'); document.getElementById('admin-pass-input').value = ''; }
+        function closeLoginModal() { document.getElementById('login-modal').classList.remove('active'); }
 
         function loginWithPass() {
             const input = document.getElementById('admin-pass-input').value;
-            if(input === adminPass) {
+            if (input === adminPass) {
                 closeLoginModal();
-                loadAdminData();
-                document.getElementById('admin-panel').classList.add('active');
+                document.getElementById('admin-pass-input').value = "";
+                openAdminPanel();
             } else {
-                alert("PIN Incorrecto.");
+                alert("PIN incorrecto.");
             }
         }
 
-        function closeAdminPanel() { document.getElementById('admin-panel').classList.remove('active'); }
-
-        function loadAdminData() {
+        function openAdminPanel() {
             document.getElementById('cfg-layout-mode').value = layoutMode;
             document.getElementById('cfg-num-cuotas').value = cuotasConfig.numCuotas || 4;
             document.getElementById('cfg-frecuencia').value = cuotasConfig.frecuencia || "Quincenal";
@@ -1477,64 +1475,26 @@
 
             renderAdminOrders();
             renderAdminInventory();
+            document.getElementById('admin-panel').classList.add('active');
         }
 
-        function renderAdminOrders() {
-            const container = document.getElementById('admin-orders-list');
-            if(!container) return;
-            container.innerHTML = '';
-
-            if(orders.length === 0) {
-                container.innerHTML = `<div style="font-size:0.85rem; color:var(--text-secondary);">No hay pedidos registrados aún.</div>`;
-                return;
-            }
-
-            orders.forEach(ord => {
-                const badgeClass = ord.status === 'Pagado' ? 'badge-paid' : 'badge-pending';
-                const row = document.createElement('div');
-                row.className = 'admin-item';
-                row.innerHTML = `
-                    <div style="flex:1;">
-                        <div style="font-weight:700;">${ord.clientName} - $${ord.totalPrice}</div>
-                        <div style="font-size:0.75rem; color:var(--text-secondary);">${ord.date} | ${ord.payMethod}</div>
-                        <span class="order-badge ${badgeClass}">${ord.status}</span>
-                    </div>
-                    <div class="admin-item-controls">
-                        <button class="btn-secondary" style="padding:4px 8px; font-size:0.75rem;" onclick="toggleOrderStatus('${ord.id}', '${ord.status}')">Estado</button>
-                        <button class="btn-danger" style="padding:4px 8px; font-size:0.75rem;" onclick="deleteOrder('${ord.id}')">X</button>
-                    </div>
-                `;
-                container.appendChild(row);
-            });
-        }
-
-        async function toggleOrderStatus(id, currentStatus) {
-            const newStatus = currentStatus === 'Pagado' ? 'Pendiente' : 'Pagado';
-            await window.updateDoc(window.doc(window.db, "orders", id), { status: newStatus });
-        }
-
-        async function deleteOrder(id) {
-            if(confirm("¿Eliminar este pedido?")) {
-                await window.deleteDoc(window.doc(window.db, "orders", id));
-            }
-        }
+        function closeAdminPanel() { document.getElementById('admin-panel').classList.remove('active'); }
 
         function getSubvariantsFromContainer(containerId) {
             const container = document.getElementById(containerId);
             const rows = container.querySelectorAll('.subvariant-row');
-            const subvariants = [];
+            const result = [];
             rows.forEach(row => {
                 const name = row.querySelector('.sub-name').value.trim();
                 const price = parseFloat(row.querySelector('.sub-price').value) || 0;
                 const initialPay = parseFloat(row.querySelector('.sub-initial').value) || 0;
                 const isOffer = row.querySelector('.sub-is-offer').checked;
                 const offerPrice = parseFloat(row.querySelector('.sub-offer-price').value) || 0;
-
-                if(name) {
-                    subvariants.push({ name, price, initialPay, isOffer, offerPrice });
+                if (name) {
+                    result.push({ name, price, initialPay, isOffer, offerPrice });
                 }
             });
-            return subvariants;
+            return result;
         }
 
         async function addNewProduct() {
@@ -1548,11 +1508,11 @@
             const offerUntil = document.getElementById('new-offer-until').value;
             const subvariants = getSubvariantsFromContainer('subvariants-container');
 
-            if(!name || price <= 0) return alert("Completa el nombre y un precio válido.");
+            if (!name) return alert("Ingresa el nombre del producto.");
 
             const img = tempBase64Image || 'https://images.unsplash.com/photo-1592945403244-b3fbafd7f539?w=400';
 
-            const newProd = {
+            const newDoc = {
                 name,
                 price,
                 initialPay,
@@ -1566,8 +1526,8 @@
                 order: products.length
             };
 
-            await window.addDoc(window.collection(window.db, "products"), newProd);
-            
+            await window.addDoc(window.collection(window.db, "products"), newDoc);
+
             document.getElementById('new-name').value = '';
             document.getElementById('new-price').value = '';
             document.getElementById('new-initial').value = '';
@@ -1576,33 +1536,32 @@
             document.getElementById('new-is-offer').checked = false;
             document.getElementById('new-offer-price').value = '';
             document.getElementById('new-offer-until').value = '';
-            document.getElementById('new-offer-box').style.display = 'none';
             document.getElementById('subvariants-container').innerHTML = '';
-            document.getElementById('new-img-file').value = '';
             document.getElementById('new-img-preview').innerHTML = 'Vista Previa';
+            document.getElementById('new-img-file').value = '';
             tempBase64Image = "";
 
-            alert("Producto guardado exitosamente en la nube.");
+            alert("Producto guardado exitosamente.");
         }
 
         function renderAdminInventory() {
             const container = document.getElementById('admin-price-list');
-            if(!container) return;
+            if (!container) return;
             container.innerHTML = '';
 
-            products.forEach((p, idx) => {
+            products.forEach((p, index) => {
                 const row = document.createElement('div');
                 row.className = 'admin-item';
                 row.innerHTML = `
                     <div style="flex:1;">
-                        <div style="font-weight:600;">${p.name} - $${parseFloat(p.price).toFixed(2)}</div>
-                        <div style="font-size:0.75rem; color:var(--text-secondary);">${p.subvariants ? p.subvariants.length : 0} variantes</div>
+                        <strong>${p.name}</strong> - $${parseFloat(p.price).toFixed(2)}
+                        ${p.isOffer ? ` <span style="color:#ef4444; font-size:0.8rem;">(Oferta: $${parseFloat(p.offerPrice).toFixed(2)})</span>` : ''}
                     </div>
                     <div class="admin-item-controls">
-                        <button class="btn-secondary" style="padding:4px 8px; font-size:0.75rem;" onclick="moveProductOrder(${idx}, -1)">▲</button>
-                        <button class="btn-secondary" style="padding:4px 8px; font-size:0.75rem;" onclick="moveProductOrder(${idx}, 1)">▼</button>
-                        <button class="btn-secondary" style="padding:4px 8px; font-size:0.75rem;" onclick="openEditProductModal('${p.id}')">Editar</button>
-                        <button class="btn-danger" style="padding:4px 8px; font-size:0.75rem;" onclick="deleteProduct('${p.id}')">X</button>
+                        <button class="btn-secondary" style="padding:4px 8px; font-size:0.8rem;" onclick="moveProductOrder(${index}, -1)">⬆️</button>
+                        <button class="btn-secondary" style="padding:4px 8px; font-size:0.8rem;" onclick="moveProductOrder(${index}, 1)">⬇️</button>
+                        <button class="btn-secondary" style="padding:4px 8px; font-size:0.8rem;" onclick="openEditProductModal('${p.id}')">✏️</button>
+                        <button class="btn-danger" style="padding:4px 8px; font-size:0.8rem;" onclick="deleteProduct('${p.id}')">🗑️</button>
                     </div>
                 `;
                 container.appendChild(row);
@@ -1613,32 +1572,33 @@
             const targetIndex = index + direction;
             if (targetIndex < 0 || targetIndex >= products.length) return;
 
-            const itemA = products[index];
-            const itemB = products[targetIndex];
+            const p1 = products[index];
+            const p2 = products[targetIndex];
 
-            await window.updateDoc(window.doc(window.db, "products", itemA.id), { order: targetIndex });
-            await window.updateDoc(window.doc(window.db, "products", itemB.id), { order: index });
+            await window.updateDoc(window.doc(window.db, "products", p1.id), { order: targetIndex });
+            await window.updateDoc(window.doc(window.db, "products", p2.id), { order: index });
         }
 
         function openEditProductModal(id) {
             const p = products.find(prod => prod.id === id);
-            if(!p) return;
+            if (!p) return;
 
             document.getElementById('edit-prod-id').value = p.id;
             document.getElementById('edit-name').value = p.name;
             document.getElementById('edit-price').value = p.price;
-            document.getElementById('edit-initial').value = p.initialPay || '';
+            document.getElementById('edit-initial').value = p.initialPay || 0;
             document.getElementById('edit-note').value = p.note || '';
             document.getElementById('edit-is-new').checked = !!p.isNew;
-
-            document.getElementById('edit-is-offer').checked = !!p.isOffer;
+            
+            const isOffer = !!p.isOffer;
+            document.getElementById('edit-is-offer').checked = isOffer;
             document.getElementById('edit-offer-price').value = p.offerPrice || '';
             document.getElementById('edit-offer-until').value = p.offerUntil || '';
-            document.getElementById('edit-offer-box').style.display = p.isOffer ? 'block' : 'none';
+            toggleOfferFields('edit');
 
-            const subContainer = document.getElementById('edit-subvariants-container');
-            subContainer.innerHTML = '';
-            if(p.subvariants && p.subvariants.length > 0) {
+            const container = document.getElementById('edit-subvariants-container');
+            container.innerHTML = '';
+            if (p.subvariants && p.subvariants.length > 0) {
                 p.subvariants.forEach(sv => {
                     addSubvariantField('edit-subvariants-container', sv.name, sv.price, sv.initialPay, sv.isOffer, sv.offerPrice);
                 });
@@ -1650,15 +1610,10 @@
             document.getElementById('edit-product-modal').classList.add('active');
         }
 
-        function closeEditModal() {
-            document.getElementById('edit-product-modal').classList.remove('active');
-        }
+        function closeEditModal() { document.getElementById('edit-product-modal').classList.remove('active'); }
 
         async function saveProductEdits() {
             const id = document.getElementById('edit-prod-id').value;
-            const p = products.find(prod => prod.id === id);
-            if(!p) return;
-
             const name = document.getElementById('edit-name').value.trim();
             const price = parseFloat(document.getElementById('edit-price').value) || 0;
             const initialPay = parseFloat(document.getElementById('edit-initial').value) || 0;
@@ -1669,9 +1624,9 @@
             const offerUntil = document.getElementById('edit-offer-until').value;
             const subvariants = getSubvariantsFromContainer('edit-subvariants-container');
 
-            if(!name || price <= 0) return alert("Completa el nombre y un precio válido.");
+            if (!name) return alert("El nombre no puede estar vacío.");
 
-            const updatedData = {
+            const updateData = {
                 name,
                 price,
                 initialPay,
@@ -1680,26 +1635,76 @@
                 isOffer,
                 offerPrice,
                 offerUntil,
-                subvariants,
-                img: tempBase64Image || p.img
+                subvariants
             };
 
-            await window.updateDoc(window.doc(window.db, "products", id), updatedData);
+            if (tempBase64Image) {
+                updateData.img = tempBase64Image;
+            }
+
+            await window.updateDoc(window.doc(window.db, "products", id), updateData);
             tempBase64Image = "";
             closeEditModal();
-            alert("Producto actualizado con éxito.");
+            alert("Producto actualizado correctamente.");
         }
 
         async function deleteProduct(id) {
-            if(confirm("¿Seguro de eliminar este producto del catálogo?")) {
+            if (confirm("¿Estás seguro de que deseas eliminar este producto?")) {
                 await window.deleteDoc(window.doc(window.db, "products", id));
+            }
+        }
+
+        function renderAdminOrders() {
+            const container = document.getElementById('admin-orders-list');
+            if (!container) return;
+            container.innerHTML = '';
+
+            if (orders.length === 0) {
+                container.innerHTML = `<div style="color:var(--text-secondary); font-size:0.85rem;">No hay pedidos registrados aún.</div>`;
+                return;
+            }
+
+            orders.forEach(ord => {
+                const isPaid = ord.status === 'Pagado';
+                const card = document.createElement('div');
+                card.style.cssText = 'background:rgba(255,255,255,0.03); border:1px solid var(--border-color); padding:10px; border-radius:12px; margin-bottom:8px;';
+                
+                let itemsList = (ord.items || []).map(i => `${i.name} x${i.qty}`).join(', ');
+
+                card.innerHTML = `
+                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:4px;">
+                        <strong>${ord.clientName || 'Cliente'}</strong>
+                        <span class="order-badge ${isPaid ? 'badge-paid' : 'badge-pending'}">${ord.status || 'Pendiente'}</span>
+                    </div>
+                    <div style="font-size:0.8rem; color:var(--text-secondary); margin-bottom:4px;">${ord.date || ''} | ${ord.payMethod || ''}</div>
+                    <div style="font-size:0.85rem; margin-bottom:6px;"><strong>Items:</strong> ${itemsList}</div>
+                    <div style="display:flex; justify-content:space-between; align-items:center;">
+                        <span style="font-weight:800; color:var(--accent-gold);">$${ord.totalPrice || '0.00'}</span>
+                        <div style="display:flex; gap:4px;">
+                            <button class="btn-secondary" style="padding:2px 8px; font-size:0.75rem;" onclick="toggleOrderStatus('${ord.id}', '${ord.status}')">Cambiar Estado</button>
+                            <button class="btn-danger" style="padding:2px 8px; font-size:0.75rem;" onclick="deleteOrder('${ord.id}')">Eliminar</button>
+                        </div>
+                    </div>
+                `;
+                container.appendChild(card);
+            });
+        }
+
+        async function toggleOrderStatus(id, currentStatus) {
+            const newStatus = currentStatus === 'Pagado' ? 'Pendiente' : 'Pagado';
+            await window.updateDoc(window.doc(window.db, "orders", id), { status: newStatus });
+        }
+
+        async function deleteOrder(id) {
+            if (confirm("¿Deseas eliminar este pedido del historial?")) {
+                await window.deleteDoc(window.doc(window.db, "orders", id));
             }
         }
 
         async function saveLayoutConfig() {
             const mode = document.getElementById('cfg-layout-mode').value;
             await window.setDoc(window.doc(window.db, "config", "layout"), { mode });
-            alert("Diseño guardado.");
+            alert("Diseño de inicio actualizado.");
         }
 
         async function savePayMethodsConfig() {
@@ -1720,17 +1725,19 @@
             const numCuotas = parseInt(document.getElementById('cfg-num-cuotas').value) || 4;
             const frecuencia = document.getElementById('cfg-frecuencia').value.trim() || "Quincenal";
 
-            await window.setDoc(window.doc(window.db, "config", "cuotas"), { numCuotas, frecuencia });
-            alert("Parámetros de cuotas actualizados.");
+            await window.setDoc(window.doc(window.db, "config", "cuotas"), {
+                numCuotas, frecuencia
+            });
+            alert("Parámetros de cuotas guardados.");
         }
 
         async function changePassword() {
-            const newPin = document.getElementById('new-pass-input').value.trim();
-            if(newPin.length !== 8 || isNaN(newPin)) return alert("El PIN debe tener exactamente 8 dígitos numéricos.");
+            const newPass = document.getElementById('new-pass-input').value.trim();
+            if (newPass.length !== 8) return alert("El PIN debe tener exactamente 8 dígitos.");
 
-            await window.setDoc(window.doc(window.doc(window.db, "config", "security")), { pin: newPin });
-            document.getElementById('new-pass-input').value = '';
-            alert("PIN administrativo actualizado con éxito.");
+            await window.setDoc(window.doc(window.db, "config", "security"), { pin: newPass });
+            document.getElementById('new-pass-input').value = "";
+            alert("PIN actualizado correctamente.");
         }
     </script>
 </body>
