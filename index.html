@@ -161,7 +161,6 @@
 
         .container { max-width: 1200px; margin: 2rem auto; padding: 0 1.5rem; }
 
-        /* BANNER SLIDERS Y DESLIZAMIENTO MANUAL */
         .banner-slider-container {
             width: 100%;
             height: 220px;
@@ -226,7 +225,6 @@
             margin-top: 6px;
         }
 
-        /* CATÁLOGO Y MODOS DE VISTA */
         .catalog-header {
             margin-bottom: 1.5rem;
             display: flex;
@@ -383,7 +381,6 @@
         .badge-paid { background: rgba(34, 197, 94, 0.2); color: #4ade80; border: 1px solid rgba(34, 197, 94, 0.4); }
         .badge-pending { background: rgba(234, 179, 8, 0.2); color: #facc15; border: 1px solid rgba(234, 179, 8, 0.4); }
 
-        /* ANIMACIONES DE CORAZONES CON BAMBOLEO */
         .wobble-heart {
             position: fixed;
             pointer-events: none;
@@ -414,7 +411,6 @@
             }
         }
 
-        /* ELEMENTO FLOTANTE DE IMAGEN VOLADORA AL CARRITO */
         .flying-product {
             position: fixed;
             z-index: 10000;
@@ -843,6 +839,11 @@
         let offerSliderInterval = null;
         let countdownTimers = [];
 
+        function toggleTheme() {
+            const current = document.documentElement.getAttribute('data-theme');
+            document.documentElement.setAttribute('data-theme', current === 'dark' ? 'light' : 'dark');
+        }
+
         function getEffectivePrice(p) {
             return (p.isOffer && p.offerPrice) ? parseFloat(p.offerPrice) : parseFloat(p.price);
         }
@@ -854,7 +855,6 @@
             return parseFloat(sv.price || parentProduct.price);
         }
 
-        // FUNCIONALIDAD N°3: EFECTO DE CORAZONES BAMBOLEANTES (WOBBLE)
         function spawnFloatingEmojis(x, y) {
             for (let i = 0; i < 7; i++) {
                 const el = document.createElement('div');
@@ -873,7 +873,6 @@
             }
         }
 
-        // FUNCIONALIDAD N°2: ANIMACIÓN DE VUELO DE IMAGEN DIRECTO AL CARRITO
         function animateFlyToCart(imgSrc, startElement) {
             const cartBtn = document.getElementById('header-cart-btn');
             if (!cartBtn) return;
@@ -1051,7 +1050,6 @@
             }
         }
 
-        // FUNCIONALIDAD N°1: ELIMINACIÓN AUTOMÁTICA DE LA OFERTA AL VENCER EL RELOJ
         function initOfferSlider() {
             const sliderContainer = document.getElementById('offer-slider');
             const offerProducts = products.filter(p => p.isOffer);
@@ -1098,7 +1096,6 @@
 
                         if (diff <= 0) {
                             if (timerEl) timerEl.innerHTML = "⏰ Oferta Finalizada";
-                            // Desactivación automática de la oferta en la base de datos
                             if (window.db && p.id) {
                                 window.updateDoc(window.doc(window.db, "products", p.id), {
                                     isOffer: false,
@@ -1317,7 +1314,6 @@
             const p = products.find(prod => prod.id === id);
             if(!p) return;
 
-            // Disparar animación de imagen volando
             const imgEl = document.getElementById(`img-product-${p.id}`) || document.getElementById(`detail-img-${p.id}`);
             animateFlyToCart(p.img, imgEl || btnElement);
 
@@ -1403,9 +1399,7 @@
                 document.getElementById('pm-cedula-lbl').innerText = payConfig.pmCedula;
             } else if(val === 'cuotas') {
                 const total = parseFloat(document.getElementById('cart-total-price').innerText) || 0;
-                
                 let requiredInitial = cart.reduce((sum, item) => sum + (parseFloat(item.initialPay || 0) * item.qty), 0);
-                
                 const restante = Math.max(0, total - requiredInitial);
                 const cuotaMonto = (restante / (cuotasConfig.numCuotas || 1)).toFixed(2);
                 
@@ -1447,75 +1441,67 @@
             cart.forEach((item, i) => { msg += `${i + 1}. *${item.name}* x${item.qty} - $${(item.price * item.qty).toFixed(2)}\n`; });
             msg += `\n💰 *Total:* $${totalPrice}\n💳 *Método de Pago:* ${methodText}\n\nQuedo atento para coordinar. ¡Gracias!`;
 
-            // CORRECCIÓN: Uso del enlace universal de la API de WhatsApp para compatibilidad móvil perfecta
-            const phone = "584249327643";
+            const phone = payConfig.pmTelf ? payConfig.pmTelf.replace(/[^0-9]/g, '') : '';
             const waUrl = `https://api.whatsapp.com/send?phone=${phone}&text=${encodeURIComponent(msg)}`;
-
-            setTimeout(() => {
-                window.location.href = waUrl;
-            }, 300);
+            window.open(waUrl, '_blank');
         }
 
-        function toggleTheme() {
-            const html = document.documentElement;
-            html.setAttribute('data-theme', html.getAttribute('data-theme') === 'dark' ? 'light' : 'dark');
-        }
-
+        // CONTROL ADMINISTRATIVO Y MÓDULO BACKEND
         function openAdminModal() { document.getElementById('login-modal').classList.add('active'); }
         function closeLoginModal() { document.getElementById('login-modal').classList.remove('active'); document.getElementById('admin-pass-input').value = ''; }
 
         function loginWithPass() {
-            if(document.getElementById('admin-pass-input').value === adminPass) {
+            const input = document.getElementById('admin-pass-input').value;
+            if(input === adminPass) {
                 closeLoginModal();
-                showAdminPanel();
-            } else alert("PIN incorrecto.");
-        }
-
-        function showAdminPanel() {
-            document.getElementById('admin-panel').classList.add('active');
-            renderAdminInventory();
-            renderAdminOrders();
-
-            document.getElementById('cfg-layout-mode').value = layoutMode;
-
-            document.getElementById('cfg-pay-pm').checked = payConfig.pm;
-            document.getElementById('cfg-pay-efectivo').checked = payConfig.efectivo;
-            document.getElementById('cfg-pay-cuotas').checked = payConfig.cuotas;
-
-            document.getElementById('cfg-pm-banco').value = payConfig.pmBanco || "";
-            document.getElementById('cfg-pm-telf').value = payConfig.pmTelf || "";
-            document.getElementById('cfg-pm-cedula').value = payConfig.pmCedula || "";
-
-            document.getElementById('cfg-num-cuotas').value = cuotasConfig.numCuotas || 4;
-            document.getElementById('cfg-frecuencia').value = cuotasConfig.frecuencia || "Quincenal";
+                loadAdminData();
+                document.getElementById('admin-panel').classList.add('active');
+            } else {
+                alert("PIN Incorrecto.");
+            }
         }
 
         function closeAdminPanel() { document.getElementById('admin-panel').classList.remove('active'); }
 
+        function loadAdminData() {
+            document.getElementById('cfg-layout-mode').value = layoutMode;
+            document.getElementById('cfg-num-cuotas').value = cuotasConfig.numCuotas || 4;
+            document.getElementById('cfg-frecuencia').value = cuotasConfig.frecuencia || "Quincenal";
+            
+            document.getElementById('cfg-pay-pm').checked = !!payConfig.pm;
+            document.getElementById('cfg-pay-efectivo').checked = !!payConfig.efectivo;
+            document.getElementById('cfg-pay-cuotas').checked = !!payConfig.cuotas;
+            document.getElementById('cfg-pm-banco').value = payConfig.pmBanco || "";
+            document.getElementById('cfg-pm-telf').value = payConfig.pmTelf || "";
+            document.getElementById('cfg-pm-cedula').value = payConfig.pmCedula || "";
+
+            renderAdminOrders();
+            renderAdminInventory();
+        }
+
         function renderAdminOrders() {
             const container = document.getElementById('admin-orders-list');
+            if(!container) return;
             container.innerHTML = '';
+
             if(orders.length === 0) {
-                container.innerHTML = '<p style="font-size:0.85rem; color:var(--text-secondary);">No hay pedidos registrados.</p>';
+                container.innerHTML = `<div style="font-size:0.85rem; color:var(--text-secondary);">No hay pedidos registrados aún.</div>`;
                 return;
             }
 
             orders.forEach(ord => {
+                const badgeClass = ord.status === 'Pagado' ? 'badge-paid' : 'badge-pending';
                 const row = document.createElement('div');
                 row.className = 'admin-item';
-                const isPaid = ord.status === 'Pagado';
-
                 row.innerHTML = `
-                    <div>
-                        <strong>${ord.clientName}</strong> - $${ord.totalPrice} 
-                        <span class="order-badge ${isPaid ? 'badge-paid' : 'badge-pending'}">${ord.status}</span>
+                    <div style="flex:1;">
+                        <div style="font-weight:700;">${ord.clientName} - $${ord.totalPrice}</div>
                         <div style="font-size:0.75rem; color:var(--text-secondary);">${ord.date} | ${ord.payMethod}</div>
+                        <span class="order-badge ${badgeClass}">${ord.status}</span>
                     </div>
                     <div class="admin-item-controls">
-                        <button class="btn-secondary" style="padding:4px 8px; font-size:0.75rem;" onclick="toggleOrderStatus('${ord.id}', '${ord.status}')">
-                            ${isPaid ? 'Marcar Pendiente' : 'Marcar Pagado'}
-                        </button>
-                        <button class="btn-danger" style="padding:4px 8px; font-size:0.75rem;" onclick="deleteOrder('${ord.id}')">Eliminar</button>
+                        <button class="btn-secondary" style="padding:4px 8px; font-size:0.75rem;" onclick="toggleOrderStatus('${ord.id}', '${ord.status}')">Estado</button>
+                        <button class="btn-danger" style="padding:4px 8px; font-size:0.75rem;" onclick="deleteOrder('${ord.id}')">X</button>
                     </div>
                 `;
                 container.appendChild(row);
@@ -1528,61 +1514,60 @@
         }
 
         async function deleteOrder(id) {
-            if(confirm("¿Eliminar este pedido del registro?")) {
+            if(confirm("¿Eliminar este pedido?")) {
                 await window.deleteDoc(window.doc(window.db, "orders", id));
             }
         }
 
-        async function saveLayoutConfig() {
-            const mode = document.getElementById('cfg-layout-mode').value;
-            await window.setDoc(window.doc(window.db, "config", "layout"), { mode });
-            alert("Diseño del catálogo guardado.");
-        }
-
-        function collectSubvariantsFromContainer(containerId) {
+        function getSubvariantsFromContainer(containerId) {
             const container = document.getElementById(containerId);
             const rows = container.querySelectorAll('.subvariant-row');
-            const result = [];
-            rows.forEach(r => {
-                const name = r.querySelector('.sub-name').value.trim();
-                const price = parseFloat(r.querySelector('.sub-price').value) || 0;
-                const initialPay = parseFloat(r.querySelector('.sub-initial').value) || 0;
-                const isOffer = r.querySelector('.sub-is-offer').checked;
-                const offerPrice = parseFloat(r.querySelector('.sub-offer-price').value) || 0;
+            const subvariants = [];
+            rows.forEach(row => {
+                const name = row.querySelector('.sub-name').value.trim();
+                const price = parseFloat(row.querySelector('.sub-price').value) || 0;
+                const initialPay = parseFloat(row.querySelector('.sub-initial').value) || 0;
+                const isOffer = row.querySelector('.sub-is-offer').checked;
+                const offerPrice = parseFloat(row.querySelector('.sub-offer-price').value) || 0;
 
-                if(name && price > 0) {
-                    result.push({ name, price, initialPay, isOffer, offerPrice });
+                if(name) {
+                    subvariants.push({ name, price, initialPay, isOffer, offerPrice });
                 }
             });
-            return result;
+            return subvariants;
         }
 
         async function addNewProduct() {
             const name = document.getElementById('new-name').value.trim();
-            const price = parseFloat(document.getElementById('new-price').value);
+            const price = parseFloat(document.getElementById('new-price').value) || 0;
             const initialPay = parseFloat(document.getElementById('new-initial').value) || 0;
             const note = document.getElementById('new-note').value.trim();
             const isNew = document.getElementById('new-is-new').checked;
-            
             const isOffer = document.getElementById('new-is-offer').checked;
             const offerPrice = parseFloat(document.getElementById('new-offer-price').value) || 0;
             const offerUntil = document.getElementById('new-offer-until').value;
+            const subvariants = getSubvariantsFromContainer('subvariants-container');
 
-            const subvariants = collectSubvariantsFromContainer('subvariants-container');
+            if(!name || price <= 0) return alert("Completa el nombre y un precio válido.");
 
-            if(!name || isNaN(price)) return alert("Por favor ingresa nombre y precio base.");
+            const img = tempBase64Image || 'https://images.unsplash.com/photo-1592945403244-b3fbafd7f539?w=400';
 
-            const newDoc = {
-                name, price, initialPay, note, isNew,
-                isOffer, offerPrice, offerUntil,
+            const newProd = {
+                name,
+                price,
+                initialPay,
+                note,
+                isNew,
+                isOffer,
+                offerPrice,
+                offerUntil,
                 subvariants,
-                img: tempBase64Image || 'https://images.unsplash.com/photo-1592945403244-b3fbafd7f539?w=400',
+                img,
                 order: products.length
             };
 
-            await window.addDoc(window.collection(window.db, "products"), newDoc);
+            await window.addDoc(window.collection(window.db, "products"), newProd);
             
-            // Limpiar campos
             document.getElementById('new-name').value = '';
             document.getElementById('new-price').value = '';
             document.getElementById('new-initial').value = '';
@@ -1591,7 +1576,9 @@
             document.getElementById('new-is-offer').checked = false;
             document.getElementById('new-offer-price').value = '';
             document.getElementById('new-offer-until').value = '';
+            document.getElementById('new-offer-box').style.display = 'none';
             document.getElementById('subvariants-container').innerHTML = '';
+            document.getElementById('new-img-file').value = '';
             document.getElementById('new-img-preview').innerHTML = 'Vista Previa';
             tempBase64Image = "";
 
@@ -1600,21 +1587,22 @@
 
         function renderAdminInventory() {
             const container = document.getElementById('admin-price-list');
+            if(!container) return;
             container.innerHTML = '';
 
             products.forEach((p, idx) => {
                 const row = document.createElement('div');
                 row.className = 'admin-item';
                 row.innerHTML = `
-                    <div>
-                        <strong>${p.name}</strong> - $${parseFloat(p.price).toFixed(2)}
-                        ${p.isOffer ? `<span style="color:#ef4444; font-size:0.8rem; font-weight:700;"> (🔥 $${parseFloat(p.offerPrice).toFixed(2)})</span>` : ''}
+                    <div style="flex:1;">
+                        <div style="font-weight:600;">${p.name} - $${parseFloat(p.price).toFixed(2)}</div>
+                        <div style="font-size:0.75rem; color:var(--text-secondary);">${p.subvariants ? p.subvariants.length : 0} variantes</div>
                     </div>
                     <div class="admin-item-controls">
                         <button class="btn-secondary" style="padding:4px 8px; font-size:0.75rem;" onclick="moveProductOrder(${idx}, -1)">▲</button>
                         <button class="btn-secondary" style="padding:4px 8px; font-size:0.75rem;" onclick="moveProductOrder(${idx}, 1)">▼</button>
-                        <button class="btn-secondary" style="padding:4px 8px; font-size:0.75rem;" onclick="openEditModal('${p.id}')">Editar</button>
-                        <button class="btn-danger" style="padding:4px 8px; font-size:0.75rem;" onclick="deleteProduct('${p.id}')">Eliminar</button>
+                        <button class="btn-secondary" style="padding:4px 8px; font-size:0.75rem;" onclick="openEditProductModal('${p.id}')">Editar</button>
+                        <button class="btn-danger" style="padding:4px 8px; font-size:0.75rem;" onclick="deleteProduct('${p.id}')">X</button>
                     </div>
                 `;
                 container.appendChild(row);
@@ -1625,34 +1613,32 @@
             const targetIndex = index + direction;
             if (targetIndex < 0 || targetIndex >= products.length) return;
 
-            const temp = products[index];
-            products[index] = products[targetIndex];
-            products[targetIndex] = temp;
+            const itemA = products[index];
+            const itemB = products[targetIndex];
 
-            for (let i = 0; i < products.length; i++) {
-                await window.updateDoc(window.doc(window.db, "products", products[i].id), { order: i });
-            }
+            await window.updateDoc(window.doc(window.db, "products", itemA.id), { order: targetIndex });
+            await window.updateDoc(window.doc(window.db, "products", itemB.id), { order: index });
         }
 
-        function openEditModal(id) {
+        function openEditProductModal(id) {
             const p = products.find(prod => prod.id === id);
             if(!p) return;
 
             document.getElementById('edit-prod-id').value = p.id;
             document.getElementById('edit-name').value = p.name;
             document.getElementById('edit-price').value = p.price;
-            document.getElementById('edit-initial').value = p.initialPay || 0;
+            document.getElementById('edit-initial').value = p.initialPay || '';
             document.getElementById('edit-note').value = p.note || '';
             document.getElementById('edit-is-new').checked = !!p.isNew;
 
             document.getElementById('edit-is-offer').checked = !!p.isOffer;
             document.getElementById('edit-offer-price').value = p.offerPrice || '';
             document.getElementById('edit-offer-until').value = p.offerUntil || '';
-            toggleOfferFields('edit');
+            document.getElementById('edit-offer-box').style.display = p.isOffer ? 'block' : 'none';
 
-            const container = document.getElementById('edit-subvariants-container');
-            container.innerHTML = '';
-            if(p.subvariants) {
+            const subContainer = document.getElementById('edit-subvariants-container');
+            subContainer.innerHTML = '';
+            if(p.subvariants && p.subvariants.length > 0) {
                 p.subvariants.forEach(sv => {
                     addSubvariantField('edit-subvariants-container', sv.name, sv.price, sv.initialPay, sv.isOffer, sv.offerPrice);
                 });
@@ -1664,55 +1650,70 @@
             document.getElementById('edit-product-modal').classList.add('active');
         }
 
-        function closeEditModal() { document.getElementById('edit-product-modal').classList.remove('active'); }
+        function closeEditModal() {
+            document.getElementById('edit-product-modal').classList.remove('active');
+        }
 
         async function saveProductEdits() {
             const id = document.getElementById('edit-prod-id').value;
+            const p = products.find(prod => prod.id === id);
+            if(!p) return;
+
             const name = document.getElementById('edit-name').value.trim();
-            const price = parseFloat(document.getElementById('edit-price').value);
+            const price = parseFloat(document.getElementById('edit-price').value) || 0;
             const initialPay = parseFloat(document.getElementById('edit-initial').value) || 0;
             const note = document.getElementById('edit-note').value.trim();
             const isNew = document.getElementById('edit-is-new').checked;
-
             const isOffer = document.getElementById('edit-is-offer').checked;
             const offerPrice = parseFloat(document.getElementById('edit-offer-price').value) || 0;
             const offerUntil = document.getElementById('edit-offer-until').value;
+            const subvariants = getSubvariantsFromContainer('edit-subvariants-container');
 
-            const subvariants = collectSubvariantsFromContainer('edit-subvariants-container');
+            if(!name || price <= 0) return alert("Completa el nombre y un precio válido.");
 
-            if(!name || isNaN(price)) return alert("Por favor completa los campos correctamente.");
-
-            const p = products.find(prod => prod.id === id);
-
-            const updatedDoc = {
-                name, price, initialPay, note, isNew,
-                isOffer, offerPrice, offerUntil,
+            const updatedData = {
+                name,
+                price,
+                initialPay,
+                note,
+                isNew,
+                isOffer,
+                offerPrice,
+                offerUntil,
                 subvariants,
                 img: tempBase64Image || p.img
             };
 
-            await window.updateDoc(window.doc(window.db, "products", id), updatedDoc);
+            await window.updateDoc(window.doc(window.db, "products", id), updatedData);
+            tempBase64Image = "";
             closeEditModal();
-            alert("Cambios guardados con éxito.");
+            alert("Producto actualizado con éxito.");
         }
 
         async function deleteProduct(id) {
-            if(confirm("¿Estás seguro de eliminar este producto?")) {
+            if(confirm("¿Seguro de eliminar este producto del catálogo?")) {
                 await window.deleteDoc(window.doc(window.db, "products", id));
             }
+        }
+
+        async function saveLayoutConfig() {
+            const mode = document.getElementById('cfg-layout-mode').value;
+            await window.setDoc(window.doc(window.db, "config", "layout"), { mode });
+            alert("Diseño guardado.");
         }
 
         async function savePayMethodsConfig() {
             const pm = document.getElementById('cfg-pay-pm').checked;
             const efectivo = document.getElementById('cfg-pay-efectivo').checked;
             const cuotas = document.getElementById('cfg-pay-cuotas').checked;
-
             const pmBanco = document.getElementById('cfg-pm-banco').value.trim();
             const pmTelf = document.getElementById('cfg-pm-telf').value.trim();
             const pmCedula = document.getElementById('cfg-pm-cedula').value.trim();
 
-            await window.setDoc(window.doc(window.db, "config", "pay"), { pm, efectivo, cuotas, pmBanco, pmTelf, pmCedula });
-            alert("Métodos de pago guardados.");
+            await window.setDoc(window.doc(window.db, "config", "pay"), {
+                pm, efectivo, cuotas, pmBanco, pmTelf, pmCedula
+            });
+            alert("Métodos de pago actualizados.");
         }
 
         async function saveCuotasConfig() {
@@ -1720,17 +1721,16 @@
             const frecuencia = document.getElementById('cfg-frecuencia').value.trim() || "Quincenal";
 
             await window.setDoc(window.doc(window.db, "config", "cuotas"), { numCuotas, frecuencia });
-            alert("Configuración de cuotas guardada.");
+            alert("Parámetros de cuotas actualizados.");
         }
 
         async function changePassword() {
-            const newPass = document.getElementById('new-pass-input').value.trim();
-            if(newPass.length !== 8 || isNaN(newPass)) return alert("El PIN debe ser exactamente de 8 números.");
+            const newPin = document.getElementById('new-pass-input').value.trim();
+            if(newPin.length !== 8 || isNaN(newPin)) return alert("El PIN debe tener exactamente 8 dígitos numéricos.");
 
-            await window.setDoc(window.doc(window.doc(window.db, "config", "security")), { pin: newPass });
-            adminPass = newPass;
+            await window.setDoc(window.doc(window.doc(window.db, "config", "security")), { pin: newPin });
             document.getElementById('new-pass-input').value = '';
-            alert("PIN cambiado exitosamente.");
+            alert("PIN administrativo actualizado con éxito.");
         }
     </script>
 </body>
