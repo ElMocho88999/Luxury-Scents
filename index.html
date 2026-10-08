@@ -161,6 +161,7 @@
 
         .container { max-width: 1200px; margin: 2rem auto; padding: 0 1.5rem; }
 
+        /* BANNER SLIDERS Y DESLIZAMIENTO MANUAL */
         .banner-slider-container {
             width: 100%;
             height: 220px;
@@ -225,6 +226,7 @@
             margin-top: 6px;
         }
 
+        /* CATÁLOGO Y MODOS DE VISTA */
         .catalog-header {
             margin-bottom: 1.5rem;
             display: flex;
@@ -381,6 +383,7 @@
         .badge-paid { background: rgba(34, 197, 94, 0.2); color: #4ade80; border: 1px solid rgba(34, 197, 94, 0.4); }
         .badge-pending { background: rgba(234, 179, 8, 0.2); color: #facc15; border: 1px solid rgba(234, 179, 8, 0.4); }
 
+        /* ANIMACIONES DE CORAZONES CON BAMBOLEO */
         .wobble-heart {
             position: fixed;
             pointer-events: none;
@@ -411,6 +414,7 @@
             }
         }
 
+        /* ELEMENTO FLOTANTE DE IMAGEN VOLADORA AL CARRITO */
         .flying-product {
             position: fixed;
             z-index: 10000;
@@ -839,11 +843,6 @@
         let offerSliderInterval = null;
         let countdownTimers = [];
 
-        function toggleTheme() {
-            const current = document.documentElement.getAttribute('data-theme');
-            document.documentElement.setAttribute('data-theme', current === 'dark' ? 'light' : 'dark');
-        }
-
         function getEffectivePrice(p) {
             return (p.isOffer && p.offerPrice) ? parseFloat(p.offerPrice) : parseFloat(p.price);
         }
@@ -855,6 +854,7 @@
             return parseFloat(sv.price || parentProduct.price);
         }
 
+        // FUNCIONALIDAD N°3: EFECTO DE CORAZONES BAMBOLEANTES (WOBBLE)
         function spawnFloatingEmojis(x, y) {
             for (let i = 0; i < 7; i++) {
                 const el = document.createElement('div');
@@ -873,6 +873,7 @@
             }
         }
 
+        // FUNCIONALIDAD N°2: ANIMACIÓN DE VUELO DE IMAGEN DIRECTO AL CARRITO
         function animateFlyToCart(imgSrc, startElement) {
             const cartBtn = document.getElementById('header-cart-btn');
             if (!cartBtn) return;
@@ -1050,6 +1051,7 @@
             }
         }
 
+        // FUNCIONALIDAD N°1: ELIMINACIÓN AUTOMÁTICA DE LA OFERTA AL VENCER EL RELOJ
         function initOfferSlider() {
             const sliderContainer = document.getElementById('offer-slider');
             const offerProducts = products.filter(p => p.isOffer);
@@ -1096,6 +1098,7 @@
 
                         if (diff <= 0) {
                             if (timerEl) timerEl.innerHTML = "⏰ Oferta Finalizada";
+                            // Desactivación automática de la oferta en la base de datos
                             if (window.db && p.id) {
                                 window.updateDoc(window.doc(window.db, "products", p.id), {
                                     isOffer: false,
@@ -1314,6 +1317,7 @@
             const p = products.find(prod => prod.id === id);
             if(!p) return;
 
+            // Disparar animación de imagen volando
             const imgEl = document.getElementById(`img-product-${p.id}`) || document.getElementById(`detail-img-${p.id}`);
             animateFlyToCart(p.img, imgEl || btnElement);
 
@@ -1399,7 +1403,9 @@
                 document.getElementById('pm-cedula-lbl').innerText = payConfig.pmCedula;
             } else if(val === 'cuotas') {
                 const total = parseFloat(document.getElementById('cart-total-price').innerText) || 0;
+                
                 let requiredInitial = cart.reduce((sum, item) => sum + (parseFloat(item.initialPay || 0) * item.qty), 0);
+                
                 const restante = Math.max(0, total - requiredInitial);
                 const cuotaMonto = (restante / (cuotasConfig.numCuotas || 1)).toFixed(2);
                 
@@ -1441,71 +1447,54 @@
             cart.forEach((item, i) => { msg += `${i + 1}. *${item.name}* x${item.qty} - $${(item.price * item.qty).toFixed(2)}\n`; });
             msg += `\n💰 *Total:* $${totalPrice}\n💳 *Método de Pago:* ${methodText}\n\nQuedo atento para coordinar. ¡Gracias!`;
 
-            const phone = payConfig.pmTelf ? payConfig.pmTelf.replace(/[^0-9]/g, '') : '';
+            // CORRECCIÓN: Uso del enlace universal de la API de WhatsApp para compatibilidad móvil perfecta
+            const phone = "584249327643";
             const waUrl = `https://api.whatsapp.com/send?phone=${phone}&text=${encodeURIComponent(msg)}`;
-            window.open(waUrl, '_blank');
+
+            setTimeout(() => {
+                window.location.href = waUrl;
+            }, 300);
         }
 
-        // CONTROL ADMINISTRATIVO Y MÓDULO BACKEND
-        function openAdminModal() { 
-            document.getElementById('login-modal').classList.add('active'); 
+        function toggleTheme() {
+            const html = document.documentElement;
+            html.setAttribute('data-theme', html.getAttribute('data-theme') === 'dark' ? 'light' : 'dark');
         }
 
-        function closeLoginModal() { 
-            document.getElementById('login-modal').classList.remove('active'); 
-        }
+        function openAdminModal() { document.getElementById('login-modal').classList.add('active'); }
+        function closeLoginModal() { document.getElementById('login-modal').classList.remove('active'); document.getElementById('admin-pass-input').value = ''; }
 
         function loginWithPass() {
-            const pass = document.getElementById('admin-pass-input').value;
-            if (pass === adminPass) {
+            if(document.getElementById('admin-pass-input').value === adminPass) {
                 closeLoginModal();
-                document.getElementById('admin-pass-input').value = '';
-                openAdminPanel();
-            } else {
-                alert("PIN incorrecto");
-            }
+                showAdminPanel();
+            } else alert("PIN incorrecto.");
         }
 
-        function openAdminPanel() {
+        function showAdminPanel() {
             document.getElementById('admin-panel').classList.add('active');
-            document.getElementById('cfg-layout-mode').value = layoutMode;
-            document.getElementById('cfg-num-cuotas').value = cuotasConfig.numCuotas || 4;
-            document.getElementById('cfg-frecuencia').value = cuotasConfig.frecuencia || "Quincenal";
-            document.getElementById('cfg-pay-pm').checked = payConfig.pm !== false;
-            document.getElementById('cfg-pay-efectivo').checked = payConfig.efectivo !== false;
-            document.getElementById('cfg-pay-cuotas').checked = payConfig.cuotas !== false;
-            document.getElementById('cfg-pm-banco').value = payConfig.pmBanco || "";
-            document.getElementById('cfg-pm-telf').value = payConfig.pmTelf || "";
-            document.getElementById('cfg-pm-cedula').value = payConfig.pmCedula || "";
             renderAdminInventory();
             renderAdminOrders();
+
+            document.getElementById('cfg-layout-mode').value = layoutMode;
+
+            document.getElementById('cfg-pay-pm').checked = payConfig.pm;
+            document.getElementById('cfg-pay-efectivo').checked = payConfig.efectivo;
+            document.getElementById('cfg-pay-cuotas').checked = payConfig.cuotas;
+            document.getElementById('cfg-pm-banco').value = payConfig.pmBanco || '';
+            document.getElementById('cfg-pm-telf').value = payConfig.pmTelf || '';
+            document.getElementById('cfg-pm-cedula').value = payConfig.pmCedula || '';
+
+            document.getElementById('cfg-num-cuotas').value = cuotasConfig.numCuotas;
+            document.getElementById('cfg-frecuencia').value = cuotasConfig.frecuencia;
         }
 
-        function closeAdminPanel() {
-            document.getElementById('admin-panel').classList.remove('active');
-        }
+        function closeAdminPanel() { document.getElementById('admin-panel').classList.remove('active'); }
 
-        function renderAdminInventory() {
-            const container = document.getElementById('admin-price-list');
-            if(!container) return;
-            container.innerHTML = '';
-
-            products.forEach((p, idx) => {
-                const row = document.createElement('div');
-                row.className = 'admin-item';
-                row.innerHTML = `
-                    <div style="flex:1;">
-                        <strong>${p.name}</strong> - $${parseFloat(p.price).toFixed(2)}
-                    </div>
-                    <div class="admin-item-controls">
-                        <button class="btn-secondary" style="padding:4px 8px;" onclick="changeProductOrder('${p.id}', -1)">▲</button>
-                        <button class="btn-secondary" style="padding:4px 8px;" onclick="changeProductOrder('${p.id}', 1)">▼</button>
-                        <button class="btn-secondary" style="padding:4px 8px;" onclick="openEditModal('${p.id}')">✏️</button>
-                        <button class="btn-danger" style="padding:4px 8px;" onclick="deleteProduct('${p.id}')">🗑️</button>
-                    </div>
-                `;
-                container.appendChild(row);
-            });
+        async function saveLayoutConfig() {
+            const mode = document.getElementById('cfg-layout-mode').value;
+            await window.setDoc(window.doc(window.db, "config", "layout"), { mode });
+            alert("Diseño del catálogo guardado.");
         }
 
         function renderAdminOrders() {
@@ -1514,124 +1503,117 @@
             container.innerHTML = '';
 
             if(orders.length === 0) {
-                container.innerHTML = `<p style="color:var(--text-secondary); font-size:0.85rem;">No hay pedidos registrados.</p>`;
+                container.innerHTML = '<div style="font-size:0.85rem; color:var(--text-secondary);">No hay pedidos registrados aún.</div>';
                 return;
             }
 
             orders.forEach(o => {
-                const row = document.createElement('div');
-                row.className = 'admin-item';
+                const card = document.createElement('div');
+                card.style.cssText = 'background:rgba(255,255,255,0.03); border:1px solid var(--border-color); padding:10px; border-radius:10px; margin-bottom:8px; font-size:0.85rem;';
+                
+                let itemsList = o.items ? o.items.map(i => `${i.name} (x${i.qty})`).join(', ') : '';
                 const isPaid = o.status === 'Pagado';
-                row.innerHTML = `
-                    <div style="flex:1;">
-                        <div><strong>${o.clientName}</strong> - $${o.totalPrice}</div>
-                        <div style="font-size:0.75rem; color:var(--text-secondary);">${o.date} | ${o.payMethod}</div>
+
+                card.innerHTML = `
+                    <div style="display:flex; justify-content:space-between; align-items:center;">
+                        <span style="font-weight:700; color:var(--accent-gold);">👤 ${o.clientName || 'Cliente'}</span>
                         <span class="order-badge ${isPaid ? 'badge-paid' : 'badge-pending'}">${o.status || 'Pendiente'}</span>
                     </div>
-                    <div class="admin-item-controls">
-                        <button class="btn-secondary" style="padding:4px 8px; font-size:0.75rem;" onclick="toggleOrderStatus('${o.id}', '${o.status}')">Estado</button>
-                        <button class="btn-danger" style="padding:4px 8px; font-size:0.75rem;" onclick="deleteOrder('${o.id}')">🗑️</button>
+                    <div style="margin-top:4px;"><strong>Items:</strong> ${itemsList}</div>
+                    <div><strong>Total:</strong> $${o.totalPrice} | <strong>Pago:</strong> ${o.payMethod}</div>
+                    <div style="font-size:0.75rem; color:var(--text-secondary); margin-top:4px;">📅 ${o.date || ''}</div>
+                    <div style="display:flex; gap:6px; margin-top:8px;">
+                        <button class="btn-secondary" style="font-size:0.75rem; padding:4px 8px;" onclick="toggleOrderStatus('${o.id}', '${o.status || 'Pendiente'}')">
+                            ${isPaid ? 'Marcar Pendiente' : 'Marcar Pagado'}
+                        </button>
+                        <button class="btn-danger" style="font-size:0.75rem; padding:4px 8px;" onclick="deleteOrder('${o.id}')">Eliminar</button>
                     </div>
                 `;
-                container.appendChild(row);
+                container.appendChild(card);
             });
         }
 
-        async function changeProductOrder(id, delta) {
-            const idx = products.findIndex(p => p.id === id);
-            if(idx === -1) return;
-            const targetIdx = idx + delta;
-            if(targetIdx < 0 || targetIdx >= products.length) return;
-
-            const temp = products[idx];
-            products[idx] = products[targetIdx];
-            products[targetIdx] = temp;
-
-            for (let i = 0; i < products.length; i++) {
-                products[i].order = i;
-                if(window.db && products[i].id) {
-                    await window.updateDoc(window.doc(window.db, "products", products[i].id), { order: i });
-                }
-            }
-            renderAdminInventory();
-            renderCatalog();
-        }
-
-        function moveOrderInArray(id, direction) {
-            changeProductOrder(id, direction === 'up' ? -1 : 1);
-        }
-
-        async function toggleOrderStatus(orderId, currentStatus) {
+        async function toggleOrderStatus(id, currentStatus) {
             const newStatus = currentStatus === 'Pagado' ? 'Pendiente' : 'Pagado';
-            if(window.db) {
-                await window.updateDoc(window.doc(window.db, "orders", orderId), { status: newStatus });
+            await window.updateDoc(window.doc(window.db, "orders", id), { status: newStatus });
+        }
+
+        async function deleteOrder(id) {
+            if(confirm("¿Seguro que deseas eliminar este pedido?")) {
+                await window.deleteDoc(window.doc(window.db, "orders", id));
             }
         }
 
-        async function deleteOrder(orderId) {
-            if(!confirm("¿Eliminar este pedido?")) return;
-            if(window.db) {
-                await window.deleteDoc(window.doc(window.db, "orders", orderId));
-            }
-        }
-
-        function extractSubvariantsFromContainer(containerId) {
-            const container = document.getElementById(containerId);
-            const rows = container.querySelectorAll('.subvariant-row');
-            const subvariants = [];
-
-            rows.forEach(r => {
-                const name = r.querySelector('.sub-name').value.trim();
-                const price = r.querySelector('.sub-price').value;
-                const initial = r.querySelector('.sub-initial').value;
-                const isOffer = r.querySelector('.sub-is-offer').checked;
-                const offerPrice = r.querySelector('.sub-offer-price').value;
-
-                if(name) {
-                    subvariants.push({
-                        name,
-                        price: price ? parseFloat(price) : null,
-                        initialPay: initial ? parseFloat(initial) : null,
-                        isOffer: !!isOffer,
-                        offerPrice: offerPrice ? parseFloat(offerPrice) : null
-                    });
-                }
+        function renderAdminInventory() {
+            const priceList = document.getElementById('admin-price-list');
+            priceList.innerHTML = '';
+            products.forEach((p, index) => {
+                const row = document.createElement('div');
+                row.className = 'admin-item';
+                row.innerHTML = `
+                    <span style="font-weight: 600; flex:1;">${p.name}</span>
+                    <div class="admin-item-controls">
+                        <button class="btn-secondary" style="font-size:0.8rem; padding:4px 8px;" onclick="moveProductOrder(${index}, -1)">⬆️</button>
+                        <button class="btn-secondary" style="font-size:0.8rem; padding:4px 8px;" onclick="moveProductOrder(${index}, 1)">⬇️</button>
+                        <button class="btn-secondary" style="font-size: 0.8rem; padding: 6px 10px;" onclick="openEditModal('${p.id}')">✏️ Editar</button>
+                        <button class="btn-danger" style="font-size: 0.8rem; padding: 6px 10px;" onclick="deleteProduct('${p.id}')">🗑️ Eliminar</button>
+                    </div>
+                `;
+                priceList.appendChild(row);
             });
-            return subvariants;
+        }
+
+        async function moveProductOrder(index, direction) {
+            const targetIndex = index + direction;
+            if(targetIndex < 0 || targetIndex >= products.length) return;
+
+            const p1 = products[index];
+            const p2 = products[targetIndex];
+
+            await window.updateDoc(window.doc(window.db, "products", p1.id), { order: targetIndex });
+            await window.updateDoc(window.doc(window.db, "products", p2.id), { order: index });
         }
 
         async function addNewProduct() {
             const name = document.getElementById('new-name').value.trim();
-            const price = document.getElementById('new-price').value;
-            const initialPay = document.getElementById('new-initial').value;
+            const price = parseFloat(document.getElementById('new-price').value);
+            const initialPay = parseFloat(document.getElementById('new-initial').value) || 0;
             const note = document.getElementById('new-note').value.trim();
             const isNew = document.getElementById('new-is-new').checked;
+
             const isOffer = document.getElementById('new-is-offer').checked;
-            const offerPrice = document.getElementById('new-offer-price').value;
-            const offerUntil = document.getElementById('new-offer-until').value;
-            const subvariants = extractSubvariantsFromContainer('subvariants-container');
+            const offerPrice = parseFloat(document.getElementById('new-offer-price').value) || 0;
+            const offerUntil = document.getElementById('new-offer-until').value || "";
 
-            if(!name || !price) return alert("Ingresa nombre y precio base.");
+            if (!name || isNaN(price)) return alert("Nombre y precio requeridos.");
 
-            const newProdData = {
-                name,
-                price: parseFloat(price),
-                initialPay: initialPay ? parseFloat(initialPay) : 0,
-                note,
-                isNew,
-                isOffer,
-                offerPrice: offerPrice ? parseFloat(offerPrice) : 0,
-                offerUntil: offerUntil || "",
-                subvariants,
-                img: tempBase64Image || 'https://images.unsplash.com/photo-1592945403244-b3fbafd7f539?w=400',
-                order: products.length
-            };
+            const subvariantRows = document.querySelectorAll('#subvariants-container .subvariant-row');
+            let subvariants = [];
+            subvariantRows.forEach(row => {
+                const subName = row.querySelector('.sub-name').value.trim();
+                const subPrice = parseFloat(row.querySelector('.sub-price').value) || price;
+                const subInitial = parseFloat(row.querySelector('.sub-initial').value) || initialPay;
+                const subIsOffer = row.querySelector('.sub-is-offer') ? row.querySelector('.sub-is-offer').checked : false;
+                const subOfferPrice = row.querySelector('.sub-offer-price') ? parseFloat(row.querySelector('.sub-offer-price').value) || 0 : 0;
+                
+                if(subName) {
+                    subvariants.push({ 
+                        name: subName, 
+                        price: subPrice, 
+                        initialPay: subInitial,
+                        isOffer: subIsOffer,
+                        offerPrice: subOfferPrice
+                    });
+                }
+            });
 
-            if(window.db) {
-                await window.addDoc(window.collection(window.db, "products"), newProdData);
-            }
+            const img = tempBase64Image || "https://images.unsplash.com/photo-1592945403244-b3fbafd7f539?w=400";
 
-            // Reset Form
+            await window.addDoc(window.collection(window.db, "products"), {
+                name, price, initialPay, note, isNew, isOffer, offerPrice, offerUntil, img, subvariants, order: products.length
+            });
+
+            alert("¡Colonia agregada!");
             document.getElementById('new-name').value = '';
             document.getElementById('new-price').value = '';
             document.getElementById('new-initial').value = '';
@@ -1640,135 +1622,116 @@
             document.getElementById('new-is-offer').checked = false;
             document.getElementById('new-offer-price').value = '';
             document.getElementById('new-offer-until').value = '';
+            document.getElementById('new-offer-box').style.display = 'none';
             document.getElementById('subvariants-container').innerHTML = '';
             document.getElementById('new-img-preview').innerHTML = 'Vista Previa';
-            document.getElementById('new-img-file').value = '';
             tempBase64Image = "";
-            toggleOfferFields('new');
-        }
-
-        function openEditModal(id) {
-            const p = products.find(prod => prod.id === id);
-            if(!p) return;
-
-            document.getElementById('edit-prod-id').value = p.id;
-            document.getElementById('edit-name').value = p.name;
-            document.getElementById('edit-price').value = p.price;
-            document.getElementById('edit-initial').value = p.initialPay || '';
-            document.getElementById('edit-note').value = p.note || '';
-            document.getElementById('edit-is-new').checked = !!p.isNew;
-            document.getElementById('edit-is-offer').checked = !!p.isOffer;
-            document.getElementById('edit-offer-price').value = p.offerPrice || '';
-            document.getElementById('edit-offer-until').value = p.offerUntil || '';
-
-            toggleOfferFields('edit');
-
-            const container = document.getElementById('edit-subvariants-container');
-            container.innerHTML = '';
-            if(p.subvariants && p.subvariants.length > 0) {
-                p.subvariants.forEach(sv => {
-                    addSubvariantField('edit-subvariants-container', sv.name, sv.price || '', sv.initialPay || '', sv.isOffer || false, sv.offerPrice || '');
-                });
-            }
-
-            document.getElementById('edit-img-preview').innerHTML = `<img src="${p.img}" style="width:100%; height:100%; object-fit:cover;">`;
-            tempBase64Image = "";
-            document.getElementById('edit-product-modal').classList.add('active');
-        }
-
-        function closeEditModal() {
-            document.getElementById('edit-product-modal').classList.remove('active');
-        }
-
-        async function saveProductEdits() {
-            const id = document.getElementById('edit-prod-id').value;
-            const p = products.find(prod => prod.id === id);
-            if(!p) return;
-
-            const name = document.getElementById('edit-name').value.trim();
-            const price = document.getElementById('edit-price').value;
-            const initialPay = document.getElementById('edit-initial').value;
-            const note = document.getElementById('edit-note').value.trim();
-            const isNew = document.getElementById('edit-is-new').checked;
-            const isOffer = document.getElementById('edit-is-offer').checked;
-            const offerPrice = document.getElementById('edit-offer-price').value;
-            const offerUntil = document.getElementById('edit-offer-until').value;
-            const subvariants = extractSubvariantsFromContainer('edit-subvariants-container');
-
-            if(!name || !price) return alert("Ingresa nombre y precio base.");
-
-            const updatedData = {
-                name,
-                price: parseFloat(price),
-                initialPay: initialPay ? parseFloat(initialPay) : 0,
-                note,
-                isNew,
-                isOffer,
-                offerPrice: offerPrice ? parseFloat(offerPrice) : 0,
-                offerUntil: offerUntil || "",
-                subvariants,
-                img: tempBase64Image || p.img
-            };
-
-            if(window.db) {
-                await window.updateDoc(window.doc(window.db, "products", id), updatedData);
-            }
-
-            closeEditModal();
         }
 
         async function deleteProduct(id) {
-            if(!confirm("¿Eliminar esta colonia/set definitivamente?")) return;
-            if(window.db) {
+            if(confirm("¿Deseas eliminar este perfume / publicación por completo?")) {
                 await window.deleteDoc(window.doc(window.db, "products", id));
             }
         }
 
-        async function saveLayoutConfig() {
-            const mode = document.getElementById('cfg-layout-mode').value;
-            layoutMode = mode;
-            if(window.db) {
-                await window.setDoc(window.doc(window.db, "config", "layout"), { mode });
+        function openEditModal(id) {
+            const p = products.find(item => item.id === id);
+            document.getElementById('edit-prod-id').value = id;
+            document.getElementById('edit-name').value = p.name || '';
+            document.getElementById('edit-price').value = p.price || 0;
+            document.getElementById('edit-initial').value = p.initialPay || 0;
+            document.getElementById('edit-note').value = p.note || '';
+            document.getElementById('edit-is-new').checked = !!p.isNew;
+            
+            document.getElementById('edit-is-offer').checked = !!p.isOffer;
+            document.getElementById('edit-offer-price').value = p.offerPrice || '';
+            document.getElementById('edit-offer-until').value = p.offerUntil || '';
+            toggleOfferFields('edit');
+
+            const subContainer = document.getElementById('edit-subvariants-container');
+            subContainer.innerHTML = '';
+            if(p.subvariants && p.subvariants.length > 0) {
+                p.subvariants.forEach(sv => addSubvariantField('edit-subvariants-container', sv.name, sv.price, sv.initialPay, sv.isOffer, sv.offerPrice));
             }
-            alert("Diseño guardado.");
+
+            const preview = document.getElementById('edit-img-preview');
+            preview.innerHTML = p.img ? `<img src="${p.img}" style="width:100%; height:100%; object-fit:cover;">` : 'Vista Previa';
+            tempBase64Image = "";
+            document.getElementById('edit-product-modal').classList.add('active');
+        }
+
+        function closeEditModal() { document.getElementById('edit-product-modal').classList.remove('active'); }
+
+        async function saveProductEdits() {
+            const id = document.getElementById('edit-prod-id').value;
+            const name = document.getElementById('edit-name').value.trim();
+            const price = parseFloat(document.getElementById('edit-price').value);
+            const initialPay = parseFloat(document.getElementById('edit-initial').value) || 0;
+            const note = document.getElementById('edit-note').value.trim();
+            const isNew = document.getElementById('edit-is-new').checked;
+
+            const isOffer = document.getElementById('edit-is-offer').checked;
+            const offerPrice = parseFloat(document.getElementById('edit-offer-price').value) || 0;
+            const offerUntil = document.getElementById('edit-offer-until').value || "";
+
+            const subvariantRows = document.querySelectorAll('#edit-subvariants-container .subvariant-row');
+            let subvariants = [];
+            subvariantRows.forEach(row => {
+                const subName = row.querySelector('.sub-name').value.trim();
+                const subPrice = parseFloat(row.querySelector('.sub-price').value) || price;
+                const subInitial = parseFloat(row.querySelector('.sub-initial').value) || initialPay;
+                const subIsOffer = row.querySelector('.sub-is-offer') ? row.querySelector('.sub-is-offer').checked : false;
+                const subOfferPrice = row.querySelector('.sub-offer-price') ? parseFloat(row.querySelector('.sub-offer-price').value) || 0 : 0;
+                
+                if(subName) {
+                    subvariants.push({ 
+                        name: subName, 
+                        price: subPrice, 
+                        initialPay: subInitial,
+                        isOffer: subIsOffer,
+                        offerPrice: subOfferPrice
+                    });
+                }
+            });
+
+            let data = { name, price, initialPay, note, isNew, isOffer, offerPrice, offerUntil, subvariants };
+            if (tempBase64Image) data.img = tempBase64Image;
+
+            await window.updateDoc(window.doc(window.db, "products", id), data);
+            closeEditModal();
+            alert("¡Cambios guardados!");
+            tempBase64Image = "";
         }
 
         async function savePayMethodsConfig() {
-            const pm = document.getElementById('cfg-pay-pm').checked;
-            const efectivo = document.getElementById('cfg-pay-efectivo').checked;
-            const cuotas = document.getElementById('cfg-pay-cuotas').checked;
-            const pmBanco = document.getElementById('cfg-pm-banco').value.trim();
-            const pmTelf = document.getElementById('cfg-pm-telf').value.trim();
-            const pmCedula = document.getElementById('cfg-pm-cedula').value.trim();
-
-            payConfig = { pm, efectivo, cuotas, pmBanco, pmTelf, pmCedula };
-            if(window.db) {
-                await window.setDoc(window.doc(window.db, "config", "pay"), payConfig);
-            }
+            const data = {
+                pm: document.getElementById('cfg-pay-pm').checked,
+                efectivo: document.getElementById('cfg-pay-efectivo').checked,
+                cuotas: document.getElementById('cfg-pay-cuotas').checked,
+                pmBanco: document.getElementById('cfg-pm-banco').value,
+                pmTelf: document.getElementById('cfg-pm-telf').value,
+                pmCedula: document.getElementById('cfg-pm-cedula').value
+            };
+            await window.setDoc(window.doc(window.db, "config", "pay"), data);
             alert("Métodos de pago guardados.");
         }
 
         async function saveCuotasConfig() {
-            const numCuotas = parseInt(document.getElementById('cfg-num-cuotas').value) || 4;
-            const frecuencia = document.getElementById('cfg-frecuencia').value.trim() || "Quincenal";
-
-            cuotasConfig = { numCuotas, frecuencia };
-            if(window.db) {
-                await window.setDoc(window.doc(window.db, "config", "cuotas"), cuotasConfig);
-            }
-            alert("Configuración de cuotas guardada.");
+            const data = {
+                numCuotas: parseInt(document.getElementById('cfg-num-cuotas').value) || 1,
+                frecuencia: document.getElementById('cfg-frecuencia').value
+            };
+            await window.setDoc(window.doc(window.db, "config", "cuotas"), data);
+            alert("Parámetros de cuotas guardados.");
         }
 
         async function changePassword() {
-            const newPin = document.getElementById('new-pass-input').value.trim();
-            if(newPin.length !== 8) return alert("El PIN debe tener exactamente 8 dígitos.");
-
-            adminPass = newPin;
-            if(window.db) {
-                await window.setDoc(window.doc(window.db, "config", "security"), { pin: newPin });
-            }
-            document.getElementById('new-pass-input').value = '';
-            alert("PIN cambiado con éxito.");
+            const newPass = document.getElementById('new-pass-input').value;
+            if(newPass.length === 8) {
+                await window.setDoc(window.doc(window.doc(window.db, "config", "security"), { pin: newPass }));
+                alert("PIN de acceso actualizado.");
+                document.getElementById('new-pass-input').value = '';
+            } else alert("El PIN debe ser de 8 dígitos.");
         }
     </script>
 </body>
