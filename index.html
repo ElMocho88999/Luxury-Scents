@@ -329,7 +329,7 @@
 
         .modal-overlay {
             position: fixed; top: 0; left: 0; right: 0; bottom: 0;
-            background: rgba(0, 0, 0, 0.75); backdrop-filter: blur(10px);
+            background: rgba(10, 14, 23, 0.85); backdrop-filter: blur(10px);
             display: flex; justify-content: center; align-items: center;
             z-index: 1000; opacity: 0; pointer-events: none;
             transition: opacity 0.3s var(--ease-smooth);
@@ -337,11 +337,12 @@
 
         .modal-overlay.active { opacity: 1; pointer-events: auto; }
         .modal {
-            background: var(--bg-base); border: 1px solid var(--border-color);
+            background: #0f172a; border: 1px solid var(--border-color);
             padding: 2rem; border-radius: 24px; width: 92%; max-width: 520px;
             max-height: 85vh; overflow-y: auto;
-            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.8);
             transform: scale(0.9); transition: transform 0.3s var(--ease-spring);
+            position: relative; z-index: 1001;
         }
         .modal-overlay.active .modal { transform: scale(1); }
 
@@ -351,11 +352,11 @@
         input, select, textarea {
             padding: 12px 14px; border-radius: var(--radius-btn);
             border: 1px solid var(--border-color);
-            background: rgba(255, 255, 255, 0.03); color: var(--text-primary);
+            background: rgba(255, 255, 255, 0.05); color: var(--text-primary);
             outline: none; font-size: 0.95rem;
         }
 
-        input:focus, select:focus { border-color: var(--accent-gold); background: rgba(255, 255, 255, 0.05); }
+        input:focus, select:focus { border-color: var(--accent-gold); background: rgba(255, 255, 255, 0.1); }
 
         .cart-item { display: flex; align-items: center; justify-content: space-between; padding: 12px 0; border-bottom: 1px solid var(--border-color); gap: 12px; }
         .cart-item img { width: 50px; height: 50px; border-radius: 10px; object-fit: cover; }
@@ -854,7 +855,6 @@
             return parseFloat(sv.price || parentProduct.price);
         }
 
-        // FUNCIONALIDAD N°3: EFECTO DE CORAZONES BAMBOLEANTES (WOBBLE)
         function spawnFloatingEmojis(x, y) {
             for (let i = 0; i < 7; i++) {
                 const el = document.createElement('div');
@@ -873,7 +873,6 @@
             }
         }
 
-        // FUNCIONALIDAD N°2: ANIMACIÓN DE VUELO DE IMAGEN DIRECTO AL CARRITO
         function animateFlyToCart(imgSrc, startElement) {
             const cartBtn = document.getElementById('header-cart-btn');
             if (!cartBtn) return;
@@ -885,172 +884,4 @@
             flyer.src = imgSrc || 'https://images.unsplash.com/photo-1592945403244-b3fbafd7f539?w=400';
             flyer.className = 'flying-product';
             
-            const startX = startRect.left + (startRect.width / 2) - 30;
-            const startY = startRect.top + (startRect.height / 2) - 30;
-
-            flyer.style.left = `${startX}px`;
-            flyer.style.top = `${startY}px`;
-            flyer.style.width = '60px';
-            flyer.style.height = '60px';
-
-            document.body.appendChild(flyer);
-
-            const targetX = cartRect.left + (cartRect.width / 2) - 15;
-            const targetY = cartRect.top + (cartRect.height / 2) - 15;
-
-            requestAnimationFrame(() => {
-                flyer.style.transform = `translate(${targetX - startX}px, ${targetY - startY}px) scale(0.2) rotate(360deg)`;
-                flyer.style.opacity = '0.3';
-            });
-
-            setTimeout(() => {
-                flyer.remove();
-                cartBtn.style.transform = 'scale(1.2)';
-                setTimeout(() => cartBtn.style.transform = 'none', 200);
-            }, 800);
-        }
-
-        function handleLogoClick(e) {
-            e.preventDefault();
-            logoClickCount++;
-            if (logoClickCount === 1) {
-                logoClickTimer = setTimeout(() => { logoClickCount = 0; }, 1000);
-            } else if (logoClickCount >= 3) {
-                clearTimeout(logoClickTimer);
-                logoClickCount = 0;
-                openAdminModal();
-            }
-        }
-
-        window.addEventListener('load', () => {
-            if(!clientName) document.getElementById('user-modal').classList.add('active');
-            updateCartUI();
-            updateFavUI();
-
-            const checkFirebase = setInterval(() => {
-                if (window.db) {
-                    clearInterval(checkFirebase);
-                    initFirebaseListeners();
-                }
-            }, 100);
-        });
-
-        function saveClientName() {
-            const val = document.getElementById('client-name-input').value.trim();
-            if(!val) return alert("Ingresa tu nombre por favor.");
-            clientName = val;
-            localStorage.setItem('ls_client_name', clientName);
-            document.getElementById('user-modal').classList.remove('active');
-        }
-
-        function saveCartLocal() { localStorage.setItem('ls_cart', JSON.stringify(cart)); }
-        function saveFavLocal() { localStorage.setItem('ls_favs', JSON.stringify(favorites)); }
-
-        function toggleOfferFields(prefix) {
-            const isOffer = document.getElementById(`${prefix}-is-offer`).checked;
-            document.getElementById(`${prefix}-offer-box`).style.display = isOffer ? 'block' : 'none';
-        }
-
-        function initFirebaseListeners() {
-            window.onSnapshot(window.collection(window.db, "products"), (snapshot) => {
-                products = [];
-                snapshot.forEach(doc => { products.push({ id: doc.id, ...doc.data() }); });
-                products.sort((a, b) => (a.order || 0) - (b.order || 0));
-                renderCatalog();
-                renderAdminInventory();
-                initBannerSlider();
-                initOfferSlider();
-            });
-
-            window.onSnapshot(window.collection(window.db, "orders"), (snapshot) => {
-                orders = [];
-                snapshot.forEach(doc => { orders.push({ id: doc.id, ...doc.data() }); });
-                renderAdminOrders();
-            });
-
-            window.onSnapshot(window.doc(window.db, "config", "cuotas"), (docSnap) => {
-                if(docSnap.exists()) cuotasConfig = docSnap.data();
-            });
-
-            window.onSnapshot(window.doc(window.db, "config", "pay"), (docSnap) => {
-                if(docSnap.exists()) payConfig = docSnap.data();
-            });
-
-            window.onSnapshot(window.doc(window.db, "config", "security"), (docSnap) => {
-                if(docSnap.exists()) adminPass = docSnap.data().pin || "12345678";
-            });
-
-            window.onSnapshot(window.doc(window.db, "config", "layout"), (docSnap) => {
-                if(docSnap.exists()) {
-                    layoutMode = docSnap.data().mode || "grid";
-                    renderCatalog();
-                }
-            });
-        }
-
-        function setupSwipeSupport(container, nextFn, prevFn) {
-            let startX = 0;
-            container.ontouchstart = (e) => { startX = e.touches[0].clientX; };
-            container.ontouchend = (e) => {
-                let diffX = startX - e.changedTouches[0].clientX;
-                if (Math.abs(diffX) > 40) {
-                    if (diffX > 0) nextFn();
-                    else prevFn();
-                }
-            };
-        }
-
-        function initBannerSlider() {
-            const sliderContainer = document.getElementById('banner-slider');
-            const newProducts = products.filter(p => p.isNew);
-
-            if (sliderInterval) clearInterval(sliderInterval);
-
-            if (newProducts.length === 0) {
-                sliderContainer.style.display = 'none';
-                return;
-            }
-
-            sliderContainer.style.display = 'block';
-            sliderContainer.innerHTML = '';
-
-            newProducts.forEach((p, idx) => {
-                const effectivePrice = getEffectivePrice(p);
-                const slide = document.createElement('div');
-                slide.className = `slide-item ${idx === 0 ? 'active' : ''}`;
-                slide.style.backgroundImage = `url('${p.img}')`;
-                slide.innerHTML = `
-                    <div class="slide-overlay">
-                        <span class="slide-badge">✨ Novedad Exclusiva</span>
-                        <div class="slide-title">${p.name}</div>
-                        <p style="color: var(--accent-gold); font-weight:700; font-size:1.2rem; margin-top:4px;">$${effectivePrice.toFixed(2)}</p>
-                    </div>
-                `;
-                sliderContainer.appendChild(slide);
-            });
-
-            let currentSlide = 0;
-            const slides = sliderContainer.querySelectorAll('.slide-item');
-
-            const nextSlide = () => {
-                slides[currentSlide].classList.remove('active');
-                currentSlide = (currentSlide + 1) % slides.length;
-                slides[currentSlide].classList.add('active');
-            };
-
-            const prevSlide = () => {
-                slides[currentSlide].classList.remove('active');
-                currentSlide = (currentSlide - 1 + slides.length) % slides.length;
-                slides[currentSlide].classList.add('active');
-            };
-
-            setupSwipeSupport(sliderContainer, nextSlide, prevSlide);
-
-            if (newProducts.length >= 2) {
-                sliderInterval = setInterval(nextSlide, 5000);
-            }
-        }
-
-        // FUNCIONALIDAD N°1: ELIMINACIÓN AUTOMÁTICA DE LA OFERTA Y SUS VARIANTES AL VENCER EL RELOJ
-        function initOfferSlider() {
-            const sliderContainer =
+            const startX = startRect.left + (startRect.width / 2) - 3
