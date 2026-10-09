@@ -1,1 +1,1739 @@
 
+<!DOCTYPE html>
+<html lang="es" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Luxury Scents - Catálogo Exclusivo</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Playfair+Display:ital,wght@0,600;0,700;1,600&display=swap');
+
+        :root {
+            --bg-base: #0a0e17;
+            --bg-card: rgba(18, 25, 40, 0.75);
+            --bg-card-hover: rgba(26, 36, 56, 0.85);
+            --text-primary: #f8fafc;
+            --text-secondary: #94a3b8;
+            --accent-gold: #e2b714;
+            --accent-gold-hover: #d4a700;
+            --border-color: rgba(255, 255, 255, 0.08);
+            --border-highlight: rgba(226, 183, 20, 0.3);
+            --blur-val: blur(20px);
+            --glass-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+            --radius-main: 20px;
+            --radius-btn: 12px;
+            --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+            --ease-smooth: cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        [data-theme="light"] {
+            --bg-base: #f8fafc;
+            --bg-card: rgba(255, 255, 255, 0.85);
+            --bg-card-hover: rgba(255, 255, 255, 0.95);
+            --text-primary: #0f172a;
+            --text-secondary: #64748b;
+            --border-color: rgba(0, 0, 0, 0.08);
+            --border-highlight: rgba(226, 183, 20, 0.4);
+            --glass-shadow: 0 10px 30px rgba(15, 23, 42, 0.08);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+            transition: background 0.3s var(--ease-smooth), 
+                        color 0.2s var(--ease-smooth), 
+                        border-color 0.2s var(--ease-smooth), 
+                        transform 0.2s var(--ease-spring), 
+                        box-shadow 0.2s var(--ease-smooth);
+        }
+
+        body {
+            background-color: var(--bg-base);
+            color: var(--text-primary);
+            min-height: 100vh;
+            padding-bottom: 60px;
+            background-image: radial-gradient(circle at 50% 0%, rgba(226, 183, 20, 0.05), transparent 40%);
+            overflow-x: hidden;
+        }
+
+        header {
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            background: var(--bg-card);
+            backdrop-filter: var(--blur-val);
+            -webkit-backdrop-filter: var(--blur-val);
+            border-bottom: 1px solid var(--border-color);
+            padding: 1rem 1.75rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: var(--glass-shadow);
+        }
+
+        .logo-container {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            text-decoration: none;
+            cursor: pointer;
+            user-select: none;
+        }
+
+        .logo-mark {
+            width: 38px;
+            height: 38px;
+            border-radius: 10px;
+            background: linear-gradient(135deg, #1e293b, #0f172a);
+            border: 1px solid var(--border-highlight);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--accent-gold);
+            font-family: 'Playfair Display', serif;
+            font-weight: 700;
+            font-size: 1.2rem;
+            box-shadow: 0 4px 12px rgba(226, 183, 20, 0.15);
+        }
+
+        .logo-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.35rem;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+            color: var(--text-primary);
+            line-height: 1.1;
+        }
+
+        .logo-subtitle {
+            font-size: 0.65rem;
+            font-weight: 600;
+            letter-spacing: 2.5px;
+            color: var(--accent-gold);
+            text-transform: uppercase;
+        }
+
+        .nav-actions { display: flex; gap: 10px; align-items: center; }
+
+        button {
+            cursor: pointer;
+            border: 1px solid transparent;
+            padding: 10px 18px;
+            border-radius: var(--radius-btn);
+            font-weight: 600;
+            font-size: 0.9rem;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        button:hover { transform: translateY(-2px); }
+        button:active { transform: scale(0.95); }
+
+        .btn-primary { background: var(--text-primary); color: var(--bg-base); font-weight: 700; }
+        .btn-secondary { background: rgba(255, 255, 255, 0.05); color: var(--text-primary); border-color: var(--border-color); }
+        .btn-secondary:hover { background: rgba(255, 255, 255, 0.1); }
+        .btn-gold { background: linear-gradient(135deg, #e2b714, #c59b08); color: #000; font-weight: 700; box-shadow: 0 4px 15px rgba(226, 183, 20, 0.2); }
+        .btn-ws { background: #25d366; color: #000; font-weight: 700; width: 100%; padding: 14px; font-size: 1rem; }
+        .btn-danger { background: rgba(239, 68, 68, 0.15); color: #f87171; border: 1px solid rgba(239, 68, 68, 0.3); }
+        .btn-danger:hover { background: rgba(239, 68, 68, 0.25); }
+
+        .cart-btn-container { position: relative; }
+        .cart-count {
+            position: absolute;
+            top: -5px; right: -5px;
+            background: var(--accent-gold); color: #000;
+            font-size: 0.75rem; font-weight: 800;
+            width: 20px; height: 20px; border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            animation: pulseCount 0.3s var(--ease-spring);
+        }
+
+        @keyframes pulseCount {
+            0% { transform: scale(0.5); }
+            50% { transform: scale(1.3); }
+            100% { transform: scale(1); }
+        }
+
+        .container { max-width: 1200px; margin: 2rem auto; padding: 0 1.5rem; }
+
+        /* BANNER SLIDERS Y DESLIZAMIENTO MANUAL */
+        .banner-slider-container {
+            width: 100%;
+            height: 220px;
+            border-radius: var(--radius-main);
+            overflow: hidden;
+            position: relative;
+            margin-bottom: 1.5rem;
+            border: 1px solid var(--border-highlight);
+            box-shadow: var(--glass-shadow);
+            touch-action: pan-y;
+            user-select: none;
+        }
+
+        .slide-item {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            opacity: 0;
+            transition: opacity 0.8s ease-in-out;
+            display: flex;
+            align-items: center;
+            background-size: cover;
+            background-position: center;
+        }
+
+        .slide-item.active { opacity: 1; }
+
+        .slide-overlay {
+            width: 100%; height: 100%;
+            background: linear-gradient(90deg, rgba(10,14,23,0.95) 0%, rgba(10,14,23,0.5) 60%, transparent 100%);
+            padding: 2.5rem;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .slide-badge {
+            background: var(--accent-gold);
+            color: #000;
+            font-size: 0.75rem;
+            font-weight: 800;
+            padding: 4px 12px;
+            border-radius: 20px;
+            width: fit-content;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 8px;
+        }
+
+        .slide-badge-offer { background: #ef4444; color: #fff; }
+
+        .slide-title { font-family: 'Playfair Display', serif; font-size: 1.8rem; font-weight: 700; color: #fff; }
+
+        .countdown-timer {
+            font-size: 0.95rem;
+            font-weight: 800;
+            color: #f87171;
+            background: rgba(239, 68, 68, 0.15);
+            padding: 4px 10px;
+            border-radius: 8px;
+            border: 1px solid rgba(239, 68, 68, 0.3);
+            width: fit-content;
+            margin-top: 6px;
+        }
+
+        /* CATÁLOGO Y MODOS DE VISTA */
+        .catalog-header {
+            margin-bottom: 1.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .sort-container {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .sort-select {
+            padding: 8px 12px;
+            font-size: 0.85rem;
+            border-radius: var(--radius-btn);
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            color: var(--text-primary);
+        }
+
+        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 1.75rem; }
+
+        .grid.horizontal-layout {
+            display: flex;
+            overflow-x: auto;
+            gap: 1.5rem;
+            padding-bottom: 1rem;
+            scroll-snap-type: x mandatory;
+            scroll-behavior: smooth;
+        }
+
+        .grid.horizontal-layout .card {
+            flex: 0 0 280px;
+            scroll-snap-align: start;
+        }
+
+        .card {
+            background: var(--bg-card);
+            backdrop-filter: var(--blur-val);
+            -webkit-backdrop-filter: var(--blur-val);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-main);
+            padding: 1.25rem;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            box-shadow: var(--glass-shadow);
+            position: relative;
+            overflow: hidden;
+            animation: fadeIn 0.4s ease-out forwards;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .card:hover { 
+            transform: translateY(-6px) scale(1.01); 
+            border-color: var(--border-highlight);
+            background: var(--bg-card-hover);
+        }
+
+        .card-img-wrapper {
+            width: 100%; height: 220px;
+            border-radius: calc(var(--radius-main) - 6px);
+            overflow: hidden; position: relative;
+            background: rgba(0,0,0,0.2);
+        }
+
+        .card img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.4s ease; }
+        .card:hover img { transform: scale(1.05); }
+
+        .fav-btn-card {
+            position: absolute; top: 10px; left: 10px;
+            background: rgba(0,0,0,0.5); backdrop-filter: blur(5px);
+            border-radius: 50%; width: 34px; height: 34px;
+            display: flex; align-items: center; justify-content: center;
+            cursor: pointer; border: 1px solid rgba(255,255,255,0.2);
+            font-size: 0.9rem; z-index: 2;
+            transition: all 0.2s ease;
+        }
+        .fav-btn-card:hover { transform: scale(1.15); }
+        .fav-btn-card.active {
+            background: rgba(239, 68, 68, 0.25);
+            border-color: #ef4444;
+            color: #ef4444;
+            box-shadow: 0 0 12px rgba(239, 68, 68, 0.4);
+        }
+
+        .card-title { font-size: 1.1rem; font-weight: 700; }
+        .card-price { font-size: 1.35rem; font-weight: 800; color: var(--accent-gold); }
+        .old-price { text-decoration: line-through; color: var(--text-secondary); font-size: 1rem; margin-right: 6px; }
+
+        .subvariants-box { display: flex; flex-direction: column; gap: 6px; margin-top: 6px; }
+
+        .modal-overlay {
+            position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0, 0, 0, 0.75); backdrop-filter: blur(10px);
+            display: flex; justify-content: center; align-items: center;
+            z-index: 1000; opacity: 0; pointer-events: none;
+            transition: opacity 0.3s var(--ease-smooth);
+        }
+
+        .modal-overlay.active { opacity: 1; pointer-events: auto; }
+        .modal {
+            background: var(--bg-base); border: 1px solid var(--border-color);
+            padding: 2rem; border-radius: 24px; width: 92%; max-width: 520px;
+            max-height: 85vh; overflow-y: auto;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+            transform: scale(0.9); transition: transform 0.3s var(--ease-spring);
+        }
+        .modal-overlay.active .modal { transform: scale(1); }
+
+        .form-group { margin-bottom: 1.25rem; display: flex; flex-direction: column; gap: 6px; }
+        .form-group label { font-size: 0.85rem; font-weight: 600; color: var(--text-secondary); }
+
+        input, select, textarea {
+            padding: 12px 14px; border-radius: var(--radius-btn);
+            border: 1px solid var(--border-color);
+            background: rgba(255, 255, 255, 0.03); color: var(--text-primary);
+            outline: none; font-size: 0.95rem;
+        }
+
+        input:focus, select:focus { border-color: var(--accent-gold); background: rgba(255, 255, 255, 0.05); }
+
+        .cart-item { display: flex; align-items: center; justify-content: space-between; padding: 12px 0; border-bottom: 1px solid var(--border-color); gap: 12px; }
+        .cart-item img { width: 50px; height: 50px; border-radius: 10px; object-fit: cover; }
+        .cart-controls { display: flex; align-items: center; gap: 8px; }
+
+        .admin-item { display: flex; justify-content: space-between; align-items: center; padding: 12px 0; border-bottom: 1px solid var(--border-color); gap: 10px; }
+        .admin-item-controls { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
+
+        .divider { border: none; border-top: 1px solid var(--border-color); margin: 1.5rem 0; }
+        
+        .subvariant-row { 
+            display: flex; 
+            flex-direction: column;
+            gap: 6px; 
+            margin-bottom: 10px; 
+            padding: 10px;
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+        }
+        .subvariant-row-inputs { display: flex; gap: 6px; align-items: center; }
+        .subvariant-row-inputs input { flex: 1; }
+
+        .order-badge { padding: 4px 8px; border-radius: 6px; font-size: 0.75rem; font-weight: 700; display: inline-block; }
+        .badge-paid { background: rgba(34, 197, 94, 0.2); color: #4ade80; border: 1px solid rgba(34, 197, 94, 0.4); }
+        .badge-pending { background: rgba(234, 179, 8, 0.2); color: #facc15; border: 1px solid rgba(234, 179, 8, 0.4); }
+
+        /* ANIMACIONES DE CORAZONES CON BAMBOLEO */
+        .wobble-heart {
+            position: fixed;
+            pointer-events: none;
+            z-index: 9999;
+            font-size: 1.5rem;
+            user-select: none;
+            animation: wobbleFloat 1.2s cubic-bezier(0.25, 1, 0.5, 1) forwards;
+        }
+
+        @keyframes wobbleFloat {
+            0% {
+                opacity: 1;
+                transform: translate(0, 0) scale(0.6) rotate(0deg);
+            }
+            25% {
+                transform: translate(calc(var(--wobble-x) * 0.5), -40px) scale(1.2) rotate(-15deg);
+            }
+            50% {
+                transform: translate(calc(var(--wobble-x) * -0.3), -80px) scale(1.1) rotate(15deg);
+            }
+            75% {
+                opacity: 0.8;
+                transform: translate(calc(var(--wobble-x) * 0.2), -120px) scale(1) rotate(-8deg);
+            }
+            100% {
+                opacity: 0;
+                transform: translate(0, -160px) scale(0.6) rotate(0deg);
+            }
+        }
+
+        /* ELEMENTO FLOTANTE DE IMAGEN VOLADORA AL CARRITO */
+        .flying-product {
+            position: fixed;
+            z-index: 10000;
+            pointer-events: none;
+            border-radius: 12px;
+            object-fit: cover;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5), 0 0 15px rgba(226, 183, 20, 0.5);
+            border: 2px solid var(--accent-gold);
+            transition: transform 0.8s cubic-bezier(0.2, 0.8, 0.2, 1), opacity 0.8s linear;
+        }
+    </style>
+
+    <!-- FIREBASE SDKS -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+        import { getFirestore, collection, doc, onSnapshot, setDoc, updateDoc, addDoc, deleteDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyC3Y5WGoergKWNTXdvrYzzVC1rcgL_VStc",
+            authDomain: "luxury-scents-51574.firebaseapp.com",
+            projectId: "luxury-scents-51574",
+            storageBucket: "luxury-scents-51574.firebasestorage.app",
+            messagingSenderId: "262786356218",
+            appId: "1:262786356218:web:21c6963531412dadc60a43"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+        window.db = db;
+        window.collection = collection;
+        window.doc = doc;
+        window.onSnapshot = onSnapshot;
+        window.setDoc = setDoc;
+        window.updateDoc = updateDoc;
+        window.addDoc = addDoc;
+        window.deleteDoc = deleteDoc;
+    </script>
+</head>
+<body>
+
+    <header>
+        <div class="logo-container" onclick="handleLogoClick(event)">
+            <div class="logo-mark">LS</div>
+            <div class="logo-text">
+                <span class="logo-title">Luxury Scents</span>
+                <span class="logo-subtitle">Alta Perfumería</span>
+            </div>
+        </div>
+        <div class="nav-actions">
+            <button class="btn-secondary" onclick="openFavoritesModal()">❤️ <span id="fav-count">0</span></button>
+            <button class="btn-secondary" onclick="toggleTheme()">🌗</button>
+            <div class="cart-btn-container">
+                <button class="btn-primary" id="header-cart-btn" onclick="openCartModal()">Carrito</button>
+                <div class="cart-count" id="cart-count">0</div>
+            </div>
+        </div>
+    </header>
+
+    <div class="container">
+        <!-- BANNER DE OFERTAS CON TIEMPO LÍMITE -->
+        <div id="offer-slider" class="banner-slider-container" style="display:none;"></div>
+
+        <!-- BANNER DE NOVEDADES -->
+        <div id="banner-slider" class="banner-slider-container" style="display:none;"></div>
+
+        <div class="catalog-header">
+            <h1 style="font-family:'Playfair Display', serif; font-size:2rem; font-weight:700;">Colección Exclusiva</h1>
+            <div class="sort-container">
+                <label for="sort-select" style="font-size:0.85rem; color:var(--text-secondary); font-weight:600;">Ordenar por:</label>
+                <select id="sort-select" class="sort-select" onchange="renderCatalog()">
+                    <option value="default">Orden predeterminado</option>
+                    <option value="price-asc">Precio: Menor a Mayor</option>
+                    <option value="price-desc">Precio: Mayor a Menor</option>
+                    <option value="name-asc">Nombre (A - Z)</option>
+                </select>
+            </div>
+        </div>
+        <div class="grid" id="catalog-grid"></div>
+    </div>
+
+    <!-- Modal Registro Nombre Cliente -->
+    <div class="modal-overlay" id="user-modal">
+        <div class="modal">
+            <h2 style="font-family:'Playfair Display', serif;">¡Bienvenido a Luxury Scents!</h2>
+            <p style="color:var(--text-secondary); margin-bottom:1rem; font-size:0.9rem;">Por favor ingresa tu nombre para personalizar tu pedido:</p>
+            <div class="form-group">
+                <label>Nombre y Apellido:</label>
+                <input type="text" id="client-name-input" placeholder="Ej: Juan Pérez">
+            </div>
+            <button class="btn-gold" style="width:100%; margin-top:0.5rem;" onclick="saveClientName()">Ingresar a la tienda</button>
+        </div>
+    </div>
+
+    <!-- Modal Favoritos -->
+    <div class="modal-overlay" id="fav-modal">
+        <div class="modal">
+            <h2 style="font-family:'Playfair Display', serif;">❤️ Mis Favoritos</h2>
+            <div id="fav-items-container" style="max-height: 300px; overflow-y: auto; margin-bottom: 1rem;"></div>
+            <button class="btn-secondary" style="width: 100%;" onclick="closeFavoritesModal()">Cerrar</button>
+        </div>
+    </div>
+
+    <!-- Modal Detalle -->
+    <div class="modal-overlay" id="detail-modal">
+        <div class="modal">
+            <div id="detail-content"></div>
+            <button class="btn-secondary" style="margin-top: 1rem; width: 100%;" onclick="closeDetailModal()">Cerrar</button>
+        </div>
+    </div>
+
+    <!-- Modal Carrito -->
+    <div class="modal-overlay" id="cart-modal">
+        <div class="modal">
+            <h2 style="font-family:'Playfair Display', serif;">Carrito de Compras</h2>
+            <div id="cart-items-container" style="max-height: 220px; overflow-y: auto; margin-bottom: 1rem;"></div>
+            
+            <div style="font-size: 1.25rem; font-weight: 800; text-align: right; margin-bottom: 1rem; color: var(--accent-gold);">
+                Total: $<span id="cart-total-price">0.00</span>
+            </div>
+
+            <hr class="divider">
+
+            <h3>Método de Pago</h3>
+            <div class="form-group">
+                <label>Selecciona una opción:</label>
+                <select id="cart-pay-method" onchange="handlePayMethodChange()"></select>
+            </div>
+
+            <div id="pay-details-pm" style="display:none; background:rgba(255,255,255,0.03); border:1px solid var(--border-color); padding:14px; border-radius:12px; margin-top:10px;">
+                <h4 style="margin-bottom: 6px;">Datos para Pago Móvil</h4>
+                <p style="font-size:0.85rem; color: var(--text-secondary);">
+                    <strong>Banco:</strong> <span id="pm-banco-lbl">-</span><br>
+                    <strong>Teléfono:</strong> <span id="pm-telf-lbl">-</span><br>
+                    <strong>Cédula:</strong> <span id="pm-cedula-lbl">-</span>
+                </p>
+            </div>
+
+            <div id="pay-details-cuotas" style="display:none; background:rgba(255,255,255,0.03); border:1px solid var(--border-color); padding:14px; border-radius:12px; margin-top:10px;">
+                <h4 style="margin-bottom: 6px;">Plan Financiado Requerido</h4>
+                <p style="font-size:0.85rem; color: var(--text-secondary);">
+                    • <strong>Monto Inicial Requerido:</strong> $<span id="cuotas-inicial-val">0.00</span><br>
+                    • <strong>Restante en:</strong> <span id="cuotas-num-lbl">4</span> cuotas <span id="cuotas-frec-lbl">Quincenal</span><br>
+                    • <strong>Monto aprox. por cuota:</strong> $<span id="cuotas-monto-val">0.00</span>
+                </p>
+            </div>
+
+            <div id="pay-details-efectivo" style="display:none; background:rgba(255,255,255,0.03); border:1px solid var(--border-color); padding:14px; border-radius:12px; margin-top:10px;">
+                <h4 style="margin-bottom: 6px;">Pago en Efectivo</h4>
+                <p style="font-size:0.85rem; color: var(--text-secondary);">Entrega del monto acordado al momento de recibir el pedido.</p>
+            </div>
+
+            <div style="display: flex; flex-direction: column; gap: 8px; margin-top: 1.5rem;">
+                <button class="btn-ws" onclick="buyNowWhatsApp(event)">Comprar por WhatsApp</button>
+                <button class="btn-secondary" style="width: 100%;" onclick="closeCartModal()">Seguir Viendo</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Login -->
+    <div class="modal-overlay" id="login-modal">
+        <div class="modal">
+            <h2 style="font-family:'Playfair Display', serif;">Acceso Administrativo</h2>
+            <div class="form-group">
+                <label>Ingresa tu PIN de 8 dígitos:</label>
+                <input type="password" id="admin-pass-input" maxlength="8" placeholder="********">
+            </div>
+            <button class="btn-gold" style="width: 100%; margin-top: 0.5rem;" onclick="loginWithPass()">Entrar al Panel</button>
+            <button class="btn-secondary" style="margin-top: 8px; width: 100%;" onclick="closeLoginModal()">Cancelar</button>
+        </div>
+    </div>
+
+    <!-- Modal Panel Admin -->
+    <div class="modal-overlay" id="admin-panel">
+        <div class="modal">
+            <h2 style="font-family:'Playfair Display', serif;">Panel de Control</h2>
+
+            <h3>📦 Pedidos de Clientes</h3>
+            <div id="admin-orders-list" style="margin-bottom: 1rem; max-height: 250px; overflow-y: auto;"></div>
+
+            <hr class="divider">
+
+            <h3>Diseño de Inicio</h3>
+            <div class="form-group">
+                <label>Diseño del Catálogo en Inicio:</label>
+                <select id="cfg-layout-mode">
+                    <option value="grid">Grilla Tradicional</option>
+                    <option value="horizontal">Horizontal (Deslizable)</option>
+                </select>
+            </div>
+            <button class="btn-secondary" style="width: 100%; margin-bottom: 1rem;" onclick="saveLayoutConfig()">Guardar Diseño</button>
+
+            <hr class="divider">
+
+            <h3>Agregar Colonia / Set</h3>
+            <div class="form-group"><label>Nombre del Producto / Marca:</label><input type="text" id="new-name" placeholder="Ej: Colección Yara"></div>
+            <div class="form-group"><label>Precio Normal / Base ($):</label><input type="number" id="new-price" step="0.5" placeholder="6.5"></div>
+            <div class="form-group"><label>Cuota Inicial Individual ($):</label><input type="number" id="new-initial" step="0.5" placeholder="5.0"></div>
+            <div class="form-group"><label>Nota / Descripción corta:</label><input type="text" id="new-note" placeholder="Ej: Fragancias orientales Lattafa"></div>
+            <div class="form-group"><label><input type="checkbox" id="new-is-new"> Marcar como Novedad / Banner</label></div>
+            
+            <div class="form-group" style="background:rgba(239, 68, 68, 0.05); padding:10px; border-radius:10px; border:1px dashed rgba(239, 68, 68, 0.3);">
+                <label><input type="checkbox" id="new-is-offer" onchange="toggleOfferFields('new')"> 🔥 Activar Oferta Especial (Tacha el precio base)</label>
+                <div id="new-offer-box" style="display:none; margin-top:8px;">
+                    <div class="form-group"><label>Precio en Oferta ($):</label><input type="number" id="new-offer-price" step="0.5" placeholder="5.0"></div>
+                    <div class="form-group"><label>Fecha y Hora Límite:</label><input type="datetime-local" id="new-offer-until"></div>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label>Variantes / Presentaciones / Sets:</label>
+                <div id="subvariants-container"></div>
+                <button class="btn-secondary" type="button" style="padding:4px 10px; font-size:0.8rem; margin-top:4px;" onclick="addSubvariantField('subvariants-container')">+ Agregar Variante / Set</button>
+            </div>
+
+            <div class="form-group">
+                <label>Imagen del Producto:</label>
+                <input type="file" id="new-img-file" accept="image/*" onchange="previewImage(this, 'new-img-preview')">
+                <div id="new-img-preview" style="height:100px; border:1px dashed var(--border-color); margin-top:6px; display:flex; align-items:center; justify-content:center; overflow:hidden; border-radius:12px;">Vista Previa</div>
+            </div>
+
+            <button class="btn-primary" style="width: 100%; margin-bottom: 1rem;" onclick="addNewProduct()">Guardar en la Nube</button>
+
+            <hr class="divider">
+
+            <h3>Inventario y Reordenamiento</h3>
+            <div id="admin-price-list" style="margin-bottom: 1rem; max-height: 250px; overflow-y: auto;"></div>
+
+            <hr class="divider">
+
+            <h3>Métodos de Pago</h3>
+            <div style="display:flex; flex-direction:column; gap:8px; margin-bottom:1rem;">
+                <label><input type="checkbox" id="cfg-pay-pm"> Pago Móvil</label>
+                <label><input type="checkbox" id="cfg-pay-efectivo"> Efectivo</label>
+                <label><input type="checkbox" id="cfg-pay-cuotas"> Cuotas</label>
+            </div>
+
+            <h4 style="margin-bottom: 0.5rem;">Datos Pago Móvil:</h4>
+            <div class="form-group"><label>Banco:</label><input type="text" id="cfg-pm-banco"></div>
+            <div class="form-group"><label>Teléfono:</label><input type="text" id="cfg-pm-telf"></div>
+            <div class="form-group"><label>Cédula / RIF:</label><input type="text" id="cfg-pm-cedula"></div>
+            <button class="btn-secondary" style="width: 100%; margin-bottom: 1rem;" onclick="savePayMethodsConfig()">Guardar Métodos</button>
+
+            <hr class="divider">
+
+            <h3>Configuración General de Cuotas</h3>
+            <div class="form-group"><label>N° Cuotas:</label><input type="number" id="cfg-num-cuotas"></div>
+            <div class="form-group"><label>Frecuencia:</label><input type="text" id="cfg-frecuencia"></div>
+            <button class="btn-secondary" style="margin-bottom: 1rem; width: 100%;" onclick="saveCuotasConfig()">Guardar Parámetros Cuotas</button>
+
+            <hr class="divider">
+
+            <h3>Seguridad</h3>
+            <div class="form-group"><label>Nuevo PIN (8 dígitos):</label><input type="password" id="new-pass-input" maxlength="8"></div>
+            <button class="btn-secondary" style="width: 100%;" onclick="changePassword()">Cambiar PIN</button>
+
+            <button class="btn-gold" style="margin-top: 1.5rem; width: 100%;" onclick="closeAdminPanel()">Cerrar Panel</button>
+        </div>
+    </div>
+
+    <!-- Modal Editar Colonia Completo -->
+    <div class="modal-overlay" id="edit-product-modal" style="z-index: 1100;">
+        <div class="modal">
+            <h2 style="font-family:'Playfair Display', serif;">Editar Colonia / Variante / Set</h2>
+            <input type="hidden" id="edit-prod-id">
+
+            <div class="form-group"><label>Nombre:</label><input type="text" id="edit-name"></div>
+            <div class="form-group"><label>Precio Normal / Base ($):</label><input type="number" step="0.5" id="edit-price"></div>
+            <div class="form-group"><label>Inicial para Cuota Individual ($):</label><input type="number" step="0.5" id="edit-initial"></div>
+            <div class="form-group"><label>Nota / Especificaciones:</label><input type="text" id="edit-note"></div>
+            <div class="form-group"><label><input type="checkbox" id="edit-is-new"> Destacar como Novedad / Banner</label></div>
+
+            <div class="form-group" style="background:rgba(239, 68, 68, 0.05); padding:10px; border-radius:10px; border:1px dashed rgba(239, 68, 68, 0.3);">
+                <label><input type="checkbox" id="edit-is-offer" onchange="toggleOfferFields('edit')"> 🔥 Activar Oferta Especial (Tacha el precio base)</label>
+                <div id="edit-offer-box" style="display:none; margin-top:8px;">
+                    <div class="form-group"><label>Precio en Oferta ($):</label><input type="number" id="edit-offer-price" step="0.5"></div>
+                    <div class="form-group"><label>Fecha y Hora Límite:</label><input type="datetime-local" id="edit-offer-until"></div>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label>Editar / Agregar Variantes o Sets:</label>
+                <div id="edit-subvariants-container"></div>
+                <button class="btn-secondary" type="button" style="padding:4px 10px; font-size:0.8rem; margin-top:4px;" onclick="addSubvariantField('edit-subvariants-container')">+ Agregar Variante / Set</button>
+            </div>
+            
+            <div class="form-group">
+                <label>Cambiar Imagen:</label>
+                <input type="file" id="edit-img-file" accept="image/*" onchange="previewImage(this, 'edit-img-preview')">
+                <div id="edit-img-preview" style="height:100px; border:1px dashed var(--border-color); margin-top:6px; display:flex; align-items:center; justify-content:center; overflow:hidden; border-radius:12px;">Vista Previa</div>
+            </div>
+
+            <button class="btn-primary" style="width: 100%; margin-top: 1rem;" onclick="saveProductEdits()">Guardar Cambios</button>
+            <button class="btn-secondary" style="width: 100%; margin-top: 8px;" onclick="closeEditModal()">Cancelar</button>
+        </div>
+    </div>
+
+    <script>
+        // SISTEMA SINTETIZADOR DE SONIDO (WEB AUDIO API)
+        let audioCtx = null;
+        function getAudioContext() {
+            if (!audioCtx) {
+                audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            }
+            if (audioCtx.state === 'suspended') {
+                audioCtx.resume();
+            }
+            return audioCtx;
+        }
+
+        function playSound(type) {
+            try {
+                const ctx = getAudioContext();
+                const now = ctx.currentTime;
+
+                if (type === 'spray') {
+                    const bufferSize = ctx.sampleRate * 0.25; 
+                    const buffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
+                    const output = buffer.getChannelData(0);
+                    for (let i = 0; i < bufferSize; i++) {
+                        output[i] = Math.random() * 2 - 1;
+                    }
+
+                    const whiteNoise = ctx.createBufferSource();
+                    whiteNoise.buffer = buffer;
+
+                    const filter = ctx.createBiquadFilter();
+                    filter.type = 'bandpass';
+                    filter.frequency.setValueAtTime(3000, now);
+                    filter.Q.setValueAtTime(1.2, now);
+
+                    const gain = ctx.createGain();
+                    gain.gain.setValueAtTime(0.01, now);
+                    gain.gain.linearRampToValueAtTime(0.25, now + 0.04);
+                    gain.gain.exponentialRampToValueAtTime(0.001, now + 0.22);
+
+                    whiteNoise.connect(filter);
+                    filter.connect(gain);
+                    gain.connect(ctx.destination);
+
+                    whiteNoise.start(now);
+                    whiteNoise.stop(now + 0.23);
+                } else if (type === 'click') {
+                    const osc = ctx.createOscillator();
+                    const gain = ctx.createGain();
+                    osc.type = 'sine';
+                    osc.frequency.setValueAtTime(600, now);
+                    osc.frequency.exponentialRampToValueAtTime(800, now + 0.05);
+                    gain.gain.setValueAtTime(0.1, now);
+                    gain.gain.exponentialRampToValueAtTime(0.001, now + 0.05);
+                    osc.connect(gain);
+                    gain.connect(ctx.destination);
+                    osc.start(now);
+                    osc.stop(now + 0.05);
+                } else if (type === 'add') {
+                    const osc = ctx.createOscillator();
+                    const gain = ctx.createGain();
+                    osc.type = 'triangle';
+                    osc.frequency.setValueAtTime(440, now);
+                    osc.frequency.exponentialRampToValueAtTime(880, now + 0.12);
+                    gain.gain.setValueAtTime(0.15, now);
+                    gain.gain.exponentialRampToValueAtTime(0.001, now + 0.12);
+                    osc.connect(gain);
+                    gain.connect(ctx.destination);
+                    osc.start(now);
+                    osc.stop(now + 0.12);
+                } else if (type === 'fav') {
+                    const osc1 = ctx.createOscillator();
+                    const osc2 = ctx.createOscillator();
+                    const gain = ctx.createGain();
+                    osc1.type = 'sine';
+                    osc2.type = 'sine';
+                    osc1.frequency.setValueAtTime(523.25, now);
+                    osc1.frequency.exponentialRampToValueAtTime(659.25, now + 0.15);
+                    osc2.frequency.setValueAtTime(659.25, now + 0.08);
+                    osc2.frequency.exponentialRampToValueAtTime(783.99, now + 0.2);
+                    gain.gain.setValueAtTime(0.12, now);
+                    gain.gain.exponentialRampToValueAtTime(0.001, now + 0.22);
+                    osc1.connect(gain);
+                    osc2.connect(gain);
+                    gain.connect(ctx.destination);
+                    osc1.start(now);
+                    osc2.start(now + 0.05);
+                    osc1.stop(now + 0.18);
+                    osc2.stop(now + 0.22);
+                } else if (type === 'buy') {
+                    [523.25, 659.25, 783.99, 1046.50].forEach((freq, idx) => {
+                        const osc = ctx.createOscillator();
+                        const gain = ctx.createGain();
+                        const startTime = now + (idx * 0.06);
+                        osc.type = 'sine';
+                        osc.frequency.setValueAtTime(freq, startTime);
+                        gain.gain.setValueAtTime(0.15, startTime);
+                        gain.gain.exponentialRampToValueAtTime(0.001, startTime + 0.15);
+                        osc.connect(gain);
+                        gain.connect(ctx.destination);
+                        osc.start(startTime);
+                        osc.stop(startTime + 0.15);
+                    });
+                }
+            } catch (e) {
+                console.log("Audio no permitido aún por interacción de usuario.");
+            }
+        }
+
+        document.addEventListener('click', (e) => {
+            if (e.target.tagName === 'BUTTON' || e.target.closest('button') || e.target.tagName === 'A' || e.target.classList.contains('card')) {
+                playSound('click');
+            }
+        });
+
+        let products = [];
+        let orders = [];
+        let adminPass = "12345678";
+        let layoutMode = "grid";
+        let cuotasConfig = { numCuotas: 4, frecuencia: "Quincenal" };
+        let payConfig = { pm: true, efectivo: true, cuotas: true, pmBanco: "Banesco", pmTelf: "04120000000", pmCedula: "V-00000000" };
+        let cart = JSON.parse(localStorage.getItem('ls_cart')) || [];
+        let favorites = JSON.parse(localStorage.getItem('ls_favs')) || [];
+        let clientName = localStorage.getItem('ls_client_name') || "";
+        let tempBase64Image = "";
+
+        let logoClickCount = 0;
+        let logoClickTimer = null;
+        let sliderInterval = null;
+        let offerSliderInterval = null;
+        let countdownTimers = [];
+
+        function getEffectivePrice(p) {
+            return (p.isOffer && p.offerPrice) ? parseFloat(p.offerPrice) : parseFloat(p.price);
+        }
+
+        function getSubvariantEffectivePrice(sv, parentProduct) {
+            if (sv.isOffer && sv.offerPrice) {
+                return parseFloat(sv.offerPrice);
+            }
+            return parseFloat(sv.price || parentProduct.price);
+        }
+
+        // FUNCIONALIDAD N°3: EFECTO DE CORAZONES BAMBOLEANTES (WOBBLE)
+        function spawnFloatingEmojis(x, y) {
+            for (let i = 0; i < 7; i++) {
+                const el = document.createElement('div');
+                el.className = 'wobble-heart';
+                el.innerText = '❤️';
+                
+                const offsetX = (Math.random() - 0.5) * 60;
+                const wobbleDistance = (Math.random() - 0.5) * 80;
+
+                el.style.left = `${x + offsetX}px`;
+                el.style.top = `${y}px`;
+                el.style.setProperty('--wobble-x', `${wobbleDistance}px`);
+
+                document.body.appendChild(el);
+                setTimeout(() => el.remove(), 1200);
+            }
+        }
+
+        // FUNCIONALIDAD N°2: ANIMACIÓN DE VUELO DE IMAGEN DIRECTO AL CARRITO
+        function animateFlyToCart(imgSrc, startElement) {
+            const cartBtn = document.getElementById('header-cart-btn');
+            if (!cartBtn) return;
+
+            const startRect = startElement ? startElement.getBoundingClientRect() : { left: window.innerWidth / 2, top: window.innerHeight / 2, width: 50, height: 50 };
+            const cartRect = cartBtn.getBoundingClientRect();
+
+            const flyer = document.createElement('img');
+            flyer.src = imgSrc || 'https://images.unsplash.com/photo-1592945403244-b3fbafd7f539?w=400';
+            flyer.className = 'flying-product';
+            
+            const startX = startRect.left + (startRect.width / 2) - 30;
+            const startY = startRect.top + (startRect.height / 2) - 30;
+
+            flyer.style.left = `${startX}px`;
+            flyer.style.top = `${startY}px`;
+            flyer.style.width = '60px';
+            flyer.style.height = '60px';
+
+            document.body.appendChild(flyer);
+
+            const targetX = cartRect.left + (cartRect.width / 2) - 15;
+            const targetY = cartRect.top + (cartRect.height / 2) - 15;
+
+            requestAnimationFrame(() => {
+                flyer.style.transform = `translate(${targetX - startX}px, ${targetY - startY}px) scale(0.2) rotate(360deg)`;
+                flyer.style.opacity = '0.3';
+            });
+
+            setTimeout(() => {
+                flyer.remove();
+                cartBtn.style.transform = 'scale(1.2)';
+                setTimeout(() => cartBtn.style.transform = 'none', 200);
+            }, 800);
+        }
+
+        function handleLogoClick(e) {
+            e.preventDefault();
+            logoClickCount++;
+            if (logoClickCount === 1) {
+                logoClickTimer = setTimeout(() => { logoClickCount = 0; }, 1000);
+            } else if (logoClickCount >= 3) {
+                clearTimeout(logoClickTimer);
+                logoClickCount = 0;
+                openAdminModal();
+            }
+        }
+
+        window.addEventListener('load', () => {
+            if(!clientName) document.getElementById('user-modal').classList.add('active');
+            updateCartUI();
+            updateFavUI();
+
+            const checkFirebase = setInterval(() => {
+                if (window.db) {
+                    clearInterval(checkFirebase);
+                    initFirebaseListeners();
+                }
+            }, 100);
+        });
+
+        function saveClientName() {
+            const val = document.getElementById('client-name-input').value.trim();
+            if(!val) return alert("Ingresa tu nombre por favor.");
+            clientName = val;
+            localStorage.setItem('ls_client_name', clientName);
+            document.getElementById('user-modal').classList.remove('active');
+        }
+
+        function saveCartLocal() { localStorage.setItem('ls_cart', JSON.stringify(cart)); }
+        function saveFavLocal() { localStorage.setItem('ls_favs', JSON.stringify(favorites)); }
+
+        function toggleOfferFields(prefix) {
+            const isOffer = document.getElementById(`${prefix}-is-offer`).checked;
+            document.getElementById(`${prefix}-offer-box`).style.display = isOffer ? 'block' : 'none';
+        }
+
+        function initFirebaseListeners() {
+            window.onSnapshot(window.collection(window.db, "products"), (snapshot) => {
+                products = [];
+                snapshot.forEach(doc => { products.push({ id: doc.id, ...doc.data() }); });
+                products.sort((a, b) => (a.order || 0) - (b.order || 0));
+                renderCatalog();
+                renderAdminInventory();
+                initBannerSlider();
+                initOfferSlider();
+            });
+
+            window.onSnapshot(window.collection(window.db, "orders"), (snapshot) => {
+                orders = [];
+                snapshot.forEach(doc => { orders.push({ id: doc.id, ...doc.data() }); });
+                renderAdminOrders();
+            });
+
+            window.onSnapshot(window.doc(window.db, "config", "cuotas"), (docSnap) => {
+                if(docSnap.exists()) cuotasConfig = docSnap.data();
+            });
+
+            window.onSnapshot(window.doc(window.db, "config", "pay"), (docSnap) => {
+                if(docSnap.exists()) payConfig = docSnap.data();
+            });
+
+            window.onSnapshot(window.doc(window.db, "config", "security"), (docSnap) => {
+                if(docSnap.exists()) adminPass = docSnap.data().pin || "12345678";
+            });
+
+            window.onSnapshot(window.doc(window.db, "config", "layout"), (docSnap) => {
+                if(docSnap.exists()) {
+                    layoutMode = docSnap.data().mode || "grid";
+                    renderCatalog();
+                }
+            });
+        }
+
+        function setupSwipeSupport(container, nextFn, prevFn) {
+            let startX = 0;
+            container.ontouchstart = (e) => { startX = e.touches[0].clientX; };
+            container.ontouchend = (e) => {
+                let diffX = startX - e.changedTouches[0].clientX;
+                if (Math.abs(diffX) > 40) {
+                    if (diffX > 0) nextFn();
+                    else prevFn();
+                }
+            };
+        }
+
+        function initBannerSlider() {
+            const sliderContainer = document.getElementById('banner-slider');
+            const newProducts = products.filter(p => p.isNew);
+
+            if (sliderInterval) clearInterval(sliderInterval);
+
+            if (newProducts.length === 0) {
+                sliderContainer.style.display = 'none';
+                return;
+            }
+
+            sliderContainer.style.display = 'block';
+            sliderContainer.innerHTML = '';
+
+            newProducts.forEach((p, idx) => {
+                const effectivePrice = getEffectivePrice(p);
+                const slide = document.createElement('div');
+                slide.className = `slide-item ${idx === 0 ? 'active' : ''}`;
+                slide.style.backgroundImage = `url('${p.img}')`;
+                slide.innerHTML = `
+                    <div class="slide-overlay">
+                        <span class="slide-badge">✨ Novedad Exclusiva</span>
+                        <div class="slide-title">${p.name}</div>
+                        <p style="color: var(--accent-gold); font-weight:700; font-size:1.2rem; margin-top:4px;">$${effectivePrice.toFixed(2)}</p>
+                    </div>
+                `;
+                sliderContainer.appendChild(slide);
+            });
+
+            let currentSlide = 0;
+            const slides = sliderContainer.querySelectorAll('.slide-item');
+
+            const nextSlide = () => {
+                slides[currentSlide].classList.remove('active');
+                currentSlide = (currentSlide + 1) % slides.length;
+                slides[currentSlide].classList.add('active');
+            };
+
+            const prevSlide = () => {
+                slides[currentSlide].classList.remove('active');
+                currentSlide = (currentSlide - 1 + slides.length) % slides.length;
+                slides[currentSlide].classList.add('active');
+            };
+
+            setupSwipeSupport(sliderContainer, nextSlide, prevSlide);
+
+            if (newProducts.length >= 2) {
+                sliderInterval = setInterval(nextSlide, 5000);
+            }
+        }
+
+        // FUNCIONALIDAD N°1: ELIMINACIÓN AUTOMÁTICA DE LA OFERTA AL VENCER EL RELOJ
+        function initOfferSlider() {
+            const sliderContainer = document.getElementById('offer-slider');
+            const offerProducts = products.filter(p => p.isOffer);
+
+            if (offerSliderInterval) clearInterval(offerSliderInterval);
+            countdownTimers.forEach(t => clearInterval(t));
+            countdownTimers = [];
+
+            if (offerProducts.length === 0) {
+                sliderContainer.style.display = 'none';
+                return;
+            }
+
+            sliderContainer.style.display = 'block';
+            sliderContainer.innerHTML = '';
+
+            offerProducts.forEach((p, idx) => {
+                const slide = document.createElement('div');
+                slide.className = `slide-item ${idx === 0 ? 'active' : ''}`;
+                slide.style.backgroundImage = `url('${p.img}')`;
+                
+                const timerId = `timer-${p.id}`;
+
+                slide.innerHTML = `
+                    <div class="slide-overlay">
+                        <span class="slide-badge slide-badge-offer">🔥 Oferta Limitada</span>
+                        <div class="slide-title">${p.name}</div>
+                        <p style="margin-top:4px;">
+                            <span class="old-price">$${parseFloat(p.price).toFixed(2)}</span>
+                            <span style="color: var(--accent-gold); font-weight:800; font-size:1.3rem;">$${parseFloat(p.offerPrice || p.price).toFixed(2)}</span>
+                        </p>
+                        ${p.offerUntil ? `<div class="countdown-timer" id="${timerId}">⏳ Cargando tiempo...</div>` : ''}
+                    </div>
+                `;
+                sliderContainer.appendChild(slide);
+
+                if (p.offerUntil) {
+                    const updateCountdown = () => {
+                        const now = new Date().getTime();
+                        const target = new Date(p.offerUntil).getTime();
+                        const diff = target - now;
+
+                        const timerEl = document.getElementById(timerId);
+
+                        if (diff <= 0) {
+                            if (timerEl) timerEl.innerHTML = "⏰ Oferta Finalizada";
+                            // Desactivación automática de la oferta en la base de datos
+                            if (window.db && p.id) {
+                                window.updateDoc(window.doc(window.db, "products", p.id), {
+                                    isOffer: false,
+                                    offerUntil: ""
+                                }).catch(err => console.log("Error al desactivar oferta automáticamente:", err));
+                            }
+                        } else {
+                            if (timerEl) {
+                                const h = Math.floor(diff / (1000 * 60 * 60));
+                                const m = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+                                const s = Math.floor((diff % (1000 * 60)) / 1000);
+                                timerEl.innerHTML = `⏳ Termina en: ${h}h ${m}m ${s}s`;
+                            }
+                        }
+                    };
+                    updateCountdown();
+                    countdownTimers.push(setInterval(updateCountdown, 1000));
+                }
+            });
+
+            let currentSlide = 0;
+            const slides = sliderContainer.querySelectorAll('.slide-item');
+
+            const nextSlide = () => {
+                if (!slides || slides.length === 0) return;
+                slides[currentSlide].classList.remove('active');
+                currentSlide = (currentSlide + 1) % slides.length;
+                slides[currentSlide].classList.add('active');
+            };
+
+            const prevSlide = () => {
+                if (!slides || slides.length === 0) return;
+                slides[currentSlide].classList.remove('active');
+                currentSlide = (currentSlide - 1 + slides.length) % slides.length;
+                slides[currentSlide].classList.add('active');
+            };
+
+            setupSwipeSupport(sliderContainer, nextSlide, prevSlide);
+
+            if (offerProducts.length >= 2) {
+                offerSliderInterval = setInterval(nextSlide, 6000);
+            }
+        }
+
+        function previewImage(inputElement, previewId) {
+            const file = inputElement.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    document.getElementById(previewId).innerHTML = `<img src="${e.target.result}" style="width:100%; height:100%; object-fit:cover;">`;
+                    tempBase64Image = e.target.result;
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+
+        function addSubvariantField(containerId, name = '', price = '', initial = '', isOffer = false, offerPrice = '') {
+            const container = document.getElementById(containerId);
+            const row = document.createElement('div');
+            row.className = 'subvariant-row';
+            row.innerHTML = `
+                <div class="subvariant-row-inputs">
+                    <input type="text" placeholder="Variante / Set (Ej: Set 3 Perfumes)" class="sub-name" value="${name}">
+                    <input type="number" placeholder="Precio $" step="0.5" class="sub-price" value="${price}">
+                    <input type="number" placeholder="Inicial $" step="0.5" class="sub-initial" value="${initial}">
+                    <button type="button" class="btn-danger" style="padding:6px 10px;" onclick="this.parentElement.parentElement.remove()">X</button>
+                </div>
+                <div style="display:flex; align-items:center; gap:8px; font-size:0.8rem; background:rgba(0,0,0,0.2); padding:6px 8px; border-radius:8px;">
+                    <label style="display:flex; align-items:center; gap:4px; font-weight:600; cursor:pointer;">
+                        <input type="checkbox" class="sub-is-offer" ${isOffer ? 'checked' : ''} onchange="this.parentElement.nextElementSibling.style.display = this.checked ? 'flex' : 'none'"> 🔥 En Oferta
+                    </label>
+                    <div style="display:${isOffer ? 'flex' : 'none'}; align-items:center; gap:4px; flex:1;">
+                        <span style="color:var(--text-secondary);">Precio Oferta $:</span>
+                        <input type="number" placeholder="Oferta $" step="0.5" class="sub-offer-price" value="${offerPrice}" style="padding:4px 8px; font-size:0.8rem; flex:1;">
+                    </div>
+                </div>
+            `;
+            container.appendChild(row);
+        }
+
+        function toggleFavorite(id, event) {
+            if(event) event.stopPropagation();
+            playSound('fav');
+            
+            const clientX = event ? event.clientX : window.innerWidth / 2;
+            const clientY = event ? event.clientY : window.innerHeight / 2;
+            spawnFloatingEmojis(clientX, clientY);
+
+            const index = favorites.indexOf(id);
+            if(index > -1) favorites.splice(index, 1);
+            else favorites.push(id);
+            saveFavLocal();
+            updateFavUI();
+            renderCatalog();
+        }
+
+        function updateFavUI() {
+            document.getElementById('fav-count').innerText = favorites.length;
+            const container = document.getElementById('fav-items-container');
+            if(!container) return;
+            container.innerHTML = '';
+
+            favorites.forEach(id => {
+                const p = products.find(prod => prod.id === id);
+                if(p) {
+                    const priceShow = getEffectivePrice(p);
+                    const row = document.createElement('div');
+                    row.className = 'cart-item';
+                    row.innerHTML = `
+                        <img src="${p.img}">
+                        <div style="flex:1;"><div style="font-weight:600;">${p.name}</div><div style="font-size:0.85rem; color:var(--text-secondary);">$${priceShow.toFixed(2)}</div></div>
+                        <button class="btn-primary" style="padding:4px 10px; font-size:0.8rem;" onclick="addToCart('${p.id}')">+ Añadir</button>
+                    `;
+                    container.appendChild(row);
+                }
+            });
+        }
+
+        function openFavoritesModal() { updateFavUI(); document.getElementById('fav-modal').classList.add('active'); }
+        function closeFavoritesModal() { document.getElementById('fav-modal').classList.remove('active'); }
+
+        function renderCatalog() {
+            const grid = document.getElementById('catalog-grid');
+            grid.innerHTML = '';
+
+            if (layoutMode === 'horizontal') {
+                grid.classList.add('horizontal-layout');
+            } else {
+                grid.classList.remove('horizontal-layout');
+            }
+
+            let displayProducts = [...products];
+            const sortMode = document.getElementById('sort-select') ? document.getElementById('sort-select').value : 'default';
+
+            if (sortMode === 'price-asc') {
+                displayProducts.sort((a, b) => getEffectivePrice(a) - getEffectivePrice(b));
+            } else if (sortMode === 'price-desc') {
+                displayProducts.sort((a, b) => getEffectivePrice(b) - getEffectivePrice(a));
+            } else if (sortMode === 'name-asc') {
+                displayProducts.sort((a, b) => a.name.localeCompare(b.name));
+            }
+
+            displayProducts.forEach(p => {
+                const card = document.createElement('div');
+                card.className = 'card';
+                card.id = `card-product-${p.id}`;
+                card.onclick = () => openDetailModal(p.id);
+
+                const isFav = favorites.includes(p.id);
+
+                let subvariantsHTML = '';
+                if(p.subvariants && p.subvariants.length > 0) {
+                    subvariantsHTML = `<div class="subvariants-box" onclick="event.stopPropagation();">
+                        <label style="font-size:0.75rem; color:var(--text-secondary); font-weight:600;">Seleccionar Variante / Set:</label>
+                        <select id="select-variant-${p.id}" style="padding:6px 8px; font-size:0.85rem;">
+                            ${p.subvariants.map((sv, idx) => {
+                                const effPrice = getSubvariantEffectivePrice(sv, p);
+                                const isSvOffer = sv.isOffer && sv.offerPrice;
+                                return `<option value="${idx}">${sv.name} - ${isSvOffer ? '🔥 ' : ''}$${effPrice.toFixed(2)}</option>`;
+                            }).join('')}
+                        </select>
+                    </div>`;
+                }
+
+                const priceDisplay = p.isOffer && p.offerPrice ? 
+                    `<span class="old-price">$${parseFloat(p.price).toFixed(2)}</span>$${parseFloat(p.offerPrice).toFixed(2)}` : 
+                    `$${parseFloat(p.price).toFixed(2)}`;
+
+                card.innerHTML = `
+                    <div class="card-img-wrapper">
+                        <div class="fav-btn-card ${isFav ? 'active' : ''}" onclick="toggleFavorite('${p.id}', event)">${isFav ? '❤️' : '🤍'}</div>
+                        <img id="img-product-${p.id}" src="${p.img || 'https://images.unsplash.com/photo-1592945403244-b3fbafd7f539?w=400'}" alt="${p.name}">
+                    </div>
+                    <div class="card-title">${p.name}</div>
+                    ${p.note ? `<div style="font-size:0.85rem; color: var(--text-secondary);">${p.note}</div>` : ''}
+                    ${subvariantsHTML}
+                    <div style="display:flex; justify-content:space-between; align-items:center; margin-top: auto; padding-top: 8px;">
+                        <div class="card-price">
+                            ${priceDisplay}
+                        </div>
+                        <button class="btn-primary" style="padding: 6px 14px; font-size: 0.85rem;" onclick="event.stopPropagation(); addToCartWithVariant('${p.id}', this)">
+                            + Añadir
+                        </button>
+                    </div>
+                `;
+                grid.appendChild(card);
+            });
+        }
+
+        function openDetailModal(id) {
+            const p = products.find(prod => prod.id === id);
+            if(!p) return;
+
+            const priceDisplay = p.isOffer && p.offerPrice ? 
+                `<span class="old-price">$${parseFloat(p.price).toFixed(2)}</span>$${parseFloat(p.offerPrice).toFixed(2)}` : 
+                `$${parseFloat(p.price).toFixed(2)}`;
+
+            const container = document.getElementById('detail-content');
+            container.innerHTML = `
+                <img id="detail-img-${p.id}" src="${p.img}" style="width:100%; height:260px; object-fit:cover; border-radius:16px; margin-bottom:1rem;">
+                <h2 style="font-size:1.5rem; font-family:'Playfair Display', serif;">${p.name}</h2>
+                <div style="font-size:1.5rem; font-weight:800; color:var(--accent-gold); margin: 6px 0;">
+                    ${priceDisplay}
+                </div>
+                ${p.initialPay ? `<div style="font-size:0.85rem; color:var(--text-secondary);">Cuota inicial desde: $${parseFloat(p.initialPay).toFixed(2)}</div>` : ''}
+                <p style="color:var(--text-secondary); line-height: 1.5; margin-top:8px;">${p.note || 'Fragancia importada de alta concentración.'}</p>
+                <button class="btn-primary" style="width:100%; margin-top:1.5rem;" onclick="addToCartWithVariant('${p.id}', this); closeDetailModal();">Agregar al Carrito</button>
+            `;
+            document.getElementById('detail-modal').classList.add('active');
+        }
+
+        function closeDetailModal() { document.getElementById('detail-modal').classList.remove('active'); }
+
+        function addToCartWithVariant(id, btnElement) {
+            playSound('spray');
+            const p = products.find(prod => prod.id === id);
+            if(!p) return;
+
+            // Disparar animación de imagen volando
+            const imgEl = document.getElementById(`img-product-${p.id}`) || document.getElementById(`detail-img-${p.id}`);
+            animateFlyToCart(p.img, imgEl || btnElement);
+
+            let itemName = p.name;
+            let itemPrice = getEffectivePrice(p);
+            let itemInitial = p.initialPay || 0;
+
+            const selectEl = document.getElementById(`select-variant-${p.id}`);
+            if(selectEl && p.subvariants && p.subvariants[selectEl.value]) {
+                const selectedSub = p.subvariants[selectEl.value];
+                itemName = `${p.name} (${selectedSub.name})`;
+                itemPrice = getSubvariantEffectivePrice(selectedSub, p);
+                itemInitial = selectedSub.initialPay || itemInitial;
+            }
+
+            const itemKey = `${p.id}_${itemName}`;
+            const existing = cart.find(item => item.key === itemKey);
+            
+            if(existing) existing.qty++;
+            else cart.push({ key: itemKey, id: p.id, name: itemName, price: itemPrice, initialPay: itemInitial, img: p.img, qty: 1 });
+            
+            saveCartLocal();
+            updateCartUI();
+        }
+
+        function addToCart(id) { addToCartWithVariant(id); }
+
+        function updateCartUI() {
+            document.getElementById('cart-count').innerText = cart.reduce((sum, item) => sum + item.qty, 0);
+            const container = document.getElementById('cart-items-container');
+            container.innerHTML = '';
+
+            let totalPrice = 0;
+            cart.forEach((item, index) => {
+                const subtotal = item.price * item.qty;
+                totalPrice += subtotal;
+                const row = document.createElement('div');
+                row.className = 'cart-item';
+                row.innerHTML = `
+                    <img src="${item.img}">
+                    <div style="flex:1;"><div style="font-weight:600;">${item.name}</div><div style="font-size:0.85rem; color:var(--text-secondary);">$${parseFloat(item.price).toFixed(2)} c/u</div></div>
+                    <div class="cart-controls">
+                        <button class="btn-secondary" style="padding:2px 8px;" onclick="changeQty(${index}, -1)">-</button>
+                        <span>${item.qty}</span>
+                        <button class="btn-secondary" style="padding:2px 8px;" onclick="changeQty(${index}, 1)">+</button>
+                    </div>
+                `;
+                container.appendChild(row);
+            });
+
+            document.getElementById('cart-total-price').innerText = totalPrice.toFixed(2);
+            updatePayMethodUI(totalPrice);
+        }
+
+        function changeQty(index, delta) {
+            cart[index].qty += delta;
+            if(cart[index].qty <= 0) cart.splice(index, 1);
+            saveCartLocal();
+            updateCartUI();
+        }
+
+        function openCartModal() { updateCartUI(); document.getElementById('cart-modal').classList.add('active'); }
+        function closeCartModal() { document.getElementById('cart-modal').classList.remove('active'); }
+
+        function updatePayMethodUI(total) {
+            const select = document.getElementById('cart-pay-method');
+            select.innerHTML = '';
+            if(payConfig.pm) select.innerHTML += `<option value="pm">Pago Móvil</option>`;
+            if(payConfig.efectivo) select.innerHTML += `<option value="efectivo">Efectivo</option>`;
+            if(payConfig.cuotas) select.innerHTML += `<option value="cuotas">Cuotas Financiadas</option>`;
+            handlePayMethodChange();
+        }
+
+        function handlePayMethodChange() {
+            const val = document.getElementById('cart-pay-method').value;
+            document.getElementById('pay-details-pm').style.display = val === 'pm' ? 'block' : 'none';
+            document.getElementById('pay-details-efectivo').style.display = val === 'efectivo' ? 'block' : 'none';
+            document.getElementById('pay-details-cuotas').style.display = val === 'cuotas' ? 'block' : 'none';
+
+            if(val === 'pm') {
+                document.getElementById('pm-banco-lbl').innerText = payConfig.pmBanco;
+                document.getElementById('pm-telf-lbl').innerText = payConfig.pmTelf;
+                document.getElementById('pm-cedula-lbl').innerText = payConfig.pmCedula;
+            } else if(val === 'cuotas') {
+                const total = parseFloat(document.getElementById('cart-total-price').innerText) || 0;
+                
+                let requiredInitial = cart.reduce((sum, item) => sum + (parseFloat(item.initialPay || 0) * item.qty), 0);
+                
+                const restante = Math.max(0, total - requiredInitial);
+                const cuotaMonto = (restante / (cuotasConfig.numCuotas || 1)).toFixed(2);
+                
+                document.getElementById('cuotas-inicial-val').innerText = requiredInitial.toFixed(2);
+                document.getElementById('cuotas-num-lbl').innerText = cuotasConfig.numCuotas;
+                document.getElementById('cuotas-frec-lbl').innerText = cuotasConfig.frecuencia;
+                document.getElementById('cuotas-monto-val').innerText = cuotaMonto;
+            }
+        }
+
+        async function buyNowWhatsApp(event) {
+            if(cart.length === 0) return alert("Tu carrito está vacío.");
+            if(!clientName) {
+                document.getElementById('user-modal').classList.add('active');
+                return;
+            }
+
+            playSound('buy');
+            const clientX = event ? event.clientX : window.innerWidth / 2;
+            const clientY = event ? event.clientY : window.innerHeight / 2;
+            spawnFloatingEmojis(clientX, clientY);
+
+            const methodSelect = document.getElementById('cart-pay-method');
+            const methodText = methodSelect.options[methodSelect.selectedIndex] ? methodSelect.options[methodSelect.selectedIndex].text : "No seleccionado";
+            const totalPrice = document.getElementById('cart-total-price').innerText;
+
+            const orderData = {
+                clientName,
+                items: cart,
+                totalPrice,
+                payMethod: methodText,
+                status: 'Pendiente',
+                date: new Date().toLocaleString()
+            };
+
+            await window.addDoc(window.collection(window.db, "orders"), orderData);
+
+            let msg = `✨ *NUEVO PEDIDO - LUXURY SCENTS* ✨\n👤 *Cliente:* ${clientName}\n\n📋 *Detalle del Pedido:*\n`;
+            cart.forEach((item, i) => { msg += `${i + 1}. *${item.name}* x${item.qty} - $${(item.price * item.qty).toFixed(2)}\n`; });
+            msg += `\n💰 *Total:* $${totalPrice}\n💳 *Método de Pago:* ${methodText}\n\nQuedo atento para coordinar. ¡Gracias!`;
+
+            // CORRECCIÓN: Uso del enlace universal de la API de WhatsApp para compatibilidad móvil perfecta
+            const phone = "584249327643";
+            const waUrl = `https://api.whatsapp.com/send?phone=${phone}&text=${encodeURIComponent(msg)}`;
+
+            setTimeout(() => {
+                window.location.href = waUrl;
+            }, 300);
+        }
+
+        function toggleTheme() {
+            const html = document.documentElement;
+            html.setAttribute('data-theme', html.getAttribute('data-theme') === 'dark' ? 'light' : 'dark');
+        }
+
+        function openAdminModal() { document.getElementById('login-modal').classList.add('active'); }
+        function closeLoginModal() { document.getElementById('login-modal').classList.remove('active'); document.getElementById('admin-pass-input').value = ''; }
+
+        function loginWithPass() {
+            if(document.getElementById('admin-pass-input').value === adminPass) {
+                closeLoginModal();
+                showAdminPanel();
+            } else alert("PIN incorrecto.");
+        }
+
+        function showAdminPanel() {
+            document.getElementById('admin-panel').classList.add('active');
+            renderAdminInventory();
+            renderAdminOrders();
+
+            document.getElementById('cfg-layout-mode').value = layoutMode;
+
+            document.getElementById('cfg-pay-pm').checked = payConfig.pm;
+            document.getElementById('cfg-pay-efectivo').checked = payConfig.efectivo;
+            document.getElementById('cfg-pay-cuotas').checked = payConfig.cuotas;
+            document.getElementById('cfg-pm-banco').value = payConfig.pmBanco || '';
+            document.getElementById('cfg-pm-telf').value = payConfig.pmTelf || '';
+            document.getElementById('cfg-pm-cedula').value = payConfig.pmCedula || '';
+
+            document.getElementById('cfg-num-cuotas').value = cuotasConfig.numCuotas;
+            document.getElementById('cfg-frecuencia').value = cuotasConfig.frecuencia;
+        }
+
+        function closeAdminPanel() { document.getElementById('admin-panel').classList.remove('active'); }
+
+        async function saveLayoutConfig() {
+            const mode = document.getElementById('cfg-layout-mode').value;
+            await window.setDoc(window.doc(window.db, "config", "layout"), { mode });
+            alert("Diseño del catálogo guardado.");
+        }
+
+        function renderAdminOrders() {
+            const container = document.getElementById('admin-orders-list');
+            if(!container) return;
+            container.innerHTML = '';
+
+            if(orders.length === 0) {
+                container.innerHTML = '<div style="font-size:0.85rem; color:var(--text-secondary);">No hay pedidos registrados aún.</div>';
+                return;
+            }
+
+            orders.forEach(o => {
+                const card = document.createElement('div');
+                card.style.cssText = 'background:rgba(255,255,255,0.03); border:1px solid var(--border-color); padding:10px; border-radius:10px; margin-bottom:8px; font-size:0.85rem;';
+                
+                let itemsList = o.items ? o.items.map(i => `${i.name} (x${i.qty})`).join(', ') : '';
+                const isPaid = o.status === 'Pagado';
+
+                card.innerHTML = `
+                    <div style="display:flex; justify-content:space-between; align-items:center;">
+                        <span style="font-weight:700; color:var(--accent-gold);">👤 ${o.clientName || 'Cliente'}</span>
+                        <span class="order-badge ${isPaid ? 'badge-paid' : 'badge-pending'}">${o.status || 'Pendiente'}</span>
+                    </div>
+                    <div style="margin-top:4px;"><strong>Items:</strong> ${itemsList}</div>
+                    <div><strong>Total:</strong> $${o.totalPrice} | <strong>Pago:</strong> ${o.payMethod}</div>
+                    <div style="font-size:0.75rem; color:var(--text-secondary); margin-top:4px;">📅 ${o.date || ''}</div>
+                    <div style="display:flex; gap:6px; margin-top:8px;">
+                        <button class="btn-secondary" style="font-size:0.75rem; padding:4px 8px;" onclick="toggleOrderStatus('${o.id}', '${o.status || 'Pendiente'}')">
+                            ${isPaid ? 'Marcar Pendiente' : 'Marcar Pagado'}
+                        </button>
+                        <button class="btn-danger" style="font-size:0.75rem; padding:4px 8px;" onclick="deleteOrder('${o.id}')">Eliminar</button>
+                    </div>
+                `;
+                container.appendChild(card);
+            });
+        }
+
+        async function toggleOrderStatus(id, currentStatus) {
+            const newStatus = currentStatus === 'Pagado' ? 'Pendiente' : 'Pagado';
+            await window.updateDoc(window.doc(window.db, "orders", id), { status: newStatus });
+        }
+
+        async function deleteOrder(id) {
+            if(confirm("¿Seguro que deseas eliminar este pedido?")) {
+                await window.deleteDoc(window.doc(window.db, "orders", id));
+            }
+        }
+
+        function renderAdminInventory() {
+            const priceList = document.getElementById('admin-price-list');
+            priceList.innerHTML = '';
+            products.forEach((p, index) => {
+                const row = document.createElement('div');
+                row.className = 'admin-item';
+                row.innerHTML = `
+                    <span style="font-weight: 600; flex:1;">${p.name}</span>
+                    <div class="admin-item-controls">
+                        <button class="btn-secondary" style="font-size:0.8rem; padding:4px 8px;" onclick="moveProductOrder(${index}, -1)">⬆️</button>
+                        <button class="btn-secondary" style="font-size:0.8rem; padding:4px 8px;" onclick="moveProductOrder(${index}, 1)">⬇️</button>
+                        <button class="btn-secondary" style="font-size: 0.8rem; padding: 6px 10px;" onclick="openEditModal('${p.id}')">✏️ Editar</button>
+                        <button class="btn-danger" style="font-size: 0.8rem; padding: 6px 10px;" onclick="deleteProduct('${p.id}')">🗑️ Eliminar</button>
+                    </div>
+                `;
+                priceList.appendChild(row);
+            });
+        }
+
+        async function moveProductOrder(index, direction) {
+            const targetIndex = index + direction;
+            if(targetIndex < 0 || targetIndex >= products.length) return;
+
+            const p1 = products[index];
+            const p2 = products[targetIndex];
+
+            await window.updateDoc(window.doc(window.db, "products", p1.id), { order: targetIndex });
+            await window.updateDoc(window.doc(window.db, "products", p2.id), { order: index });
+        }
+
+        async function addNewProduct() {
+            const name = document.getElementById('new-name').value.trim();
+            const price = parseFloat(document.getElementById('new-price').value);
+            const initialPay = parseFloat(document.getElementById('new-initial').value) || 0;
+            const note = document.getElementById('new-note').value.trim();
+            const isNew = document.getElementById('new-is-new').checked;
+
+            const isOffer = document.getElementById('new-is-offer').checked;
+            const offerPrice = parseFloat(document.getElementById('new-offer-price').value) || 0;
+            const offerUntil = document.getElementById('new-offer-until').value || "";
+
+            if (!name || isNaN(price)) return alert("Nombre y precio requeridos.");
+
+            const subvariantRows = document.querySelectorAll('#subvariants-container .subvariant-row');
+            let subvariants = [];
+            subvariantRows.forEach(row => {
+                const subName = row.querySelector('.sub-name').value.trim();
+                const subPrice = parseFloat(row.querySelector('.sub-price').value) || price;
+                const subInitial = parseFloat(row.querySelector('.sub-initial').value) || initialPay;
+                const subIsOffer = row.querySelector('.sub-is-offer') ? row.querySelector('.sub-is-offer').checked : false;
+                const subOfferPrice = row.querySelector('.sub-offer-price') ? parseFloat(row.querySelector('.sub-offer-price').value) || 0 : 0;
+                
+                if(subName) {
+                    subvariants.push({ 
+                        name: subName, 
+                        price: subPrice, 
+                        initialPay: subInitial,
+                        isOffer: subIsOffer,
+                        offerPrice: subOfferPrice
+                    });
+                }
+            });
+
+            const img = tempBase64Image || "https://images.unsplash.com/photo-1592945403244-b3fbafd7f539?w=400";
+
+            await window.addDoc(window.collection(window.db, "products"), {
+                name, price, initialPay, note, isNew, isOffer, offerPrice, offerUntil, img, subvariants, order: products.length
+            });
+
+            alert("¡Colonia agregada!");
+            document.getElementById('new-name').value = '';
+            document.getElementById('new-price').value = '';
+            document.getElementById('new-initial').value = '';
+            document.getElementById('new-note').value = '';
+            document.getElementById('new-is-new').checked = false;
+            document.getElementById('new-is-offer').checked = false;
+            document.getElementById('new-offer-price').value = '';
+            document.getElementById('new-offer-until').value = '';
+            document.getElementById('new-offer-box').style.display = 'none';
+            document.getElementById('subvariants-container').innerHTML = '';
+            document.getElementById('new-img-preview').innerHTML = 'Vista Previa';
+            tempBase64Image = "";
+        }
+
+        async function deleteProduct(id) {
+            if(confirm("¿Deseas eliminar este perfume / publicación por completo?")) {
+                await window.deleteDoc(window.doc(window.db, "products", id));
+            }
+        }
+
+        function openEditModal(id) {
+            const p = products.find(item => item.id === id);
+            document.getElementById('edit-prod-id').value = id;
+            document.getElementById('edit-name').value = p.name || '';
+            document.getElementById('edit-price').value = p.price || 0;
+            document.getElementById('edit-initial').value = p.initialPay || 0;
+            document.getElementById('edit-note').value = p.note || '';
+            document.getElementById('edit-is-new').checked = !!p.isNew;
+            
+            document.getElementById('edit-is-offer').checked = !!p.isOffer;
+            document.getElementById('edit-offer-price').value = p.offerPrice || '';
+            document.getElementById('edit-offer-until').value = p.offerUntil || '';
+            toggleOfferFields('edit');
+
+            const subContainer = document.getElementById('edit-subvariants-container');
+            subContainer.innerHTML = '';
+            if(p.subvariants && p.subvariants.length > 0) {
+                p.subvariants.forEach(sv => addSubvariantField('edit-subvariants-container', sv.name, sv.price, sv.initialPay, sv.isOffer, sv.offerPrice));
+            }
+
+            const preview = document.getElementById('edit-img-preview');
+            preview.innerHTML = p.img ? `<img src="${p.img}" style="width:100%; height:100%; object-fit:cover;">` : 'Vista Previa';
+            tempBase64Image = "";
+            document.getElementById('edit-product-modal').classList.add('active');
+        }
+
+        function closeEditModal() { document.getElementById('edit-product-modal').classList.remove('active'); }
+
+        async function saveProductEdits() {
+            const id = document.getElementById('edit-prod-id').value;
+            const name = document.getElementById('edit-name').value.trim();
+            const price = parseFloat(document.getElementById('edit-price').value);
+            const initialPay = parseFloat(document.getElementById('edit-initial').value) || 0;
+            const note = document.getElementById('edit-note').value.trim();
+            const isNew = document.getElementById('edit-is-new').checked;
+
+            const isOffer = document.getElementById('edit-is-offer').checked;
+            const offerPrice = parseFloat(document.getElementById('edit-offer-price').value) || 0;
+            const offerUntil = document.getElementById('edit-offer-until').value || "";
+
+            const subvariantRows = document.querySelectorAll('#edit-subvariants-container .subvariant-row');
+            let subvariants = [];
+            subvariantRows.forEach(row => {
+                const subName = row.querySelector('.sub-name').value.trim();
+                const subPrice = parseFloat(row.querySelector('.sub-price').value) || price;
+                const subInitial = parseFloat(row.querySelector('.sub-initial').value) || initialPay;
+                const subIsOffer = row.querySelector('.sub-is-offer') ? row.querySelector('.sub-is-offer').checked : false;
+                const subOfferPrice = row.querySelector('.sub-offer-price') ? parseFloat(row.querySelector('.sub-offer-price').value) || 0 : 0;
+                
+                if(subName) {
+                    subvariants.push({ 
+                        name: subName, 
+                        price: subPrice, 
+                        initialPay: subInitial,
+                        isOffer: subIsOffer,
+                        offerPrice: subOfferPrice
+                    });
+                }
+            });
+
+            let data = { name, price, initialPay, note, isNew, isOffer, offerPrice, offerUntil, subvariants };
+            if (tempBase64Image) data.img = tempBase64Image;
+
+            await window.updateDoc(window.doc(window.db, "products", id), data);
+            closeEditModal();
+            alert("¡Cambios guardados!");
+            tempBase64Image = "";
+        }
+
+        async function savePayMethodsConfig() {
+            const data = {
+                pm: document.getElementById('cfg-pay-pm').checked,
+                efectivo: document.getElementById('cfg-pay-efectivo').checked,
+                cuotas: document.getElementById('cfg-pay-cuotas').checked,
+                pmBanco: document.getElementById('cfg-pm-banco').value,
+                pmTelf: document.getElementById('cfg-pm-telf').value,
+                pmCedula: document.getElementById('cfg-pm-cedula').value
+            };
+            await window.setDoc(window.doc(window.db, "config", "pay"), data);
+            alert("Métodos de pago guardados.");
+        }
+
+        async function saveCuotasConfig() {
+            const data = {
+                numCuotas: parseInt(document.getElementById('cfg-num-cuotas').value) || 1,
+                frecuencia: document.getElementById('cfg-frecuencia').value
+            };
+            await window.setDoc(window.doc(window.db, "config", "cuotas"), data);
+            alert("Parámetros de cuotas guardados.");
+        }
+
+        async function changePassword() {
+            const newPass = document.getElementById('new-pass-input').value;
+            if(newPass.length === 8) {
+                await window.setDoc(window.doc(window.doc(window.db, "config", "security"), { pin: newPass }));
+                alert("PIN de acceso actualizado.");
+                document.getElementById('new-pass-input').value = '';
+            } else alert("El PIN debe ser de 8 dígitos.");
+        }
+    </script>
+</body>
+</html>
