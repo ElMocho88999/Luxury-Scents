@@ -164,7 +164,6 @@
 
         .container { max-width: 1200px; margin: 2rem auto; padding: 0 1.5rem; }
 
-        /* Banner visible para el público cuando tenga contenido */
         .banner-slider-container {
             width: 100%;
             height: auto;
@@ -387,6 +386,42 @@
             transform: scale(0.9); transition: transform 0.3s var(--ease-spring);
         }
         .modal-overlay.active .modal { transform: scale(1); }
+
+        /* ESTILOS REESTRUCTURADOS PARA EL PANEL ADMINISTRATIVO */
+        .modal-admin-redesign {
+            max-width: 680px !important;
+            padding: 1.75rem !important;
+        }
+
+        .admin-section-card {
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid var(--border-color);
+            border-left: 4px solid var(--accent-gold);
+            border-radius: 16px;
+            padding: 1.25rem;
+            margin-bottom: 1.25rem;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.25);
+        }
+
+        .admin-section-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.15rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 0.85rem;
+            padding-bottom: 6px;
+            border-bottom: 1px dashed var(--border-color);
+        }
+
+        .admin-divider {
+            height: 1px;
+            background: linear-gradient(90deg, transparent, var(--border-highlight), transparent);
+            margin: 1.5rem 0;
+            border: none;
+        }
 
         .form-group { margin-bottom: 1.25rem; display: flex; flex-direction: column; gap: 6px; }
         .form-group label { font-size: 0.85rem; font-weight: 600; color: var(--text-secondary); }
@@ -683,117 +718,144 @@
         </div>
     </div>
 
-    <!-- Modal Panel Admin -->
+    <!-- Panel de Control del Vendedor Reestructurado -->
     <div class="modal-overlay" id="admin-panel">
-        <div class="modal">
-            <h2 style="font-family:'Playfair Display', serif;">Panel de Control</h2>
-
-            <h3>📦 Pedidos de Clientes</h3>
-            <div id="admin-orders-list" style="margin-bottom: 1rem; max-height: 250px; overflow-y: auto;"></div>
-
-            <hr class="divider">
-
-            <h3>✨ Banners de Novedades</h3>
-            <div class="form-group">
-                <label>Imagen del Banner:</label>
-                <input type="file" id="new-banner-img-file" accept="image/*" onchange="previewBannerImage(this, 'new-banner-img-preview')">
-                <div id="new-banner-img-preview" style="height:80px; border:1px dashed var(--border-color); margin-top:6px; display:flex; align-items:center; justify-content:center; overflow:hidden; border-radius:12px;">Vista Previa Banner</div>
+        <div class="modal modal-admin-redesign">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1.25rem;">
+                <h2 style="font-family:'Playfair Display', serif; font-size:1.6rem; color:var(--accent-gold);">⚙️ Panel de Control</h2>
+                <button class="btn-gold" style="padding:6px 14px; font-size:0.85rem;" onclick="closeAdminPanel()">✕ Cerrar</button>
             </div>
-            <button class="btn-secondary" style="width: 100%; margin-bottom: 1rem;" onclick="addBannerItem()">Guardar Banner</button>
-            <div id="admin-banners-list" style="margin-bottom: 1rem; max-height: 150px; overflow-y: auto;"></div>
 
-            <hr class="divider">
-
-            <h3>🏷️ Gestión de Categorías</h3>
-            <div class="form-group">
-                <label>Nueva Categoría:</label>
+            <!-- SECCIÓN 1: CAMBIAR FONDO DESDE LA GALERÍA -->
+            <div class="admin-section-card">
+                <div class="admin-section-title">🎨 Personalización del Fondo del Sitio</div>
+                <div class="form-group">
+                    <label>Selecciona una imagen de tu galería para el fondo:</label>
+                    <input type="file" id="bg-custom-file" accept="image/*" onchange="previewCustomBg(this)">
+                    <div id="bg-preview-container" style="height:110px; border:1px dashed var(--border-highlight); margin-top:8px; border-radius:12px; display:flex; align-items:center; justify-content:center; overflow:hidden; background:rgba(0,0,0,0.3);">
+                        <span style="font-size:0.85rem; color:var(--text-secondary);">Vista previa del fondo</span>
+                    </div>
+                </div>
                 <div style="display:flex; gap:8px;">
-                    <input type="text" id="new-category-name" placeholder="Ej: Relojes, Árabes..." style="flex:1;">
-                    <button class="btn-secondary" onclick="addCustomCategory()">Agregar</button>
-                </div>
-            </div>
-            <div id="admin-categories-list" style="margin-bottom: 1rem; max-height: 150px; overflow-y: auto;"></div>
-
-            <hr class="divider">
-
-            <h3>Diseño de Inicio</h3>
-            <div class="form-group">
-                <label>Diseño del Catálogo en Inicio:</label>
-                <select id="cfg-layout-mode">
-                    <option value="grid">Grilla Tradicional</option>
-                    <option value="horizontal">Horizontal (Deslizable)</option>
-                </select>
-            </div>
-            <button class="btn-secondary" style="width: 100%; margin-bottom: 1rem;" onclick="saveLayoutConfig()">Guardar Diseño</button>
-
-            <hr class="divider">
-
-            <h3>Agregar Producto</h3>
-            <div class="form-group"><label>Nombre del Producto / Marca:</label><input type="text" id="new-name" placeholder="Ej: Colección Yara"></div>
-            <div class="form-group">
-                <label>Categoría (Una sola):</label>
-                <select id="new-category"></select>
-            </div>
-            <div class="form-group"><label>Precio Normal / Base ($):</label><input type="number" id="new-price" step="0.5" placeholder="6.5"></div>
-            <div class="form-group"><label>Cuota Inicial Individual ($):</label><input type="number" id="new-initial" step="0.5" placeholder="5.0"></div>
-            <div class="form-group"><label>Nota / Descripción corta:</label><input type="text" id="new-note" placeholder="Ej: Fragancias orientales Lattafa"></div>
-            
-            <div class="form-group" style="background:rgba(239, 68, 68, 0.05); padding:10px; border-radius:10px; border:1px dashed rgba(239, 68, 68, 0.3);">
-                <label><input type="checkbox" id="new-is-offer" onchange="toggleOfferFields('new')"> 🔥 Activar Oferta Especial (Tacha el precio base)</label>
-                <div id="new-offer-box" style="display:none; margin-top:8px;">
-                    <div class="form-group"><label>Precio en Oferta ($):</label><input type="number" id="new-offer-price" step="0.5" placeholder="5.0"></div>
-                    <div class="form-group"><label>Fecha y Hora Límite:</label><input type="datetime-local" id="new-offer-until"></div>
+                    <button class="btn-gold" style="flex:1;" onclick="saveCustomBg()">Aplicar Nuevo Fondo</button>
+                    <button class="btn-danger" style="font-size:0.8rem; padding:8px 12px;" onclick="resetCustomBg()">Restablecer Fondo Estelar</button>
                 </div>
             </div>
 
-            <div class="form-group">
-                <label>Variantes / Presentaciones / Sets:</label>
-                <div id="subvariants-container"></div>
-                <button class="btn-secondary" type="button" style="padding:4px 10px; font-size:0.8rem; margin-top:4px;" onclick="addSubvariantField('subvariants-container')">+ Agregar Variante / Set</button>
+            <!-- SECCIÓN 2: PEDIDOS DE CLIENTES -->
+            <div class="admin-section-card">
+                <div class="admin-section-title">📦 Pedidos de Clientes</div>
+                <div id="admin-orders-list" style="max-height: 220px; overflow-y: auto;"></div>
             </div>
 
-            <div class="form-group">
-                <label>Imágenes del Producto (Puedes subir varias):</label>
-                <input type="file" id="new-img-files" accept="image/*" multiple onchange="previewMultipleImages(this, 'new-img-preview-container')">
-                <div id="new-img-preview-container" style="display:flex; gap:8px; flex-wrap:wrap; margin-top:6px; min-height:80px; border:1px dashed var(--border-color); border-radius:12px; padding:8px; align-items:center;">Vista Previa</div>
+            <!-- SECCIÓN 3: BANNERS DE NOVEDADES -->
+            <div class="admin-section-card">
+                <div class="admin-section-title">✨ Banners Promocionales</div>
+                <div class="form-group">
+                    <label>Subir nuevo banner:</label>
+                    <input type="file" id="new-banner-img-file" accept="image/*" onchange="previewBannerImage(this, 'new-banner-img-preview')">
+                    <div id="new-banner-img-preview" style="height:80px; border:1px dashed var(--border-color); margin-top:6px; display:flex; align-items:center; justify-content:center; overflow:hidden; border-radius:12px;">Vista Previa Banner</div>
+                </div>
+                <button class="btn-secondary" style="width: 100%; margin-bottom: 1rem;" onclick="addBannerItem()">Guardar Banner</button>
+                <div id="admin-banners-list" style="max-height: 150px; overflow-y: auto;"></div>
             </div>
 
-            <button class="btn-primary" style="width: 100%; margin-bottom: 1rem;" onclick="addNewProduct()">Guardar en la Nube</button>
-
-            <hr class="divider">
-
-            <h3>Inventario y Reordenamiento</h3>
-            <div id="admin-price-list" style="margin-bottom: 1rem; max-height: 250px; overflow-y: auto;"></div>
-
-            <hr class="divider">
-
-            <h3>Métodos de Pago</h3>
-            <div style="display:flex; flex-direction:column; gap:8px; margin-bottom:1rem;">
-                <label><input type="checkbox" id="cfg-pay-pm"> Pago Móvil</label>
-                <label><input type="checkbox" id="cfg-pay-efectivo"> Efectivo</label>
-                <label><input type="checkbox" id="cfg-pay-cuotas"> Cuotas</label>
+            <!-- SECCIÓN 4: NAVEGACIÓN Y CATEGORÍAS -->
+            <div class="admin-section-card">
+                <div class="admin-section-title">🏷️ Gestión de Categorías</div>
+                <div class="form-group">
+                    <label>Agregar nueva categoría:</label>
+                    <div style="display:flex; gap:8px;">
+                        <input type="text" id="new-category-name" placeholder="Ej: Relojes, Árabes..." style="flex:1;">
+                        <button class="btn-secondary" onclick="addCustomCategory()">Agregar</button>
+                    </div>
+                </div>
+                <div id="admin-categories-list" style="max-height: 140px; overflow-y: auto;"></div>
             </div>
 
-            <h4 style="margin-bottom: 0.5rem;">Datos Pago Móvil:</h4>
-            <div class="form-group"><label>Banco:</label><input type="text" id="cfg-pm-banco"></div>
-            <div class="form-group"><label>Teléfono:</label><input type="text" id="cfg-pm-telf"></div>
-            <div class="form-group"><label>Cédula / RIF:</label><input type="text" id="cfg-pm-cedula"></div>
-            <button class="btn-secondary" style="width: 100%; margin-bottom: 1rem;" onclick="savePayMethodsConfig()">Guardar Métodos</button>
+            <!-- SECCIÓN 5: DISEÑO DE VISTA DE INICIO -->
+            <div class="admin-section-card">
+                <div class="admin-section-title">📐 Estilo de Vista en Inicio</div>
+                <div class="form-group">
+                    <label>Disposición del catálogo:</label>
+                    <select id="cfg-layout-mode">
+                        <option value="grid">Grilla Tradicional</option>
+                        <option value="horizontal">Horizontal (Deslizable)</option>
+                    </select>
+                </div>
+                <button class="btn-secondary" style="width: 100%;" onclick="saveLayoutConfig()">Guardar Formato</button>
+            </div>
 
-            <hr class="divider">
+            <!-- SECCIÓN 6: AGREGAR PRODUCTO NUEVO -->
+            <div class="admin-section-card">
+                <div class="admin-section-title">➕ Publicar Nuevo Producto</div>
+                <div class="form-group"><label>Nombre del Producto / Marca:</label><input type="text" id="new-name" placeholder="Ej: Colección Yara"></div>
+                <div class="form-group">
+                    <label>Categoría:</label>
+                    <select id="new-category"></select>
+                </div>
+                <div class="form-group"><label>Precio Normal / Base ($):</label><input type="number" id="new-price" step="0.5" placeholder="6.5"></div>
+                <div class="form-group"><label>Cuota Inicial Individual ($):</label><input type="number" id="new-initial" step="0.5" placeholder="5.0"></div>
+                <div class="form-group"><label>Nota / Descripción corta:</label><input type="text" id="new-note" placeholder="Ej: Fragancias orientales Lattafa"></div>
+                
+                <div class="form-group" style="background:rgba(239, 68, 68, 0.05); padding:10px; border-radius:10px; border:1px dashed rgba(239, 68, 68, 0.3);">
+                    <label><input type="checkbox" id="new-is-offer" onchange="toggleOfferFields('new')"> 🔥 Activar Oferta Especial (Tacha el precio base)</label>
+                    <div id="new-offer-box" style="display:none; margin-top:8px;">
+                        <div class="form-group"><label>Precio en Oferta ($):</label><input type="number" id="new-offer-price" step="0.5" placeholder="5.0"></div>
+                        <div class="form-group"><label>Fecha y Hora Límite:</label><input type="datetime-local" id="new-offer-until"></div>
+                    </div>
+                </div>
 
-            <h3>Configuración General de Cuotas</h3>
-            <div class="form-group"><label>N° Cuotas:</label><input type="number" id="cfg-num-cuotas"></div>
-            <div class="form-group"><label>Frecuencia:</label><input type="text" id="cfg-frecuencia"></div>
-            <button class="btn-secondary" style="margin-bottom: 1rem; width: 100%;" onclick="saveCuotasConfig()">Guardar Parámetros Cuotas</button>
+                <div class="form-group">
+                    <label>Variantes / Presentaciones / Sets:</label>
+                    <div id="subvariants-container"></div>
+                    <button class="btn-secondary" type="button" style="padding:4px 10px; font-size:0.8rem; margin-top:4px;" onclick="addSubvariantField('subvariants-container')">+ Agregar Variante / Set</button>
+                </div>
 
-            <hr class="divider">
+                <div class="form-group">
+                    <label>Imágenes del Producto:</label>
+                    <input type="file" id="new-img-files" accept="image/*" multiple onchange="previewMultipleImages(this, 'new-img-preview-container')">
+                    <div id="new-img-preview-container" style="display:flex; gap:8px; flex-wrap:wrap; margin-top:6px; min-height:80px; border:1px dashed var(--border-color); border-radius:12px; padding:8px; align-items:center;">Vista Previa</div>
+                </div>
 
-            <h3>Seguridad</h3>
-            <div class="form-group"><label>Nuevo PIN (8 dígitos):</label><input type="password" id="new-pass-input" maxlength="8"></div>
-            <button class="btn-secondary" style="width: 100%;" onclick="changePassword()">Cambiar PIN</button>
+                <button class="btn-primary" style="width: 100%; margin-top:0.5rem;" onclick="addNewProduct()">Guardar en la Nube</button>
+            </div>
 
-            <button class="btn-gold" style="margin-top: 1.5rem; width: 100%;" onclick="closeAdminPanel()">Cerrar Panel</button>
+            <!-- SECCIÓN 7: INVENTARIO Y REORDENAR -->
+            <div class="admin-section-card">
+                <div class="admin-section-title">📋 Inventario y Posición de Productos</div>
+                <div id="admin-price-list" style="max-height: 250px; overflow-y: auto;"></div>
+            </div>
+
+            <!-- SECCIÓN 8: MÉTODOS DE PAGO Y CUOTAS -->
+            <div class="admin-section-card">
+                <div class="admin-section-title">💳 Ajustes de Pagos y Financiamiento</div>
+                <div style="display:flex; flex-direction:column; gap:8px; margin-bottom:1rem;">
+                    <label><input type="checkbox" id="cfg-pay-pm"> Pago Móvil</label>
+                    <label><input type="checkbox" id="cfg-pay-efectivo"> Efectivo</label>
+                    <label><input type="checkbox" id="cfg-pay-cuotas"> Cuotas</label>
+                </div>
+
+                <h4 style="margin-bottom: 0.5rem; font-size:0.9rem;">Datos Pago Móvil:</h4>
+                <div class="form-group"><label>Banco:</label><input type="text" id="cfg-pm-banco"></div>
+                <div class="form-group"><label>Teléfono:</label><input type="text" id="cfg-pm-telf"></div>
+                <div class="form-group"><label>Cédula / RIF:</label><input type="text" id="cfg-pm-cedula"></div>
+                <button class="btn-secondary" style="width: 100%; margin-bottom: 1.25rem;" onclick="savePayMethodsConfig()">Guardar Datos Pago Móvil</button>
+
+                <h4 style="margin-bottom: 0.5rem; font-size:0.9rem;">Parámetros de Cuotas:</h4>
+                <div class="form-group"><label>N° Cuotas:</label><input type="number" id="cfg-num-cuotas"></div>
+                <div class="form-group"><label>Frecuencia:</label><input type="text" id="cfg-frecuencia"></div>
+                <button class="btn-secondary" style="width: 100%;" onclick="saveCuotasConfig()">Guardar Cuotas</button>
+            </div>
+
+            <!-- SECCIÓN 9: SEGURIDAD Y PIN -->
+            <div class="admin-section-card">
+                <div class="admin-section-title">🔒 Seguridad del Panel</div>
+                <div class="form-group"><label>Nuevo PIN (8 dígitos):</label><input type="password" id="new-pass-input" maxlength="8"></div>
+                <button class="btn-secondary" style="width: 100%;" onclick="changePassword()">Cambiar PIN</button>
+            </div>
+
+            <button class="btn-gold" style="margin-top: 1rem; width: 100%;" onclick="closeAdminPanel()">Finalizar y Cerrar Panel</button>
         </div>
     </div>
 
@@ -979,6 +1041,7 @@
         let clientName = localStorage.getItem('ls_client_name') || "";
         let tempImagesList = [];
         let tempBannerBase64Image = "";
+        let tempCustomBgBase64 = "";
 
         let logoClickCount = 0;
         let logoClickTimer = null;
@@ -1092,6 +1155,40 @@
             document.getElementById(`${prefix}-offer-box`).style.display = isOffer ? 'block' : 'none';
         }
 
+        function applyBgToBody(bgUrl) {
+            const defaultBg = "https://images.unsplash.com/photo-1506703719100-a0f3a48c0f86?w=1600";
+            const urlToUse = bgUrl || defaultBg;
+            document.body.style.backgroundImage = `linear-gradient(rgba(5, 7, 12, 0.75), rgba(5, 7, 12, 0.75)), url('${urlToUse}')`;
+        }
+
+        function previewCustomBg(inputElement) {
+            const file = inputElement.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    tempCustomBgBase64 = e.target.result;
+                    document.getElementById('bg-preview-container').innerHTML = `<img src="${tempCustomBgBase64}" style="width:100%; height:100%; object-fit:cover;">`;
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+
+        async function saveCustomBg() {
+            if(!tempCustomBgBase64) return alert("Por favor selecciona una imagen de tu galería.");
+            await window.setDoc(window.doc(window.db, "config", "background"), { bgUrl: tempCustomBgBase64 });
+            alert("¡Fondo de pantalla actualizado con éxito!");
+        }
+
+        async function resetCustomBg() {
+            if(confirm("¿Deseas volver al fondo estelar predeterminado?")) {
+                const defaultBg = "https://images.unsplash.com/photo-1506703719100-a0f3a48c0f86?w=1600";
+                await window.setDoc(window.doc(window.db, "config", "background"), { bgUrl: defaultBg });
+                document.getElementById('bg-preview-container').innerHTML = `<span style="font-size:0.85rem; color:var(--text-secondary);">Vista previa del fondo</span>`;
+                tempCustomBgBase64 = "";
+                alert("Fondo restablecido.");
+            }
+        }
+
         function initFirebaseListeners() {
             window.onSnapshot(window.collection(window.db, "products"), (snapshot) => {
                 products = [];
@@ -1122,6 +1219,14 @@
                 renderCategoryFilters();
                 renderCategorySelects();
                 renderAdminCategories();
+            });
+
+            window.onSnapshot(window.doc(window.db, "config", "background"), (docSnap) => {
+                if(docSnap.exists() && docSnap.data().bgUrl) {
+                    applyBgToBody(docSnap.data().bgUrl);
+                } else {
+                    applyBgToBody();
+                }
             });
 
             window.onSnapshot(window.doc(window.db, "config", "cuotas"), (docSnap) => {
