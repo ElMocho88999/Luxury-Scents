@@ -161,7 +161,6 @@
 
         .container { max-width: 1200px; margin: 2rem auto; padding: 0 1.5rem; }
 
-        /* BANNER SLIDERS Y DESLIZAMIENTO MANUAL */
         .banner-slider-container {
             width: 100%;
             height: 220px;
@@ -190,43 +189,28 @@
 
         .slide-overlay {
             width: 100%; height: 100%;
-            background: linear-gradient(90deg, rgba(10,14,23,0.95) 0%, rgba(10,14,23,0.5) 60%, transparent 100%);
+            background: rgba(10, 14, 23, 0.4);
             padding: 2.5rem;
             display: flex;
             flex-direction: column;
-            justify-content: center;
+            justify-content: flex-end;
+            align-items: flex-start;
         }
 
-        .slide-badge {
-            background: var(--accent-gold);
-            color: #000;
-            font-size: 0.75rem;
-            font-weight: 800;
-            padding: 4px 12px;
-            border-radius: 20px;
-            width: fit-content;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            margin-bottom: 8px;
-        }
-
-        .slide-badge-offer { background: #ef4444; color: #fff; }
-
-        .slide-title { font-family: 'Playfair Display', serif; font-size: 1.8rem; font-weight: 700; color: #fff; }
+        .slide-badge-offer { background: #ef4444; color: #fff; padding: 4px 12px; border-radius: 20px; font-size: 0.75rem; font-weight: 800; text-transform: uppercase; margin-bottom: 6px; }
 
         .countdown-timer {
             font-size: 0.95rem;
             font-weight: 800;
             color: #f87171;
-            background: rgba(239, 68, 68, 0.15);
+            background: rgba(239, 68, 68, 0.2);
             padding: 4px 10px;
             border-radius: 8px;
-            border: 1px solid rgba(239, 68, 68, 0.3);
+            border: 1px solid rgba(239, 68, 68, 0.4);
             width: fit-content;
             margin-top: 6px;
         }
 
-        /* CATÁLOGO Y MODOS DE VISTA */
         .catalog-header {
             margin-bottom: 1.5rem;
             display: flex;
@@ -251,7 +235,6 @@
             color: var(--text-primary);
         }
 
-        /* BARRA DE FILTROS POR CATEGORÍA */
         .category-filters {
             display: flex;
             gap: 10px;
@@ -394,7 +377,6 @@
         .badge-paid { background: rgba(34, 197, 94, 0.2); color: #4ade80; border: 1px solid rgba(34, 197, 94, 0.4); }
         .badge-pending { background: rgba(234, 179, 8, 0.2); color: #facc15; border: 1px solid rgba(234, 179, 8, 0.4); }
 
-        /* ANIMACIONES DE CORAZONES CON BAMBOLEO */
         .wobble-heart {
             position: fixed;
             pointer-events: none;
@@ -405,27 +387,13 @@
         }
 
         @keyframes wobbleFloat {
-            0% {
-                opacity: 1;
-                transform: translate(0, 0) scale(0.6) rotate(0deg);
-            }
-            25% {
-                transform: translate(calc(var(--wobble-x) * 0.5), -40px) scale(1.2) rotate(-15deg);
-            }
-            50% {
-                transform: translate(calc(var(--wobble-x) * -0.3), -80px) scale(1.1) rotate(15deg);
-            }
-            75% {
-                opacity: 0.8;
-                transform: translate(calc(var(--wobble-x) * 0.2), -120px) scale(1) rotate(-8deg);
-            }
-            100% {
-                opacity: 0;
-                transform: translate(0, -160px) scale(0.6) rotate(0deg);
-            }
+            0% { opacity: 1; transform: translate(0, 0) scale(0.6) rotate(0deg); }
+            25% { transform: translate(calc(var(--wobble-x) * 0.5), -40px) scale(1.2) rotate(-15deg); }
+            50% { transform: translate(calc(var(--wobble-x) * -0.3), -80px) scale(1.1) rotate(15deg); }
+            75% { opacity: 0.8; transform: translate(calc(var(--wobble-x) * 0.2), -120px) scale(1) rotate(-8deg); }
+            100% { opacity: 0; transform: translate(0, -160px) scale(0.6) rotate(0deg); }
         }
 
-        /* ELEMENTO FLOTANTE DE IMAGEN VOLADORA AL CARRITO */
         .flying-product {
             position: fixed;
             z-index: 10000;
@@ -435,6 +403,64 @@
             box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5), 0 0 15px rgba(226, 183, 20, 0.5);
             border: 2px solid var(--accent-gold);
             transition: transform 0.8s cubic-bezier(0.2, 0.8, 0.2, 1), opacity 0.8s linear;
+        }
+
+        /* Estilos galería e imagen pantalla completa */
+        .detail-gallery {
+            display: flex;
+            gap: 8px;
+            overflow-x: auto;
+            margin-bottom: 1rem;
+            padding-bottom: 4px;
+        }
+        .detail-thumb {
+            width: 60px;
+            height: 60px;
+            border-radius: 10px;
+            object-fit: cover;
+            cursor: pointer;
+            border: 2px solid transparent;
+            opacity: 0.6;
+            transition: all 0.2s ease;
+        }
+        .detail-thumb.active {
+            border-color: var(--accent-gold);
+            opacity: 1;
+        }
+
+        .fullscreen-overlay {
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0,0,0,0.95);
+            z-index: 5000;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+        }
+        .fullscreen-overlay.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+        .fullscreen-overlay img {
+            max-width: 92%;
+            max-height: 92vh;
+            border-radius: 12px;
+            object-fit: contain;
+        }
+        .fullscreen-close {
+            position: absolute;
+            top: 20px; right: 20px;
+            background: rgba(255,255,255,0.1);
+            color: #fff;
+            border: none;
+            font-size: 1.5rem;
+            width: 45px; height: 45px;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex; align-items: center; justify-content: center;
         }
     </style>
 
@@ -489,7 +515,7 @@
         <!-- BANNER DE OFERTAS CON TIEMPO LÍMITE -->
         <div id="offer-slider" class="banner-slider-container" style="display:none;"></div>
 
-        <!-- BANNER DE NOVEDADES (INDEPENDIENTES) -->
+        <!-- BANNER DE NOVEDADES -->
         <div id="banner-slider" class="banner-slider-container" style="display:none;"></div>
 
         <!-- BARRA DE FILTROS POR CATEGORÍA -->
@@ -508,6 +534,12 @@
             </div>
         </div>
         <div class="grid" id="catalog-grid"></div>
+    </div>
+
+    <!-- Visor de Imagen Pantalla Completa -->
+    <div class="fullscreen-overlay" id="fullscreen-modal" onclick="closeFullscreen()">
+        <button class="fullscreen-close">&times;</button>
+        <img id="fullscreen-img" src="" alt="Pantalla completa">
     </div>
 
     <!-- Modal Registro Nombre Cliente -->
@@ -611,15 +643,13 @@
 
             <hr class="divider">
 
-            <h3>✨ Banners de Novedades (Solo Imagen / Título)</h3>
-            <div class="form-group"><label>Título del Banner:</label><input type="text" id="new-banner-title" placeholder="Ej: ¡Nueva Colección!"></div>
-            <div class="form-group"><label>Subtítulo o Precio corto:</label><input type="text" id="new-banner-subtitle" placeholder="Ej: Desde $15.00"></div>
+            <h3>✨ Banners de Novedades</h3>
             <div class="form-group">
                 <label>Imagen del Banner:</label>
                 <input type="file" id="new-banner-img-file" accept="image/*" onchange="previewBannerImage(this, 'new-banner-img-preview')">
                 <div id="new-banner-img-preview" style="height:80px; border:1px dashed var(--border-color); margin-top:6px; display:flex; align-items:center; justify-content:center; overflow:hidden; border-radius:12px;">Vista Previa Banner</div>
             </div>
-            <button class="btn-secondary" style="width: 100%; margin-bottom: 1rem;" onclick="addBannerItem()">Guardar Banner de Novedad</button>
+            <button class="btn-secondary" style="width: 100%; margin-bottom: 1rem;" onclick="addBannerItem()">Guardar Banner</button>
             <div id="admin-banners-list" style="margin-bottom: 1rem; max-height: 150px; overflow-y: auto;"></div>
 
             <hr class="divider">
@@ -651,7 +681,7 @@
             <h3>Agregar Producto</h3>
             <div class="form-group"><label>Nombre del Producto / Marca:</label><input type="text" id="new-name" placeholder="Ej: Colección Yara"></div>
             <div class="form-group">
-                <label>Categoría (Única):</label>
+                <label>Categoría (Una sola):</label>
                 <select id="new-category"></select>
             </div>
             <div class="form-group"><label>Precio Normal / Base ($):</label><input type="number" id="new-price" step="0.5" placeholder="6.5"></div>
@@ -673,9 +703,9 @@
             </div>
 
             <div class="form-group">
-                <label>Imagen del Producto:</label>
-                <input type="file" id="new-img-file" accept="image/*" onchange="previewImage(this, 'new-img-preview')">
-                <div id="new-img-preview" style="height:100px; border:1px dashed var(--border-color); margin-top:6px; display:flex; align-items:center; justify-content:center; overflow:hidden; border-radius:12px;">Vista Previa</div>
+                <label>Imágenes del Producto (Puedes subir varias):</label>
+                <input type="file" id="new-img-files" accept="image/*" multiple onchange="previewMultipleImages(this, 'new-img-preview-container')">
+                <div id="new-img-preview-container" style="display:flex; gap:8px; flex-wrap:wrap; margin-top:6px; min-height:80px; border:1px dashed var(--border-color); border-radius:12px; padding:8px; align-items:center;">Vista Previa</div>
             </div>
 
             <button class="btn-primary" style="width: 100%; margin-bottom: 1rem;" onclick="addNewProduct()">Guardar en la Nube</button>
@@ -725,7 +755,7 @@
 
             <div class="form-group"><label>Nombre:</label><input type="text" id="edit-name"></div>
             <div class="form-group">
-                <label>Categoría (Única):</label>
+                <label>Categoría (Una sola):</label>
                 <select id="edit-category"></select>
             </div>
             <div class="form-group"><label>Precio Normal / Base ($):</label><input type="number" step="0.5" id="edit-price"></div>
@@ -747,9 +777,9 @@
             </div>
             
             <div class="form-group">
-                <label>Cambiar Imagen:</label>
-                <input type="file" id="edit-img-file" accept="image/*" onchange="previewImage(this, 'edit-img-preview')">
-                <div id="edit-img-preview" style="height:100px; border:1px dashed var(--border-color); margin-top:6px; display:flex; align-items:center; justify-content:center; overflow:hidden; border-radius:12px;">Vista Previa</div>
+                <label>Imágenes del Producto (Puedes subir varias):</label>
+                <input type="file" id="edit-img-files" accept="image/*" multiple onchange="previewMultipleImages(this, 'edit-img-preview-container')">
+                <div id="edit-img-preview-container" style="display:flex; gap:8px; flex-wrap:wrap; margin-top:6px; min-height:80px; border:1px dashed var(--border-color); border-radius:12px; padding:8px; align-items:center;">Vista Previa</div>
             </div>
 
             <button class="btn-primary" style="width: 100%; margin-top: 1rem;" onclick="saveProductEdits()">Guardar Cambios</button>
@@ -760,10 +790,8 @@
     <!-- Modal Editar Banner -->
     <div class="modal-overlay" id="edit-banner-modal" style="z-index: 1100;">
         <div class="modal">
-            <h2 style="font-family:'Playfair Display', serif;">Editar Banner de Novedad</h2>
+            <h2 style="font-family:'Playfair Display', serif;">Editar Banner</h2>
             <input type="hidden" id="edit-banner-id">
-            <div class="form-group"><label>Título:</label><input type="text" id="edit-banner-title"></div>
-            <div class="form-group"><label>Subtítulo:</label><input type="text" id="edit-banner-subtitle"></div>
             <div class="form-group">
                 <label>Cambiar Imagen:</label>
                 <input type="file" id="edit-banner-img-file" accept="image/*" onchange="previewBannerImage(this, 'edit-banner-img-preview')">
@@ -775,7 +803,6 @@
     </div>
 
     <script>
-        // SISTEMA SINTETIZADOR DE SONIDO (WEB AUDIO API)
         let audioCtx = null;
         function getAudioContext() {
             if (!audioCtx) {
@@ -878,7 +905,7 @@
                     });
                 }
             } catch (e) {
-                console.log("Audio no permitido aún por interacción de usuario.");
+                console.log("Audio no permitido aún.");
             }
         }
 
@@ -900,7 +927,7 @@
         let cart = JSON.parse(localStorage.getItem('ls_cart')) || [];
         let favorites = JSON.parse(localStorage.getItem('ls_favs')) || [];
         let clientName = localStorage.getItem('ls_client_name') || "";
-        let tempBase64Image = "";
+        let tempImagesList = [];
         let tempBannerBase64Image = "";
 
         let logoClickCount = 0;
@@ -920,7 +947,6 @@
             return parseFloat(sv.price || parentProduct.price);
         }
 
-        // FUNCIONALIDAD N°3: EFECTO DE CORAZONES BAMBOLEANTES (WOBBLE)
         function spawnFloatingEmojis(x, y) {
             for (let i = 0; i < 7; i++) {
                 const el = document.createElement('div');
@@ -939,7 +965,6 @@
             }
         }
 
-        // FUNCIONALIDAD N°2: ANIMACIÓN DE VUELO DE IMAGEN DIRECTO AL CARRITO
         function animateFlyToCart(imgSrc, startElement) {
             const cartBtn = document.getElementById('header-cart-btn');
             if (!cartBtn) return;
@@ -1160,16 +1185,11 @@
         }
 
         async function addBannerItem() {
-            const title = document.getElementById('new-banner-title').value.trim();
-            const subtitle = document.getElementById('new-banner-subtitle').value.trim();
             const img = tempBannerBase64Image;
-
             if(!img) return alert("Sube una imagen para el banner.");
 
-            await window.addDoc(window.collection(window.db, "banners"), { title, subtitle, img });
-            alert("¡Banner de novedad agregado!");
-            document.getElementById('new-banner-title').value = '';
-            document.getElementById('new-banner-subtitle').value = '';
+            await window.addDoc(window.collection(window.db, "banners"), { img });
+            alert("¡Banner agregado!");
             document.getElementById('new-banner-img-preview').innerHTML = 'Vista Previa Banner';
             tempBannerBase64Image = "";
         }
@@ -1184,8 +1204,6 @@
             const b = banners.find(item => item.id === id);
             if(!b) return;
             document.getElementById('edit-banner-id').value = b.id;
-            document.getElementById('edit-banner-title').value = b.title || '';
-            document.getElementById('edit-banner-subtitle').value = b.subtitle || '';
             document.getElementById('edit-banner-img-preview').innerHTML = b.img ? `<img src="${b.img}" style="width:100%; height:100%; object-fit:cover;">` : 'Vista Previa';
             tempBannerBase64Image = "";
             document.getElementById('edit-banner-modal').classList.add('active');
@@ -1197,15 +1215,12 @@
 
         async function saveBannerEdits() {
             const id = document.getElementById('edit-banner-id').value;
-            const title = document.getElementById('edit-banner-title').value.trim();
-            const subtitle = document.getElementById('edit-banner-subtitle').value.trim();
-
-            let data = { title, subtitle };
+            let data = {};
             if(tempBannerBase64Image) data.img = tempBannerBase64Image;
 
             await window.updateDoc(window.doc(window.db, "banners", id), data);
             closeEditBannerModal();
-            alert("¡Banner actualizado con éxito!");
+            alert("¡Banner actualizado!");
             tempBannerBase64Image = "";
         }
 
@@ -1222,7 +1237,7 @@
                 row.className = 'admin-item';
                 row.innerHTML = `
                     <img src="${b.img}" style="width:40px; height:40px; border-radius:6px; object-fit:cover;">
-                    <span style="font-weight:600; flex:1; margin-left:8px;">${b.title || 'Novedad'}</span>
+                    <span style="font-weight:600; flex:1; margin-left:8px;">Banner Novedad</span>
                     <button class="btn-secondary" style="font-size:0.75rem; padding:4px 8px;" onclick="openEditBannerModal('${b.id}')">✏️ Editar</button>
                     <button class="btn-danger" style="font-size:0.75rem; padding:4px 8px;" onclick="deleteBanner('${b.id}')">Eliminar</button>
                 `;
@@ -1232,7 +1247,6 @@
 
         function initBannerSlider() {
             const sliderContainer = document.getElementById('banner-slider');
-
             if (sliderInterval) clearInterval(sliderInterval);
 
             if (banners.length === 0) {
@@ -1247,13 +1261,7 @@
                 const slide = document.createElement('div');
                 slide.className = `slide-item ${idx === 0 ? 'active' : ''}`;
                 slide.style.backgroundImage = `url('${b.img}')`;
-                slide.innerHTML = `
-                    <div class="slide-overlay">
-                        <span class="slide-badge">✨ Novedad Exclusiva</span>
-                        <div class="slide-title">${b.title || ''}</div>
-                        ${b.subtitle ? `<p style="color: var(--accent-gold); font-weight:700; font-size:1.2rem; margin-top:4px;">${b.subtitle}</p>` : ''}
-                    </div>
-                `;
+                slide.innerHTML = `<div class="slide-overlay"></div>`;
                 sliderContainer.appendChild(slide);
             });
 
@@ -1281,7 +1289,6 @@
             }
         }
 
-        // FUNCIONALIDAD N°1: ELIMINACIÓN AUTOMÁTICA DE LA OFERTA AL VENCER EL RELOJ
         function initOfferSlider() {
             const sliderContainer = document.getElementById('offer-slider');
             const offerProducts = products.filter(p => p.isOffer);
@@ -1301,17 +1308,18 @@
             offerProducts.forEach((p, idx) => {
                 const slide = document.createElement('div');
                 slide.className = `slide-item ${idx === 0 ? 'active' : ''}`;
-                slide.style.backgroundImage = `url('${p.img}')`;
+                const mainImg = (p.images && p.images.length > 0) ? p.images[0] : (p.img || '');
+                slide.style.backgroundImage = `url('${mainImg}')`;
                 
                 const timerId = `timer-${p.id}`;
 
                 slide.innerHTML = `
                     <div class="slide-overlay">
-                        <span class="slide-badge slide-badge-offer">🔥 Oferta Limitada</span>
-                        <div class="slide-title">${p.name}</div>
-                        <p style="margin-top:4px;">
+                        <span class="slide-badge-offer">🔥 Oferta Limitada</span>
+                        <div class="slide-title" style="font-size:1.4rem;">${p.name}</div>
+                        <p style="margin-top:2px;">
                             <span class="old-price">$${parseFloat(p.price).toFixed(2)}</span>
-                            <span style="color: var(--accent-gold); font-weight:800; font-size:1.3rem;">$${parseFloat(p.offerPrice || p.price).toFixed(2)}</span>
+                            <span style="color: var(--accent-gold); font-weight:800; font-size:1.2rem;">$${parseFloat(p.offerPrice || p.price).toFixed(2)}</span>
                         </p>
                         ${p.offerUntil ? `<div class="countdown-timer" id="${timerId}">⏳ Cargando tiempo...</div>` : ''}
                     </div>
@@ -1332,7 +1340,7 @@
                                 window.updateDoc(window.doc(window.db, "products", p.id), {
                                     isOffer: false,
                                     offerUntil: ""
-                                }).catch(err => console.log("Error al desactivar oferta automáticamente:", err));
+                                }).catch(err => console.log(err));
                             }
                         } else {
                             if (timerEl) {
@@ -1372,15 +1380,25 @@
             }
         }
 
-        function previewImage(inputElement, previewId) {
-            const file = inputElement.files[0];
-            if (file) {
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    document.getElementById(previewId).innerHTML = `<img src="${e.target.result}" style="width:100%; height:100%; object-fit:cover;">`;
-                    tempBase64Image = e.target.result;
-                };
-                reader.readAsDataURL(file);
+        // Manejo de múltiples imágenes
+        function previewMultipleImages(inputElement, previewContainerId) {
+            const files = inputElement.files;
+            const container = document.getElementById(previewContainerId);
+            container.innerHTML = '';
+            tempImagesList = [];
+
+            if (files && files.length > 0) {
+                Array.from(files).forEach((file) => {
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        tempImagesList.push(e.target.result);
+                        const imgBox = document.createElement('img');
+                        imgBox.src = e.target.result;
+                        imgBox.style.cssText = 'width:60px; height:60px; object-fit:cover; border-radius:8px; border:1px solid var(--border-highlight);';
+                        container.appendChild(imgBox);
+                    };
+                    reader.readAsDataURL(file);
+                });
             }
         }
 
@@ -1434,10 +1452,11 @@
                 const p = products.find(prod => prod.id === id);
                 if(p) {
                     const priceShow = getEffectivePrice(p);
+                    const mainImg = (p.images && p.images.length > 0) ? p.images[0] : (p.img || '');
                     const row = document.createElement('div');
                     row.className = 'cart-item';
                     row.innerHTML = `
-                        <img src="${p.img}">
+                        <img src="${mainImg}">
                         <div style="flex:1;"><div style="font-weight:600;">${p.name}</div><div style="font-size:0.85rem; color:var(--text-secondary);">$${priceShow.toFixed(2)}</div></div>
                         <button class="btn-primary" style="padding:4px 10px; font-size:0.8rem;" onclick="addToCart('${p.id}')">+ Añadir</button>
                     `;
@@ -1495,6 +1514,7 @@
                 card.onclick = () => openDetailModal(p.id);
 
                 const isFav = favorites.includes(p.id);
+                const mainImg = (p.images && p.images.length > 0) ? p.images[0] : (p.img || 'https://images.unsplash.com/photo-1592945403244-b3fbafd7f539?w=400');
 
                 let subvariantsHTML = '';
                 if(p.subvariants && p.subvariants.length > 0) {
@@ -1517,7 +1537,7 @@
                 card.innerHTML = `
                     <div class="card-img-wrapper">
                         <div class="fav-btn-card ${isFav ? 'active' : ''}" onclick="toggleFavorite('${p.id}', event)">${isFav ? '❤️' : '🤍'}</div>
-                        <img id="img-product-${p.id}" src="${p.img || 'https://images.unsplash.com/photo-1592945403244-b3fbafd7f539?w=400'}" alt="${p.name}">
+                        <img id="img-product-${p.id}" src="${mainImg}" alt="${p.name}">
                     </div>
                     <div class="card-title">${p.name}</div>
                     ${p.note ? `<div style="font-size:0.85rem; color: var(--text-secondary);">${p.note}</div>` : ''}
@@ -1535,9 +1555,12 @@
             });
         }
 
+        // Funcionalidad de galería y pantalla completa en detalle de perfume
         function openDetailModal(id) {
             const p = products.find(prod => prod.id === id);
             if(!p) return;
+
+            let imgs = (p.images && p.images.length > 0) ? p.images : [p.img || 'https://images.unsplash.com/photo-1592945403244-b3fbafd7f539?w=400'];
 
             const priceDisplay = p.isOffer && p.offerPrice ? 
                 `<span class="old-price">$${parseFloat(p.price).toFixed(2)}</span>$${parseFloat(p.offerPrice).toFixed(2)}` : 
@@ -1545,7 +1568,15 @@
 
             const container = document.getElementById('detail-content');
             container.innerHTML = `
-                <img id="detail-img-${p.id}" src="${p.img}" style="width:100%; height:260px; object-fit:cover; border-radius:16px; margin-bottom:1rem;">
+                <div style="position:relative; margin-bottom:1rem;">
+                    <img id="detail-active-img" src="${imgs[0]}" onclick="openFullscreen(this.src)" style="width:100%; height:260px; object-fit:cover; border-radius:16px; cursor:pointer;" title="Haz clic para ver en pantalla completa">
+                    <span style="position:absolute; bottom:10px; right:10px; background:rgba(0,0,0,0.6); color:#fff; font-size:0.75rem; padding:4px 8px; border-radius:6px; pointer-events:none;">🔍 Toca para ampliar</span>
+                </div>
+                ${imgs.length > 1 ? `
+                    <div class="detail-gallery">
+                        ${imgs.map((im, idx) => `<img src="${im}" class="detail-thumb ${idx === 0 ? 'active' : ''}" onclick="switchDetailImage('${im}', this)">`).join('')}
+                    </div>
+                ` : ''}
                 <h2 style="font-size:1.5rem; font-family:'Playfair Display', serif;">${p.name}</h2>
                 <div style="font-size:1.5rem; font-weight:800; color:var(--accent-gold); margin: 6px 0;">
                     ${priceDisplay}
@@ -1557,6 +1588,21 @@
             document.getElementById('detail-modal').classList.add('active');
         }
 
+        function switchDetailImage(imgSrc, thumbEl) {
+            document.getElementById('detail-active-img').src = imgSrc;
+            document.querySelectorAll('.detail-thumb').forEach(t => t.classList.remove('active'));
+            thumbEl.classList.add('active');
+        }
+
+        function openFullscreen(imgSrc) {
+            document.getElementById('fullscreen-img').src = imgSrc;
+            document.getElementById('fullscreen-modal').classList.add('active');
+        }
+
+        function closeFullscreen() {
+            document.getElementById('fullscreen-modal').classList.remove('active');
+        }
+
         function closeDetailModal() { document.getElementById('detail-modal').classList.remove('active'); }
 
         function addToCartWithVariant(id, btnElement) {
@@ -1564,8 +1610,9 @@
             const p = products.find(prod => prod.id === id);
             if(!p) return;
 
-            const imgEl = document.getElementById(`img-product-${p.id}`) || document.getElementById(`detail-img-${p.id}`);
-            animateFlyToCart(p.img, imgEl || btnElement);
+            const mainImg = (p.images && p.images.length > 0) ? p.images[0] : (p.img || '');
+            const imgEl = document.getElementById(`img-product-${p.id}`) || document.getElementById(`detail-active-img`);
+            animateFlyToCart(mainImg, imgEl || btnElement);
 
             let itemName = p.name;
             let itemPrice = getEffectivePrice(p);
@@ -1583,7 +1630,7 @@
             const existing = cart.find(item => item.key === itemKey);
             
             if(existing) existing.qty++;
-            else cart.push({ key: itemKey, id: p.id, name: itemName, price: itemPrice, initialPay: itemInitial, img: p.img, qty: 1 });
+            else cart.push({ key: itemKey, id: p.id, name: itemName, price: itemPrice, initialPay: itemInitial, img: mainImg, qty: 1 });
             
             saveCartLocal();
             updateCartUI();
@@ -1740,7 +1787,7 @@
         async function saveLayoutConfig() {
             const mode = document.getElementById('cfg-layout-mode').value;
             await window.setDoc(window.doc(window.db, "config", "layout"), { mode });
-            alert("Diseño del catálogo guardado.");
+            alert("Diseño guardado.");
         }
 
         function renderAdminOrders() {
@@ -1785,7 +1832,7 @@
         }
 
         async function deleteOrder(id) {
-            if(confirm("¿Seguro que deseas eliminar este pedido?")) {
+            if(confirm("¿Deseas eliminar este pedido?")) {
                 await window.deleteDoc(window.doc(window.db, "orders", id));
             }
         }
@@ -1853,10 +1900,10 @@
                 }
             });
 
-            const img = tempBase64Image || "https://images.unsplash.com/photo-1592945403244-b3fbafd7f539?w=400";
+            const images = tempImagesList.length > 0 ? tempImagesList : ["https://images.unsplash.com/photo-1592945403244-b3fbafd7f539?w=400"];
 
             await window.addDoc(window.collection(window.db, "products"), {
-                name, category, price, initialPay, note, isOffer, offerPrice, offerUntil, img, subvariants, order: products.length
+                name, category, price, initialPay, note, isOffer, offerPrice, offerUntil, images, img: images[0], subvariants, order: products.length
             });
 
             alert("¡Producto agregado!");
@@ -1869,8 +1916,8 @@
             document.getElementById('new-offer-until').value = '';
             document.getElementById('new-offer-box').style.display = 'none';
             document.getElementById('subvariants-container').innerHTML = '';
-            document.getElementById('new-img-preview').innerHTML = 'Vista Previa';
-            tempBase64Image = "";
+            document.getElementById('new-img-preview-container').innerHTML = 'Vista Previa';
+            tempImagesList = [];
         }
 
         async function deleteProduct(id) {
@@ -1899,9 +1946,16 @@
                 p.subvariants.forEach(sv => addSubvariantField('edit-subvariants-container', sv.name, sv.price, sv.initialPay, sv.isOffer, sv.offerPrice));
             }
 
-            const preview = document.getElementById('edit-img-preview');
-            preview.innerHTML = p.img ? `<img src="${p.img}" style="width:100%; height:100%; object-fit:cover;">` : 'Vista Previa';
-            tempBase64Image = "";
+            tempImagesList = p.images || (p.img ? [p.img] : []);
+            const previewContainer = document.getElementById('edit-img-preview-container');
+            previewContainer.innerHTML = '';
+            tempImagesList.forEach(im => {
+                const imgBox = document.createElement('img');
+                imgBox.src = im;
+                imgBox.style.cssText = 'width:60px; height:60px; object-fit:cover; border-radius:8px; border:1px solid var(--border-highlight);';
+                previewContainer.appendChild(imgBox);
+            });
+
             document.getElementById('edit-product-modal').classList.add('active');
         }
 
@@ -1940,12 +1994,15 @@
             });
 
             let data = { name, category, price, initialPay, note, isOffer, offerPrice, offerUntil, subvariants };
-            if (tempBase64Image) data.img = tempBase64Image;
+            if (tempImagesList.length > 0) {
+                data.images = tempImagesList;
+                data.img = tempImagesList[0];
+            }
 
             await window.updateDoc(window.doc(window.db, "products", id), data);
             closeEditModal();
             alert("¡Cambios guardados!");
-            tempBase64Image = "";
+            tempImagesList = [];
         }
 
         async function savePayMethodsConfig() {
@@ -1967,14 +2024,14 @@
                 frecuencia: document.getElementById('cfg-frecuencia').value
             };
             await window.setDoc(window.doc(window.db, "config", "cuotas"), data);
-            alert("Parámetros de cuotas guardados.");
+            alert("Parámetros guardados.");
         }
 
         async function changePassword() {
             const newPass = document.getElementById('new-pass-input').value;
             if(newPass.length === 8) {
                 await window.setDoc(window.doc(window.db, "config", "security"), { pin: newPass });
-                alert("PIN de acceso actualizado.");
+                alert("PIN actualizado.");
                 document.getElementById('new-pass-input').value = '';
             } else alert("El PIN debe ser de 8 dígitos.");
         }
