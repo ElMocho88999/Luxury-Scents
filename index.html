@@ -489,7 +489,7 @@
         <!-- BANNER DE OFERTAS CON TIEMPO LÍMITE -->
         <div id="offer-slider" class="banner-slider-container" style="display:none;"></div>
 
-        <!-- BANNER DE NOVEDADES -->
+        <!-- BANNER DE NOVEDADES (INDEPENDIENTES) -->
         <div id="banner-slider" class="banner-slider-container" style="display:none;"></div>
 
         <!-- BARRA DE FILTROS POR CATEGORÍA -->
@@ -611,6 +611,19 @@
 
             <hr class="divider">
 
+            <h3>✨ Banners de Novedades (Solo Imagen / Título)</h3>
+            <div class="form-group"><label>Título del Banner:</label><input type="text" id="new-banner-title" placeholder="Ej: ¡Nueva Colección!"></div>
+            <div class="form-group"><label>Subtítulo o Precio corto:</label><input type="text" id="new-banner-subtitle" placeholder="Ej: Desde $15.00"></div>
+            <div class="form-group">
+                <label>Imagen del Banner:</label>
+                <input type="file" id="new-banner-img-file" accept="image/*" onchange="previewBannerImage(this, 'new-banner-img-preview')">
+                <div id="new-banner-img-preview" style="height:80px; border:1px dashed var(--border-color); margin-top:6px; display:flex; align-items:center; justify-content:center; overflow:hidden; border-radius:12px;">Vista Previa Banner</div>
+            </div>
+            <button class="btn-secondary" style="width: 100%; margin-bottom: 1rem;" onclick="addBannerItem()">Guardar Banner de Novedad</button>
+            <div id="admin-banners-list" style="margin-bottom: 1rem; max-height: 150px; overflow-y: auto;"></div>
+
+            <hr class="divider">
+
             <h3>🏷️ Gestión de Categorías</h3>
             <div class="form-group">
                 <label>Nueva Categoría:</label>
@@ -638,13 +651,12 @@
             <h3>Agregar Producto</h3>
             <div class="form-group"><label>Nombre del Producto / Marca:</label><input type="text" id="new-name" placeholder="Ej: Colección Yara"></div>
             <div class="form-group">
-                <label>Categoría:</label>
+                <label>Categoría (Única):</label>
                 <select id="new-category"></select>
             </div>
             <div class="form-group"><label>Precio Normal / Base ($):</label><input type="number" id="new-price" step="0.5" placeholder="6.5"></div>
             <div class="form-group"><label>Cuota Inicial Individual ($):</label><input type="number" id="new-initial" step="0.5" placeholder="5.0"></div>
             <div class="form-group"><label>Nota / Descripción corta:</label><input type="text" id="new-note" placeholder="Ej: Fragancias orientales Lattafa"></div>
-            <div class="form-group"><label><input type="checkbox" id="new-is-new"> Marcar como Novedad / Banner</label></div>
             
             <div class="form-group" style="background:rgba(239, 68, 68, 0.05); padding:10px; border-radius:10px; border:1px dashed rgba(239, 68, 68, 0.3);">
                 <label><input type="checkbox" id="new-is-offer" onchange="toggleOfferFields('new')"> 🔥 Activar Oferta Especial (Tacha el precio base)</label>
@@ -713,13 +725,12 @@
 
             <div class="form-group"><label>Nombre:</label><input type="text" id="edit-name"></div>
             <div class="form-group">
-                <label>Categoría:</label>
+                <label>Categoría (Única):</label>
                 <select id="edit-category"></select>
             </div>
             <div class="form-group"><label>Precio Normal / Base ($):</label><input type="number" step="0.5" id="edit-price"></div>
             <div class="form-group"><label>Inicial para Cuota Individual ($):</label><input type="number" step="0.5" id="edit-initial"></div>
             <div class="form-group"><label>Nota / Especificaciones:</label><input type="text" id="edit-note"></div>
-            <div class="form-group"><label><input type="checkbox" id="edit-is-new"> Destacar como Novedad / Banner</label></div>
 
             <div class="form-group" style="background:rgba(239, 68, 68, 0.05); padding:10px; border-radius:10px; border:1px dashed rgba(239, 68, 68, 0.3);">
                 <label><input type="checkbox" id="edit-is-offer" onchange="toggleOfferFields('edit')"> 🔥 Activar Oferta Especial (Tacha el precio base)</label>
@@ -743,6 +754,23 @@
 
             <button class="btn-primary" style="width: 100%; margin-top: 1rem;" onclick="saveProductEdits()">Guardar Cambios</button>
             <button class="btn-secondary" style="width: 100%; margin-top: 8px;" onclick="closeEditModal()">Cancelar</button>
+        </div>
+    </div>
+
+    <!-- Modal Editar Banner -->
+    <div class="modal-overlay" id="edit-banner-modal" style="z-index: 1100;">
+        <div class="modal">
+            <h2 style="font-family:'Playfair Display', serif;">Editar Banner de Novedad</h2>
+            <input type="hidden" id="edit-banner-id">
+            <div class="form-group"><label>Título:</label><input type="text" id="edit-banner-title"></div>
+            <div class="form-group"><label>Subtítulo:</label><input type="text" id="edit-banner-subtitle"></div>
+            <div class="form-group">
+                <label>Cambiar Imagen:</label>
+                <input type="file" id="edit-banner-img-file" accept="image/*" onchange="previewBannerImage(this, 'edit-banner-img-preview')">
+                <div id="edit-banner-img-preview" style="height:90px; border:1px dashed var(--border-color); margin-top:6px; display:flex; align-items:center; justify-content:center; overflow:hidden; border-radius:12px;">Vista Previa</div>
+            </div>
+            <button class="btn-primary" style="width: 100%; margin-top: 1rem;" onclick="saveBannerEdits()">Guardar Cambios</button>
+            <button class="btn-secondary" style="width: 100%; margin-top: 8px;" onclick="closeEditBannerModal()">Cancelar</button>
         </div>
     </div>
 
@@ -862,6 +890,7 @@
 
         let products = [];
         let orders = [];
+        let banners = [];
         let categories = ["Árabes", "Diseñador", "Relojes", "Sets"];
         let adminPass = "12345678";
         let layoutMode = "grid";
@@ -872,6 +901,7 @@
         let favorites = JSON.parse(localStorage.getItem('ls_favs')) || [];
         let clientName = localStorage.getItem('ls_client_name') || "";
         let tempBase64Image = "";
+        let tempBannerBase64Image = "";
 
         let logoClickCount = 0;
         let logoClickTimer = null;
@@ -994,7 +1024,6 @@
                 products.sort((a, b) => (a.order || 0) - (b.order || 0));
                 renderCatalog();
                 renderAdminInventory();
-                initBannerSlider();
                 initOfferSlider();
             });
 
@@ -1002,6 +1031,13 @@
                 orders = [];
                 snapshot.forEach(doc => { orders.push({ id: doc.id, ...doc.data() }); });
                 renderAdminOrders();
+            });
+
+            window.onSnapshot(window.collection(window.db, "banners"), (snapshot) => {
+                banners = [];
+                snapshot.forEach(doc => { banners.push({ id: doc.id, ...doc.data() }); });
+                initBannerSlider();
+                renderAdminBanners();
             });
 
             window.onSnapshot(window.doc(window.db, "config", "categories"), (docSnap) => {
@@ -1037,12 +1073,12 @@
             const container = document.getElementById('category-filters');
             if(!container) return;
             container.innerHTML = `
-                <button class="btn-${currentCategoryFilter === 'all' ? 'gold' : 'secondary'} filter-btn" onclick="filterCategory('all', this)">⭐️ Todos</button>
+                <button class="btn-${currentCategoryFilter === 'all' ? 'gold' : 'secondary'} filter-btn" onclick="filterCategory('all', this)">✨ Todos</button>
             `;
             categories.forEach(cat => {
                 const isActive = currentCategoryFilter === cat;
                 container.innerHTML += `
-                    <button class="btn-${isActive ? 'gold' : 'secondary'} filter-btn" onclick="filterCategory('${cat}', this)">💎 ${cat}</button>
+                    <button class="btn-${isActive ? 'gold' : 'secondary'} filter-btn" onclick="filterCategory('${cat}', this)">📁 ${cat}</button>
                 `;
             });
         }
@@ -1111,13 +1147,95 @@
             };
         }
 
+        function previewBannerImage(inputElement, previewId) {
+            const file = inputElement.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    document.getElementById(previewId).innerHTML = `<img src="${e.target.result}" style="width:100%; height:100%; object-fit:cover;">`;
+                    tempBannerBase64Image = e.target.result;
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+
+        async function addBannerItem() {
+            const title = document.getElementById('new-banner-title').value.trim();
+            const subtitle = document.getElementById('new-banner-subtitle').value.trim();
+            const img = tempBannerBase64Image;
+
+            if(!img) return alert("Sube una imagen para el banner.");
+
+            await window.addDoc(window.collection(window.db, "banners"), { title, subtitle, img });
+            alert("¡Banner de novedad agregado!");
+            document.getElementById('new-banner-title').value = '';
+            document.getElementById('new-banner-subtitle').value = '';
+            document.getElementById('new-banner-img-preview').innerHTML = 'Vista Previa Banner';
+            tempBannerBase64Image = "";
+        }
+
+        async function deleteBanner(id) {
+            if(confirm("¿Deseas eliminar este banner?")) {
+                await window.deleteDoc(window.doc(window.db, "banners", id));
+            }
+        }
+
+        function openEditBannerModal(id) {
+            const b = banners.find(item => item.id === id);
+            if(!b) return;
+            document.getElementById('edit-banner-id').value = b.id;
+            document.getElementById('edit-banner-title').value = b.title || '';
+            document.getElementById('edit-banner-subtitle').value = b.subtitle || '';
+            document.getElementById('edit-banner-img-preview').innerHTML = b.img ? `<img src="${b.img}" style="width:100%; height:100%; object-fit:cover;">` : 'Vista Previa';
+            tempBannerBase64Image = "";
+            document.getElementById('edit-banner-modal').classList.add('active');
+        }
+
+        function closeEditBannerModal() {
+            document.getElementById('edit-banner-modal').classList.remove('active');
+        }
+
+        async function saveBannerEdits() {
+            const id = document.getElementById('edit-banner-id').value;
+            const title = document.getElementById('edit-banner-title').value.trim();
+            const subtitle = document.getElementById('edit-banner-subtitle').value.trim();
+
+            let data = { title, subtitle };
+            if(tempBannerBase64Image) data.img = tempBannerBase64Image;
+
+            await window.updateDoc(window.doc(window.db, "banners", id), data);
+            closeEditBannerModal();
+            alert("¡Banner actualizado con éxito!");
+            tempBannerBase64Image = "";
+        }
+
+        function renderAdminBanners() {
+            const container = document.getElementById('admin-banners-list');
+            if(!container) return;
+            container.innerHTML = '';
+            if(banners.length === 0) {
+                container.innerHTML = '<div style="font-size:0.85rem; color:var(--text-secondary);">No hay banners activos.</div>';
+                return;
+            }
+            banners.forEach(b => {
+                const row = document.createElement('div');
+                row.className = 'admin-item';
+                row.innerHTML = `
+                    <img src="${b.img}" style="width:40px; height:40px; border-radius:6px; object-fit:cover;">
+                    <span style="font-weight:600; flex:1; margin-left:8px;">${b.title || 'Novedad'}</span>
+                    <button class="btn-secondary" style="font-size:0.75rem; padding:4px 8px;" onclick="openEditBannerModal('${b.id}')">✏️ Editar</button>
+                    <button class="btn-danger" style="font-size:0.75rem; padding:4px 8px;" onclick="deleteBanner('${b.id}')">Eliminar</button>
+                `;
+                container.appendChild(row);
+            });
+        }
+
         function initBannerSlider() {
             const sliderContainer = document.getElementById('banner-slider');
-            const newProducts = products.filter(p => p.isNew);
 
             if (sliderInterval) clearInterval(sliderInterval);
 
-            if (newProducts.length === 0) {
+            if (banners.length === 0) {
                 sliderContainer.style.display = 'none';
                 return;
             }
@@ -1125,16 +1243,15 @@
             sliderContainer.style.display = 'block';
             sliderContainer.innerHTML = '';
 
-            newProducts.forEach((p, idx) => {
-                const effectivePrice = getEffectivePrice(p);
+            banners.forEach((b, idx) => {
                 const slide = document.createElement('div');
                 slide.className = `slide-item ${idx === 0 ? 'active' : ''}`;
-                slide.style.backgroundImage = `url('${p.img}')`;
+                slide.style.backgroundImage = `url('${b.img}')`;
                 slide.innerHTML = `
                     <div class="slide-overlay">
                         <span class="slide-badge">✨ Novedad Exclusiva</span>
-                        <div class="slide-title">${p.name}</div>
-                        <p style="color: var(--accent-gold); font-weight:700; font-size:1.2rem; margin-top:4px;">$${effectivePrice.toFixed(2)}</p>
+                        <div class="slide-title">${b.title || ''}</div>
+                        ${b.subtitle ? `<p style="color: var(--accent-gold); font-weight:700; font-size:1.2rem; margin-top:4px;">${b.subtitle}</p>` : ''}
                     </div>
                 `;
                 sliderContainer.appendChild(slide);
@@ -1144,12 +1261,14 @@
             const slides = sliderContainer.querySelectorAll('.slide-item');
 
             const nextSlide = () => {
+                if(!slides || slides.length === 0) return;
                 slides[currentSlide].classList.remove('active');
                 currentSlide = (currentSlide + 1) % slides.length;
                 slides[currentSlide].classList.add('active');
             };
 
             const prevSlide = () => {
+                if(!slides || slides.length === 0) return;
                 slides[currentSlide].classList.remove('active');
                 currentSlide = (currentSlide - 1 + slides.length) % slides.length;
                 slides[currentSlide].classList.add('active');
@@ -1157,7 +1276,7 @@
 
             setupSwipeSupport(sliderContainer, nextSlide, prevSlide);
 
-            if (newProducts.length >= 2) {
+            if (banners.length >= 2) {
                 sliderInterval = setInterval(nextSlide, 5000);
             }
         }
@@ -1600,6 +1719,7 @@
             renderAdminInventory();
             renderAdminOrders();
             renderAdminCategories();
+            renderAdminBanners();
             renderCategorySelects();
 
             document.getElementById('cfg-layout-mode').value = layoutMode;
@@ -1706,7 +1826,6 @@
             const price = parseFloat(document.getElementById('new-price').value);
             const initialPay = parseFloat(document.getElementById('new-initial').value) || 0;
             const note = document.getElementById('new-note').value.trim();
-            const isNew = document.getElementById('new-is-new').checked;
 
             const isOffer = document.getElementById('new-is-offer').checked;
             const offerPrice = parseFloat(document.getElementById('new-offer-price').value) || 0;
@@ -1737,7 +1856,7 @@
             const img = tempBase64Image || "https://images.unsplash.com/photo-1592945403244-b3fbafd7f539?w=400";
 
             await window.addDoc(window.collection(window.db, "products"), {
-                name, category, price, initialPay, note, isNew, isOffer, offerPrice, offerUntil, img, subvariants, order: products.length
+                name, category, price, initialPay, note, isOffer, offerPrice, offerUntil, img, subvariants, order: products.length
             });
 
             alert("¡Producto agregado!");
@@ -1745,7 +1864,6 @@
             document.getElementById('new-price').value = '';
             document.getElementById('new-initial').value = '';
             document.getElementById('new-note').value = '';
-            document.getElementById('new-is-new').checked = false;
             document.getElementById('new-is-offer').checked = false;
             document.getElementById('new-offer-price').value = '';
             document.getElementById('new-offer-until').value = '';
@@ -1769,7 +1887,6 @@
             document.getElementById('edit-price').value = p.price || 0;
             document.getElementById('edit-initial').value = p.initialPay || 0;
             document.getElementById('edit-note').value = p.note || '';
-            document.getElementById('edit-is-new').checked = !!p.isNew;
             
             document.getElementById('edit-is-offer').checked = !!p.isOffer;
             document.getElementById('edit-offer-price').value = p.offerPrice || '';
@@ -1797,7 +1914,6 @@
             const price = parseFloat(document.getElementById('edit-price').value);
             const initialPay = parseFloat(document.getElementById('edit-initial').value) || 0;
             const note = document.getElementById('edit-note').value.trim();
-            const isNew = document.getElementById('edit-is-new').checked;
 
             const isOffer = document.getElementById('edit-is-offer').checked;
             const offerPrice = parseFloat(document.getElementById('edit-offer-price').value) || 0;
@@ -1823,7 +1939,7 @@
                 }
             });
 
-            let data = { name, category, price, initialPay, note, isNew, isOffer, offerPrice, offerUntil, subvariants };
+            let data = { name, category, price, initialPay, note, isOffer, offerPrice, offerUntil, subvariants };
             if (tempBase64Image) data.img = tempBase64Image;
 
             await window.updateDoc(window.doc(window.db, "products", id), data);
