@@ -163,7 +163,9 @@
 
         .banner-slider-container {
             width: 100%;
-            height: 220px;
+            height: auto;
+            min-height: 180px;
+            max-height: 380px;
             border-radius: var(--radius-main);
             overflow: hidden;
             position: relative;
@@ -172,6 +174,8 @@
             box-shadow: var(--glass-shadow);
             touch-action: pan-y;
             user-select: none;
+            background: rgba(0, 0, 0, 0.3);
+            aspect-ratio: 16 / 6;
         }
 
         .slide-item {
@@ -181,7 +185,8 @@
             transition: opacity 0.8s ease-in-out;
             display: flex;
             align-items: center;
-            background-size: cover;
+            background-size: contain;
+            background-repeat: no-repeat;
             background-position: center;
         }
 
@@ -189,8 +194,8 @@
 
         .slide-overlay {
             width: 100%; height: 100%;
-            background: rgba(10, 14, 23, 0.4);
-            padding: 2.5rem;
+            background: transparent;
+            padding: 1.5rem;
             display: flex;
             flex-direction: column;
             justify-content: flex-end;
@@ -203,7 +208,7 @@
             font-size: 0.95rem;
             font-weight: 800;
             color: #f87171;
-            background: rgba(239, 68, 68, 0.2);
+            background: rgba(239, 68, 68, 0.25);
             padding: 4px 10px;
             border-radius: 8px;
             border: 1px solid rgba(239, 68, 68, 0.4);
@@ -289,13 +294,23 @@
         }
 
         .card-img-wrapper {
-            width: 100%; height: 220px;
+            width: 100%; 
+            height: 240px;
             border-radius: calc(var(--radius-main) - 6px);
             overflow: hidden; position: relative;
-            background: rgba(0,0,0,0.2);
+            background: rgba(0, 0, 0, 0.25);
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
 
-        .card img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.4s ease; }
+        .card img { 
+            width: 100%; 
+            height: 100%; 
+            object-fit: contain; 
+            padding: 6px;
+            transition: transform 0.4s ease; 
+        }
         .card:hover img { transform: scale(1.05); }
 
         .fav-btn-card {
@@ -352,7 +367,7 @@
         input:focus, select:focus { border-color: var(--accent-gold); background: rgba(255, 255, 255, 0.05); }
 
         .cart-item { display: flex; align-items: center; justify-content: space-between; padding: 12px 0; border-bottom: 1px solid var(--border-color); gap: 12px; }
-        .cart-item img { width: 50px; height: 50px; border-radius: 10px; object-fit: cover; }
+        .cart-item img { width: 50px; height: 50px; border-radius: 10px; object-fit: contain; background: rgba(0,0,0,0.2); }
         .cart-controls { display: flex; align-items: center; gap: 8px; }
 
         .admin-item { display: flex; justify-content: space-between; align-items: center; padding: 12px 0; border-bottom: 1px solid var(--border-color); gap: 10px; }
@@ -399,13 +414,13 @@
             z-index: 10000;
             pointer-events: none;
             border-radius: 12px;
-            object-fit: cover;
+            object-fit: contain;
+            background: var(--bg-card);
             box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5), 0 0 15px rgba(226, 183, 20, 0.5);
             border: 2px solid var(--accent-gold);
             transition: transform 0.8s cubic-bezier(0.2, 0.8, 0.2, 1), opacity 0.8s linear;
         }
 
-        /* Estilos galería e imagen pantalla completa */
         .detail-gallery {
             display: flex;
             gap: 8px;
@@ -417,7 +432,8 @@
             width: 60px;
             height: 60px;
             border-radius: 10px;
-            object-fit: cover;
+            object-fit: contain;
+            background: rgba(0,0,0,0.25);
             cursor: pointer;
             border: 2px solid transparent;
             opacity: 0.6;
@@ -1177,7 +1193,7 @@
             if (file) {
                 const reader = new FileReader();
                 reader.onload = function(e) {
-                    document.getElementById(previewId).innerHTML = `<img src="${e.target.result}" style="width:100%; height:100%; object-fit:cover;">`;
+                    document.getElementById(previewId).innerHTML = `<img src="${e.target.result}" style="width:100%; height:100%; object-fit:contain;">`;
                     tempBannerBase64Image = e.target.result;
                 };
                 reader.readAsDataURL(file);
@@ -1204,7 +1220,7 @@
             const b = banners.find(item => item.id === id);
             if(!b) return;
             document.getElementById('edit-banner-id').value = b.id;
-            document.getElementById('edit-banner-img-preview').innerHTML = b.img ? `<img src="${b.img}" style="width:100%; height:100%; object-fit:cover;">` : 'Vista Previa';
+            document.getElementById('edit-banner-img-preview').innerHTML = b.img ? `<img src="${b.img}" style="width:100%; height:100%; object-fit:contain;">` : 'Vista Previa';
             tempBannerBase64Image = "";
             document.getElementById('edit-banner-modal').classList.add('active');
         }
@@ -1236,7 +1252,7 @@
                 const row = document.createElement('div');
                 row.className = 'admin-item';
                 row.innerHTML = `
-                    <img src="${b.img}" style="width:40px; height:40px; border-radius:6px; object-fit:cover;">
+                    <img src="${b.img}" style="width:40px; height:40px; border-radius:6px; object-fit:contain; background:rgba(0,0,0,0.2);">
                     <span style="font-weight:600; flex:1; margin-left:8px;">Banner Novedad</span>
                     <button class="btn-secondary" style="font-size:0.75rem; padding:4px 8px;" onclick="openEditBannerModal('${b.id}')">✏️ Editar</button>
                     <button class="btn-danger" style="font-size:0.75rem; padding:4px 8px;" onclick="deleteBanner('${b.id}')">Eliminar</button>
@@ -1380,7 +1396,6 @@
             }
         }
 
-        // Manejo de múltiples imágenes
         function previewMultipleImages(inputElement, previewContainerId) {
             const files = inputElement.files;
             const container = document.getElementById(previewContainerId);
@@ -1394,7 +1409,7 @@
                         tempImagesList.push(e.target.result);
                         const imgBox = document.createElement('img');
                         imgBox.src = e.target.result;
-                        imgBox.style.cssText = 'width:60px; height:60px; object-fit:cover; border-radius:8px; border:1px solid var(--border-highlight);';
+                        imgBox.style.cssText = 'width:60px; height:60px; object-fit:contain; background:rgba(0,0,0,0.2); border-radius:8px; border:1px solid var(--border-highlight);';
                         container.appendChild(imgBox);
                     };
                     reader.readAsDataURL(file);
@@ -1555,7 +1570,6 @@
             });
         }
 
-        // Funcionalidad de galería y pantalla completa en detalle de perfume
         function openDetailModal(id) {
             const p = products.find(prod => prod.id === id);
             if(!p) return;
@@ -1568,8 +1582,8 @@
 
             const container = document.getElementById('detail-content');
             container.innerHTML = `
-                <div style="position:relative; margin-bottom:1rem;">
-                    <img id="detail-active-img" src="${imgs[0]}" onclick="openFullscreen(this.src)" style="width:100%; height:260px; object-fit:cover; border-radius:16px; cursor:pointer;" title="Haz clic para ver en pantalla completa">
+                <div style="position:relative; margin-bottom:1rem; background:rgba(0,0,0,0.25); border-radius:16px; display:flex; align-items:center; justify-content:center;">
+                    <img id="detail-active-img" src="${imgs[0]}" onclick="openFullscreen(this.src)" style="width:100%; height:260px; object-fit:contain; padding:8px; cursor:pointer;" title="Haz clic para ver en pantalla completa">
                     <span style="position:absolute; bottom:10px; right:10px; background:rgba(0,0,0,0.6); color:#fff; font-size:0.75rem; padding:4px 8px; border-radius:6px; pointer-events:none;">🔍 Toca para ampliar</span>
                 </div>
                 ${imgs.length > 1 ? `
@@ -1952,7 +1966,7 @@
             tempImagesList.forEach(im => {
                 const imgBox = document.createElement('img');
                 imgBox.src = im;
-                imgBox.style.cssText = 'width:60px; height:60px; object-fit:cover; border-radius:8px; border:1px solid var(--border-highlight);';
+                imgBox.style.cssText = 'width:60px; height:60px; object-fit:contain; background:rgba(0,0,0,0.2); border-radius:8px; border:1px solid var(--border-highlight);';
                 previewContainer.appendChild(imgBox);
             });
 
