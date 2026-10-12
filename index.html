@@ -1037,12 +1037,12 @@
             const container = document.getElementById('category-filters');
             if(!container) return;
             container.innerHTML = `
-                <button class="btn-${currentCategoryFilter === 'all' ? 'gold' : 'secondary'} filter-btn" onclick="filterCategory('all', this)">✨ Todos</button>
+                <button class="btn-${currentCategoryFilter === 'all' ? 'gold' : 'secondary'} filter-btn" onclick="filterCategory('all', this)">⭐️ Todos</button>
             `;
             categories.forEach(cat => {
                 const isActive = currentCategoryFilter === cat;
                 container.innerHTML += `
-                    <button class="btn-${isActive ? 'gold' : 'secondary'} filter-btn" onclick="filterCategory('${cat}', this)">📁 ${cat}</button>
+                    <button class="btn-${isActive ? 'gold' : 'secondary'} filter-btn" onclick="filterCategory('${cat}', this)">💎 ${cat}</button>
                 `;
             });
         }
