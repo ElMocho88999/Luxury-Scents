@@ -161,7 +161,7 @@
 
         .container { max-width: 1200px; margin: 2rem auto; padding: 0 1.5rem; }
 
-        /* Banner con difuminado suave alrededor */
+        /* Banner con difuminado dinámico de los propios colores de la foto */
         .banner-slider-container {
             width: 100%;
             height: auto;
@@ -172,11 +172,11 @@
             position: relative;
             margin-bottom: 1.5rem;
             border: 1px solid var(--border-highlight);
-            box-shadow: 0 0 25px rgba(226, 183, 20, 0.15), inset 0 0 20px rgba(0, 0, 0, 0.4);
+            box-shadow: var(--glass-shadow);
             touch-action: pan-y;
             user-select: none;
-            background: radial-gradient(circle, rgba(30, 41, 59, 0.6) 0%, rgba(10, 14, 23, 0.95) 100%);
             aspect-ratio: 16 / 6;
+            background: #0a0e17;
         }
 
         .slide-item {
@@ -186,22 +186,42 @@
             transition: opacity 0.8s ease-in-out;
             display: flex;
             align-items: center;
-            background-size: contain;
-            background-repeat: no-repeat;
-            background-position: center;
-            filter: drop-shadow(0 0 15px rgba(0,0,0,0.5));
+            justify-content: center;
+            overflow: hidden;
         }
 
         .slide-item.active { opacity: 1; }
 
+        /* Capa de fondo desenfocada */
+        .slide-bg-blur {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background-size: cover;
+            background-position: center;
+            filter: blur(25px) brightness(0.7);
+            transform: scale(1.2);
+            z-index: 1;
+        }
+
+        /* Imagen principal enfocada */
+        .slide-img-front {
+            position: relative;
+            z-index: 2;
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
+        }
+
         .slide-overlay {
-            width: 100%; height: 100%;
-            background: transparent;
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            z-index: 3;
             padding: 1.5rem;
             display: flex;
             flex-direction: column;
             justify-content: flex-end;
             align-items: flex-start;
+            pointer-events: none;
         }
 
         .slide-badge-offer { background: #ef4444; color: #fff; padding: 4px 12px; border-radius: 20px; font-size: 0.75rem; font-weight: 800; text-transform: uppercase; margin-bottom: 6px; }
@@ -295,31 +315,39 @@
             background: var(--bg-card-hover);
         }
 
-        /* Contenedor de producto con efecto de degradado radial y sombra suave */
+        /* Contenedor de producto con fondo desenfocado automático */
         .card-img-wrapper {
             width: 100%; 
             height: 240px;
             border-radius: calc(var(--radius-main) - 6px);
-            overflow: hidden; position: relative;
-            background: radial-gradient(circle at center, rgba(30, 41, 59, 0.4) 0%, rgba(10, 14, 23, 0.8) 100%);
+            overflow: hidden; 
+            position: relative;
             display: flex;
             align-items: center;
             justify-content: center;
-            box-shadow: inset 0 0 15px rgba(0,0,0,0.5);
+            background: #0a0e17;
+        }
+
+        .card-bg-blur {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background-size: cover;
+            background-position: center;
+            filter: blur(20px) brightness(0.7);
+            transform: scale(1.2);
+            z-index: 0;
         }
 
         .card img { 
-            width: 100%; 
-            height: 100%; 
+            position: relative;
+            z-index: 1;
+            max-width: 100%; 
+            max-height: 100%; 
             object-fit: contain; 
-            padding: 10px;
-            filter: drop-shadow(0 6px 12px rgba(0, 0, 0, 0.4));
-            transition: transform 0.4s ease, filter 0.4s ease; 
+            padding: 6px;
+            transition: transform 0.4s ease; 
         }
-        .card:hover img { 
-            transform: scale(1.06); 
-            filter: drop-shadow(0 8px 16px rgba(226, 183, 20, 0.2));
-        }
+        .card:hover img { transform: scale(1.06); }
 
         .fav-btn-card {
             position: absolute; top: 10px; left: 10px;
@@ -1284,8 +1312,11 @@
             banners.forEach((b, idx) => {
                 const slide = document.createElement('div');
                 slide.className = `slide-item ${idx === 0 ? 'active' : ''}`;
-                slide.style.backgroundImage = `url('${b.img}')`;
-                slide.innerHTML = `<div class="slide-overlay"></div>`;
+                slide.innerHTML = `
+                    <div class="slide-bg-blur" style="background-image: url('${b.img}');"></div>
+                    <img class="slide-img-front" src="${b.img}" alt="Banner">
+                    <div class="slide-overlay"></div>
+                `;
                 sliderContainer.appendChild(slide);
             });
 
@@ -1333,11 +1364,12 @@
                 const slide = document.createElement('div');
                 slide.className = `slide-item ${idx === 0 ? 'active' : ''}`;
                 const mainImg = (p.images && p.images.length > 0) ? p.images[0] : (p.img || '');
-                slide.style.backgroundImage = `url('${mainImg}')`;
                 
                 const timerId = `timer-${p.id}`;
 
                 slide.innerHTML = `
+                    <div class="slide-bg-blur" style="background-image: url('${mainImg}');"></div>
+                    <img class="slide-img-front" src="${mainImg}" alt="${p.name}">
                     <div class="slide-overlay">
                         <span class="slide-badge-offer">🔥 Oferta Limitada</span>
                         <div class="slide-title" style="font-size:1.4rem;">${p.name}</div>
@@ -1559,6 +1591,7 @@
 
                 card.innerHTML = `
                     <div class="card-img-wrapper">
+                        <div class="card-bg-blur" style="background-image: url('${mainImg}');"></div>
                         <div class="fav-btn-card ${isFav ? 'active' : ''}" onclick="toggleFavorite('${p.id}', event)">${isFav ? '❤️' : '🤍'}</div>
                         <img id="img-product-${p.id}" src="${mainImg}" alt="${p.name}">
                     </div>
@@ -1590,9 +1623,10 @@
 
             const container = document.getElementById('detail-content');
             container.innerHTML = `
-                <div style="position:relative; margin-bottom:1rem; background:radial-gradient(circle at center, rgba(30, 41, 59, 0.4) 0%, rgba(10, 14, 23, 0.8) 100%); border-radius:16px; display:flex; align-items:center; justify-content:center; box-shadow: inset 0 0 15px rgba(0,0,0,0.5);">
-                    <img id="detail-active-img" src="${imgs[0]}" onclick="openFullscreen(this.src)" style="width:100%; height:260px; object-fit:contain; padding:10px; cursor:pointer; filter: drop-shadow(0 6px 12px rgba(0, 0, 0, 0.4));" title="Haz clic para ver en pantalla completa">
-                    <span style="position:absolute; bottom:10px; right:10px; background:rgba(0,0,0,0.6); color:#fff; font-size:0.75rem; padding:4px 8px; border-radius:6px; pointer-events:none;">🔍 Toca para ampliar</span>
+                <div style="position:relative; margin-bottom:1rem; border-radius:16px; overflow:hidden; display:flex; align-items:center; justify-content:center; height:260px; background:#0a0e17;">
+                    <div id="detail-bg-blur" class="card-bg-blur" style="background-image: url('${imgs[0]}');"></div>
+                    <img id="detail-active-img" src="${imgs[0]}" onclick="openFullscreen(this.src)" style="position:relative; z-index:1; width:100%; height:100%; object-fit:contain; padding:10px; cursor:pointer;" title="Haz clic para ver en pantalla completa">
+                    <span style="position:absolute; bottom:10px; right:10px; z-index:2; background:rgba(0,0,0,0.6); color:#fff; font-size:0.75rem; padding:4px 8px; border-radius:6px; pointer-events:none;">🔍 Toca para ampliar</span>
                 </div>
                 ${imgs.length > 1 ? `
                     <div class="detail-gallery">
@@ -1612,6 +1646,8 @@
 
         function switchDetailImage(imgSrc, thumbEl) {
             document.getElementById('detail-active-img').src = imgSrc;
+            const bgBlur = document.getElementById('detail-bg-blur');
+            if(bgBlur) bgBlur.style.backgroundImage = `url('${imgSrc}')`;
             document.querySelectorAll('.detail-thumb').forEach(t => t.classList.remove('active'));
             thumbEl.classList.add('active');
         }
