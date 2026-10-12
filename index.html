@@ -493,13 +493,7 @@
         <div id="banner-slider" class="banner-slider-container" style="display:none;"></div>
 
         <!-- BARRA DE FILTROS POR CATEGORÍA -->
-        <div class="category-filters" id="category-filters">
-            <button class="btn-gold filter-btn" onclick="filterCategory('all', this)">✨ Todos</button>
-            <button class="btn-secondary filter-btn" onclick="filterCategory('Árabes', this)">🐪 Árabes</button>
-            <button class="btn-secondary filter-btn" onclick="filterCategory('Diseñador', this)">💎 Diseñador</button>
-            <button class="btn-secondary filter-btn" onclick="filterCategory('Relojes', this)">⌚ Relojes</button>
-            <button class="btn-secondary filter-btn" onclick="filterCategory('Sets', this)">🎁 Sets</button>
-        </div>
+        <div class="category-filters" id="category-filters"></div>
 
         <div class="catalog-header">
             <h1 style="font-family:'Playfair Display', serif; font-size:2rem; font-weight:700;">Colección Exclusiva</h1>
@@ -617,6 +611,18 @@
 
             <hr class="divider">
 
+            <h3>🏷️ Gestión de Categorías</h3>
+            <div class="form-group">
+                <label>Nueva Categoría:</label>
+                <div style="display:flex; gap:8px;">
+                    <input type="text" id="new-category-name" placeholder="Ej: Relojes, Árabes..." style="flex:1;">
+                    <button class="btn-secondary" onclick="addCustomCategory()">Agregar</button>
+                </div>
+            </div>
+            <div id="admin-categories-list" style="margin-bottom: 1rem; max-height: 150px; overflow-y: auto;"></div>
+
+            <hr class="divider">
+
             <h3>Diseño de Inicio</h3>
             <div class="form-group">
                 <label>Diseño del Catálogo en Inicio:</label>
@@ -633,12 +639,7 @@
             <div class="form-group"><label>Nombre del Producto / Marca:</label><input type="text" id="new-name" placeholder="Ej: Colección Yara"></div>
             <div class="form-group">
                 <label>Categoría:</label>
-                <select id="new-category">
-                    <option value="Árabes">Perfumes Árabes</option>
-                    <option value="Diseñador">Perfumes de Diseñador</option>
-                    <option value="Relojes">Relojes</option>
-                    <option value="Sets">Sets y Combos</option>
-                </select>
+                <select id="new-category"></select>
             </div>
             <div class="form-group"><label>Precio Normal / Base ($):</label><input type="number" id="new-price" step="0.5" placeholder="6.5"></div>
             <div class="form-group"><label>Cuota Inicial Individual ($):</label><input type="number" id="new-initial" step="0.5" placeholder="5.0"></div>
@@ -713,12 +714,7 @@
             <div class="form-group"><label>Nombre:</label><input type="text" id="edit-name"></div>
             <div class="form-group">
                 <label>Categoría:</label>
-                <select id="edit-category">
-                    <option value="Árabes">Perfumes Árabes</option>
-                    <option value="Diseñador">Perfumes de Diseñador</option>
-                    <option value="Relojes">Relojes</option>
-                    <option value="Sets">Sets y Combos</option>
-                </select>
+                <select id="edit-category"></select>
             </div>
             <div class="form-group"><label>Precio Normal / Base ($):</label><input type="number" step="0.5" id="edit-price"></div>
             <div class="form-group"><label>Inicial para Cuota Individual ($):</label><input type="number" step="0.5" id="edit-initial"></div>
@@ -866,9 +862,10 @@
 
         let products = [];
         let orders = [];
+        let categories = ["Árabes", "Diseñador", "Relojes", "Sets"];
         let adminPass = "12345678";
         let layoutMode = "grid";
-        let currentCategoryFilter = 'all'; // Variable para filtro por categoría
+        let currentCategoryFilter = 'all';
         let cuotasConfig = { numCuotas: 4, frecuencia: "Quincenal" };
         let payConfig = { pm: true, efectivo: true, cuotas: true, pmBanco: "Banesco", pmTelf: "04120000000", pmCedula: "V-00000000" };
         let cart = JSON.parse(localStorage.getItem('ls_cart')) || [];
@@ -1007,6 +1004,15 @@
                 renderAdminOrders();
             });
 
+            window.onSnapshot(window.doc(window.db, "config", "categories"), (docSnap) => {
+                if(docSnap.exists() && docSnap.data().list) {
+                    categories = docSnap.data().list;
+                }
+                renderCategoryFilters();
+                renderCategorySelects();
+                renderAdminCategories();
+            });
+
             window.onSnapshot(window.doc(window.db, "config", "cuotas"), (docSnap) => {
                 if(docSnap.exists()) cuotasConfig = docSnap.data();
             });
@@ -1025,6 +1031,72 @@
                     renderCatalog();
                 }
             });
+        }
+
+        function renderCategoryFilters() {
+            const container = document.getElementById('category-filters');
+            if(!container) return;
+            container.innerHTML = `
+                <button class="btn-${currentCategoryFilter === 'all' ? 'gold' : 'secondary'} filter-btn" onclick="filterCategory('all', this)">✨ Todos</button>
+            `;
+            categories.forEach(cat => {
+                const isActive = currentCategoryFilter === cat;
+                container.innerHTML += `
+                    <button class="btn-${isActive ? 'gold' : 'secondary'} filter-btn" onclick="filterCategory('${cat}', this)">📁 ${cat}</button>
+                `;
+            });
+        }
+
+        function renderCategorySelects() {
+            ['new-category', 'edit-category'].forEach(id => {
+                const select = document.getElementById(id);
+                if(select) {
+                    const currentVal = select.value;
+                    select.innerHTML = '';
+                    categories.forEach(cat => {
+                        select.innerHTML += `<option value="${cat}">${cat}</option>`;
+                    });
+                    if(categories.includes(currentVal)) select.value = currentVal;
+                }
+            });
+        }
+
+        function renderAdminCategories() {
+            const container = document.getElementById('admin-categories-list');
+            if(!container) return;
+            container.innerHTML = '';
+
+            categories.forEach((cat, index) => {
+                const row = document.createElement('div');
+                row.className = 'admin-item';
+                row.innerHTML = `
+                    <span style="font-weight:600; flex:1;">${cat}</span>
+                    <button class="btn-danger" style="font-size:0.75rem; padding:4px 8px;" onclick="deleteCustomCategory(${index})">Eliminar</button>
+                `;
+                container.appendChild(row);
+            });
+        }
+
+        async function addCustomCategory() {
+            const input = document.getElementById('new-category-name');
+            const val = input.value.trim();
+            if(!val) return alert("Ingresa un nombre de categoría.");
+            if(categories.includes(val)) return alert("Esta categoría ya existe.");
+
+            categories.push(val);
+            input.value = '';
+            await window.setDoc(window.doc(window.db, "config", "categories"), { list: categories });
+            alert("Categoría agregada con éxito.");
+        }
+
+        async function deleteCustomCategory(index) {
+            if(categories.length <= 1) return alert("Debes tener al menos una categoría.");
+            const catToDelete = categories[index];
+            if(confirm(`¿Deseas eliminar la categoría "${catToDelete}"?`)) {
+                categories.splice(index, 1);
+                await window.setDoc(window.doc(window.db, "config", "categories"), { list: categories });
+                alert("Categoría eliminada.");
+            }
         }
 
         function setupSwipeSupport(container, nextFn, prevFn) {
@@ -1137,7 +1209,6 @@
 
                         if (diff <= 0) {
                             if (timerEl) timerEl.innerHTML = "⏰ Oferta Finalizada";
-                            // Desactivación automática de la oferta en la base de datos
                             if (window.db && p.id) {
                                 window.updateDoc(window.doc(window.db, "products", p.id), {
                                     isOffer: false,
@@ -1261,16 +1332,7 @@
 
         function filterCategory(category, btnElement) {
             currentCategoryFilter = category;
-            
-            document.querySelectorAll('.filter-btn').forEach(btn => {
-                btn.classList.remove('btn-gold');
-                btn.classList.add('btn-secondary');
-            });
-            if(btnElement) {
-                btnElement.classList.remove('btn-secondary');
-                btnElement.classList.add('btn-gold');
-            }
-            
+            renderCategoryFilters();
             renderCatalog();
         }
 
@@ -1286,9 +1348,8 @@
 
             let displayProducts = [...products];
 
-            // FILTRAR POR CATEGORÍA
             if (currentCategoryFilter !== 'all') {
-                displayProducts = displayProducts.filter(p => (p.category || 'Árabes') === currentCategoryFilter);
+                displayProducts = displayProducts.filter(p => (p.category || categories[0]) === currentCategoryFilter);
             }
 
             const sortMode = document.getElementById('sort-select') ? document.getElementById('sort-select').value : 'default';
@@ -1469,9 +1530,7 @@
                 document.getElementById('pm-cedula-lbl').innerText = payConfig.pmCedula;
             } else if(val === 'cuotas') {
                 const total = parseFloat(document.getElementById('cart-total-price').innerText) || 0;
-                
                 let requiredInitial = cart.reduce((sum, item) => sum + (parseFloat(item.initialPay || 0) * item.qty), 0);
-                
                 const restante = Math.max(0, total - requiredInitial);
                 const cuotaMonto = (restante / (cuotasConfig.numCuotas || 1)).toFixed(2);
                 
@@ -1540,6 +1599,8 @@
             document.getElementById('admin-panel').classList.add('active');
             renderAdminInventory();
             renderAdminOrders();
+            renderAdminCategories();
+            renderCategorySelects();
 
             document.getElementById('cfg-layout-mode').value = layoutMode;
 
@@ -1616,7 +1677,7 @@
                 const row = document.createElement('div');
                 row.className = 'admin-item';
                 row.innerHTML = `
-                    <span style="font-weight: 600; flex:1;">${p.name} <span style="font-size:0.75rem; color:var(--text-secondary);">[${p.category || 'Árabes'}]</span></span>
+                    <span style="font-weight: 600; flex:1;">${p.name} <span style="font-size:0.75rem; color:var(--text-secondary);">[${p.category || categories[0]}]</span></span>
                     <div class="admin-item-controls">
                         <button class="btn-secondary" style="font-size:0.8rem; padding:4px 8px;" onclick="moveProductOrder(${index}, -1)">⬆️</button>
                         <button class="btn-secondary" style="font-size:0.8rem; padding:4px 8px;" onclick="moveProductOrder(${index}, 1)">⬇️</button>
@@ -1704,7 +1765,7 @@
             const p = products.find(item => item.id === id);
             document.getElementById('edit-prod-id').value = id;
             document.getElementById('edit-name').value = p.name || '';
-            document.getElementById('edit-category').value = p.category || 'Árabes';
+            document.getElementById('edit-category').value = p.category || categories[0];
             document.getElementById('edit-price').value = p.price || 0;
             document.getElementById('edit-initial').value = p.initialPay || 0;
             document.getElementById('edit-note').value = p.note || '';
