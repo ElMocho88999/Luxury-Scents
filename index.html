@@ -741,22 +741,25 @@
                 <button class="btn-gold" style="padding:6px 14px; font-size:0.85rem;" onclick="closeAdminPanel()">✕ Cerrar</button>
             </div>
 
-            <!-- SECCIÓN 1: CAMBIAR FONDO (OPTIMIZADO VÍA URL) -->
+            <!-- SECCIÓN 1: CAMBIAR FONDO (FOTO DESDE GALERÍA O VIDEO VÍA URL) -->
             <div class="admin-section-card">
                 <div class="admin-section-title">🎨 Personalización del Fondo del Sitio</div>
                 <div class="form-group">
-                    <label>Enlace de Imagen de fondo (URL):</label>
-                    <input type="text" id="bg-url-input" placeholder="https://images.unsplash.com/...">
+                    <label>Foto de fondo (Desde tu Galería):</label>
+                    <input type="file" id="bg-custom-file" accept="image/*" onchange="previewCustomBg(this)">
                 </div>
                 <div class="form-group">
-                    <label>Enlace de Video de fondo MP4/WebM (URL directa):</label>
+                    <label>Video de fondo (Solo por enlace URL directo MP4/WebM):</label>
                     <div style="display:flex; gap:8px;">
                         <input type="text" id="bg-video-url-input" placeholder="https://...video.mp4" style="flex:1;">
                         <button class="btn-secondary" onclick="saveCustomBgVideo()">Usar Video</button>
                     </div>
                 </div>
+                <div id="bg-preview-container" style="height:110px; border:1px dashed var(--border-highlight); margin-top:8px; border-radius:12px; display:flex; align-items:center; justify-content:center; overflow:hidden; background:rgba(0,0,0,0.3);">
+                    <span style="font-size:0.85rem; color:var(--text-secondary);">Vista previa del fondo</span>
+                </div>
                 <div style="display:flex; gap:8px; margin-top:10px;">
-                    <button class="btn-gold" style="flex:1;" onclick="saveCustomBgUrl()">Aplicar Imagen</button>
+                    <button class="btn-gold" style="flex:1;" onclick="saveCustomBg()">Aplicar Imagen de Galería</button>
                     <button class="btn-danger" style="font-size:0.8rem; padding:8px 12px;" onclick="resetCustomBg()">Restablecer Fondo Estelar</button>
                 </div>
             </div>
@@ -767,17 +770,18 @@
                 <div id="admin-orders-list" style="max-height: 220px; overflow-y: auto;"></div>
             </div>
 
-            <!-- SECCIÓN 3: BANNERS DE NOVEDADES (OPTIMIZADO VÍA URL) -->
+            <!-- SECCIÓN 3: BANNERS DE NOVEDADES (FOTO DESDE GALERÍA O VIDEO VÍA URL) -->
             <div class="admin-section-card">
                 <div class="admin-section-title">✨ Banners Promocionales</div>
                 <div class="form-group">
-                    <label>Enlace de Imagen Banner (URL):</label>
-                    <input type="text" id="new-banner-img-url" placeholder="https://...imagen.jpg">
+                    <label>Subir banner (Foto desde Galería):</label>
+                    <input type="file" id="new-banner-img-file" accept="image/*" onchange="previewBannerImage(this, 'new-banner-img-preview')">
                 </div>
                 <div class="form-group">
-                    <label>Enlace de Video Banner (URL directa MP4):</label>
+                    <label>O colocar banner (Video solo por enlace URL MP4):</label>
                     <input type="text" id="new-banner-video-url" placeholder="https://...video.mp4">
                 </div>
+                <div id="new-banner-img-preview" style="height:80px; border:1px dashed var(--border-color); margin-top:6px; display:flex; align-items:center; justify-content:center; overflow:hidden; border-radius:12px;">Vista Previa Banner</div>
                 <button class="btn-secondary" style="width: 100%; margin-top: 1rem;" onclick="addBannerItem()">Guardar Banner</button>
                 <div id="admin-banners-list" style="max-height: 150px; overflow-y: auto; margin-top: 1rem;"></div>
             </div>
@@ -808,7 +812,7 @@
                 <button class="btn-secondary" style="width: 100%;" onclick="saveLayoutConfig()">Guardar Formato</button>
             </div>
 
-            <!-- SECCIÓN 6: AGREGAR PRODUCTO NUEVO -->
+            <!-- SECCIÓN 6: AGREGAR PRODUCTO NUEVO (FOTOS DESDE GALERÍA) -->
             <div class="admin-section-card">
                 <div class="admin-section-title">➕ Publicar Nuevo Producto</div>
                 <div class="form-group"><label>Nombre del Producto / Marca:</label><input type="text" id="new-name" placeholder="Ej: Colección Yara"></div>
@@ -835,8 +839,9 @@
                 </div>
 
                 <div class="form-group">
-                    <label>Enlace URL de la Imagen Principal:</label>
-                    <input type="text" id="new-img-url" placeholder="https://images.unsplash.com/...">
+                    <label>Fotos del Producto (Desde tu Galería):</label>
+                    <input type="file" id="new-img-files" accept="image/*" multiple onchange="previewMultipleImages(this, 'new-img-preview-container')">
+                    <div id="new-img-preview-container" style="display:flex; gap:8px; flex-wrap:wrap; margin-top:6px; min-height:80px; border:1px dashed var(--border-color); border-radius:12px; padding:8px; align-items:center;">Vista Previa</div>
                 </div>
 
                 <button class="btn-primary" style="width: 100%; margin-top:0.5rem;" onclick="addNewProduct()">Guardar en la Nube</button>
@@ -910,8 +915,9 @@
             </div>
             
             <div class="form-group">
-                <label>Enlace URL de la Imagen Principal:</label>
-                <input type="text" id="edit-img-url" placeholder="https://images.unsplash.com/...">
+                <label>Fotos del Producto (Desde Galería):</label>
+                <input type="file" id="edit-img-files" accept="image/*" multiple onchange="previewMultipleImages(this, 'edit-img-preview-container')">
+                <div id="edit-img-preview-container" style="display:flex; gap:8px; flex-wrap:wrap; margin-top:6px; min-height:80px; border:1px dashed var(--border-color); border-radius:12px; padding:8px; align-items:center;">Vista Previa</div>
             </div>
 
             <button class="btn-primary" style="width: 100%; margin-top: 1rem;" onclick="saveProductEdits()">Guardar Cambios</button>
@@ -925,13 +931,14 @@
             <h2 style="font-family:'Playfair Display', serif;">Editar Banner</h2>
             <input type="hidden" id="edit-banner-id">
             <div class="form-group">
-                <label>Cambiar Banner (URL de Imagen):</label>
-                <input type="text" id="edit-banner-img-url" placeholder="https://...imagen.jpg">
+                <label>Cambiar Foto (Desde Galería):</label>
+                <input type="file" id="edit-banner-img-file" accept="image/*" onchange="previewBannerImage(this, 'edit-banner-img-preview')">
             </div>
             <div class="form-group">
-                <label>O Cambiar Banner (URL de Video MP4):</label>
+                <label>O Enlace de Video (URL MP4):</label>
                 <input type="text" id="edit-banner-video-url" placeholder="https://...video.mp4">
             </div>
+            <div id="edit-banner-img-preview" style="height:90px; border:1px dashed var(--border-color); margin-top:6px; display:flex; align-items:center; justify-content:center; overflow:hidden; border-radius:12px;">Vista Previa</div>
             <button class="btn-primary" style="width: 100%; margin-top: 1rem;" onclick="saveBannerEdits()">Guardar Cambios</button>
             <button class="btn-secondary" style="width: 100%; margin-top: 8px;" onclick="closeEditBannerModal()">Cancelar</button>
         </div>
@@ -1050,6 +1057,9 @@
         let cart = JSON.parse(localStorage.getItem('ls_cart')) || [];
         let favorites = JSON.parse(localStorage.getItem('ls_favs')) || [];
         let clientName = localStorage.getItem('ls_client_name') || "";
+        let tempImagesList = [];
+        let tempBannerBase64Image = "";
+        let tempCustomBgBase64 = "";
 
         let logoClickCount = 0;
         let logoClickTimer = null;
@@ -1180,10 +1190,21 @@
             }
         }
 
-        async function saveCustomBgUrl() {
-            const url = document.getElementById('bg-url-input').value.trim();
-            if(!url) return alert("Por favor ingresa una URL de imagen válida.");
-            await window.setDoc(window.doc(window.db, "config", "background"), { bgUrl: url, isVideo: false });
+        function previewCustomBg(inputElement) {
+            const file = inputElement.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    tempCustomBgBase64 = e.target.result;
+                    document.getElementById('bg-preview-container').innerHTML = `<img src="${tempCustomBgBase64}" style="width:100%; height:100%; object-fit:cover;">`;
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+
+        async function saveCustomBg() {
+            if(!tempCustomBgBase64) return alert("Por favor selecciona una foto de tu galería.");
+            await window.setDoc(window.doc(window.db, "config", "background"), { bgUrl: tempCustomBgBase64, isVideo: false });
             alert("¡Fondo de pantalla actualizado con éxito!");
         }
 
@@ -1198,6 +1219,8 @@
             if(confirm("¿Deseas volver al fondo estelar predeterminado?")) {
                 const defaultBg = "https://images.unsplash.com/photo-1506703719100-a0f3a48c0f86?w=1600";
                 await window.setDoc(window.doc(window.db, "config", "background"), { bgUrl: defaultBg, isVideo: false });
+                document.getElementById('bg-preview-container').innerHTML = `<span style="font-size:0.85rem; color:var(--text-secondary);">Vista previa del fondo</span>`;
+                tempCustomBgBase64 = "";
                 alert("Fondo restablecido.");
             }
         }
@@ -1340,19 +1363,29 @@
             };
         }
 
+        function previewBannerImage(inputElement, previewId) {
+            const file = inputElement.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    document.getElementById(previewId).innerHTML = `<img src="${e.target.result}" style="width:100%; height:100%; object-fit:contain;">`;
+                    tempBannerBase64Image = e.target.result;
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+
         async function addBannerItem() {
-            const imgUrl = document.getElementById('new-banner-img-url').value.trim();
             const videoUrl = document.getElementById('new-banner-video-url').value.trim();
-            
-            if(!imgUrl && !videoUrl) return alert("Ingresa una URL de imagen o de video para el banner.");
+            const img = videoUrl || tempBannerBase64Image;
+            if(!img) return alert("Sube una foto de galería o ingresa el enlace de video URL para el banner.");
 
             const isVideo = !!videoUrl;
-            const finalSrc = isVideo ? videoUrl : imgUrl;
-
-            await window.addDoc(window.collection(window.db, "banners"), { img: finalSrc, isVideo });
+            await window.addDoc(window.collection(window.db, "banners"), { img, isVideo });
             alert("¡Banner agregado!");
-            document.getElementById('new-banner-img-url').value = '';
+            document.getElementById('new-banner-img-preview').innerHTML = 'Vista Previa Banner';
             document.getElementById('new-banner-video-url').value = '';
+            tempBannerBase64Image = "";
         }
 
         async function deleteBanner(id) {
@@ -1367,11 +1400,12 @@
             document.getElementById('edit-banner-id').value = b.id;
             if(b.isVideo) {
                 document.getElementById('edit-banner-video-url').value = b.img;
-                document.getElementById('edit-banner-img-url').value = '';
+                document.getElementById('edit-banner-img-preview').innerHTML = 'Video configurado por URL';
             } else {
-                document.getElementById('edit-banner-img-url').value = b.img;
                 document.getElementById('edit-banner-video-url').value = '';
+                document.getElementById('edit-banner-img-preview').innerHTML = b.img ? `<img src="${b.img}" style="width:100%; height:100%; object-fit:contain;">` : 'Vista Previa';
             }
+            tempBannerBase64Image = "";
             document.getElementById('edit-banner-modal').classList.add('active');
         }
 
@@ -1381,15 +1415,20 @@
 
         async function saveBannerEdits() {
             const id = document.getElementById('edit-banner-id').value;
-            const imgUrl = document.getElementById('edit-banner-img-url').value.trim();
             const videoUrl = document.getElementById('edit-banner-video-url').value.trim();
+            let data = {};
+            if(videoUrl) {
+                data.img = videoUrl;
+                data.isVideo = true;
+            } else if(tempBannerBase64Image) {
+                data.img = tempBannerBase64Image;
+                data.isVideo = false;
+            }
 
-            const isVideo = !!videoUrl;
-            const finalSrc = isVideo ? videoUrl : imgUrl;
-
-            await window.updateDoc(window.doc(window.db, "banners", id), { img: finalSrc, isVideo });
+            await window.updateDoc(window.doc(window.db, "banners", id), data);
             closeEditBannerModal();
             alert("¡Banner actualizado!");
+            tempBannerBase64Image = "";
         }
 
         function renderAdminBanners() {
@@ -1404,7 +1443,7 @@
                 const row = document.createElement('div');
                 row.className = 'admin-item';
                 row.innerHTML = `
-                    <span style="font-weight:600; flex:1;">${b.isVideo ? '🎬 Banner Video' : '🖼️ Banner Imagen'}</span>
+                    <span style="font-weight:600; flex:1;">${b.isVideo ? '🎬 Banner Video (URL)' : '🖼️ Banner Foto'}</span>
                     <button class="btn-secondary" style="font-size:0.75rem; padding:4px 8px;" onclick="openEditBannerModal('${b.id}')">✏️ Editar</button>
                     <button class="btn-danger" style="font-size:0.75rem; padding:4px 8px;" onclick="deleteBanner('${b.id}')">Eliminar</button>
                 `;
@@ -1593,6 +1632,27 @@
 
             if (offerProducts.length >= 2) {
                 offerSliderInterval = setInterval(nextSlide, 6000);
+            }
+        }
+
+        function previewMultipleImages(inputElement, previewContainerId) {
+            const files = inputElement.files;
+            const container = document.getElementById(previewContainerId);
+            container.innerHTML = '';
+            tempImagesList = [];
+
+            if (files && files.length > 0) {
+                Array.from(files).forEach((file) => {
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        tempImagesList.push(e.target.result);
+                        const imgBox = document.createElement('img');
+                        imgBox.src = e.target.result;
+                        imgBox.style.cssText = 'width:60px; height:60px; object-fit:contain; background:rgba(0,0,0,0.2); border-radius:8px; border:1px solid var(--border-highlight);';
+                        container.appendChild(imgBox);
+                    };
+                    reader.readAsDataURL(file);
+                });
             }
         }
 
@@ -2070,7 +2130,6 @@
             const price = parseFloat(document.getElementById('new-price').value);
             const initialPay = parseFloat(document.getElementById('new-initial').value) || 0;
             const note = document.getElementById('new-note').value.trim();
-            const imgUrl = document.getElementById('new-img-url').value.trim();
 
             const isOffer = document.getElementById('new-is-offer').checked;
             const offerPrice = parseFloat(document.getElementById('new-offer-price').value) || 0;
@@ -2098,10 +2157,10 @@
                 }
             });
 
-            const mainImg = imgUrl || "https://images.unsplash.com/photo-1592945403244-b3fbafd7f539?w=400";
+            const images = tempImagesList.length > 0 ? tempImagesList : ["https://images.unsplash.com/photo-1592945403244-b3fbafd7f539?w=400"];
 
             await window.addDoc(window.collection(window.db, "products"), {
-                name, category, price, initialPay, note, isOffer, offerPrice, offerUntil, images: [mainImg], img: mainImg, subvariants, order: products.length
+                name, category, price, initialPay, note, isOffer, offerPrice, offerUntil, images, img: images[0], subvariants, order: products.length
             });
 
             alert("¡Producto agregado!");
@@ -2109,12 +2168,13 @@
             document.getElementById('new-price').value = '';
             document.getElementById('new-initial').value = '';
             document.getElementById('new-note').value = '';
-            document.getElementById('new-img-url').value = '';
             document.getElementById('new-is-offer').checked = false;
             document.getElementById('new-offer-price').value = '';
             document.getElementById('new-offer-until').value = '';
             document.getElementById('new-offer-box').style.display = 'none';
             document.getElementById('subvariants-container').innerHTML = '';
+            document.getElementById('new-img-preview-container').innerHTML = 'Vista Previa';
+            tempImagesList = [];
         }
 
         async function deleteProduct(id) {
@@ -2131,7 +2191,6 @@
             document.getElementById('edit-price').value = p.price || 0;
             document.getElementById('edit-initial').value = p.initialPay || 0;
             document.getElementById('edit-note').value = p.note || '';
-            document.getElementById('edit-img-url').value = (p.images && p.images.length > 0) ? p.images[0] : (p.img || '');
             
             document.getElementById('edit-is-offer').checked = !!p.isOffer;
             document.getElementById('edit-offer-price').value = p.offerPrice || '';
@@ -2143,6 +2202,16 @@
             if(p.subvariants && p.subvariants.length > 0) {
                 p.subvariants.forEach(sv => addSubvariantField('edit-subvariants-container', sv.name, sv.price, sv.initialPay, sv.isOffer, sv.offerPrice));
             }
+
+            tempImagesList = p.images || (p.img ? [p.img] : []);
+            const previewContainer = document.getElementById('edit-img-preview-container');
+            previewContainer.innerHTML = '';
+            tempImagesList.forEach(im => {
+                const imgBox = document.createElement('img');
+                imgBox.src = im;
+                imgBox.style.cssText = 'width:60px; height:60px; object-fit:contain; background:rgba(0,0,0,0.2); border-radius:8px; border:1px solid var(--border-highlight);';
+                previewContainer.appendChild(imgBox);
+            });
 
             document.getElementById('edit-product-modal').classList.add('active');
         }
@@ -2156,7 +2225,6 @@
             const price = parseFloat(document.getElementById('edit-price').value);
             const initialPay = parseFloat(document.getElementById('edit-initial').value) || 0;
             const note = document.getElementById('edit-note').value.trim();
-            const imgUrl = document.getElementById('edit-img-url').value.trim();
 
             const isOffer = document.getElementById('edit-is-offer').checked;
             const offerPrice = parseFloat(document.getElementById('edit-offer-price').value) || 0;
@@ -2183,14 +2251,15 @@
             });
 
             let data = { name, category, price, initialPay, note, isOffer, offerPrice, offerUntil, subvariants };
-            if (imgUrl) {
-                data.images = [imgUrl];
-                data.img = imgUrl;
+            if (tempImagesList.length > 0) {
+                data.images = tempImagesList;
+                data.img = tempImagesList[0];
             }
 
-            await window.updateDoc(window.doc(window.db, "products", id), data);
+            await window.updateDoc(window.doc(window.doc(window.db, "products", id)), data);
             closeEditModal();
             alert("¡Cambios guardados!");
+            tempImagesList = [];
         }
 
         async function savePayMethodsConfig() {
