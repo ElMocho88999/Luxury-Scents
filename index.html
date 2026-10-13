@@ -58,6 +58,23 @@
             background-position: center;
             background-attachment: fixed;
             overflow-x: hidden;
+            position: relative;
+        }
+
+        #bg-video-container {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            z-index: -999;
+            overflow: hidden;
+            pointer-events: none;
+            display: none;
+        }
+
+        #bg-video-container video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            filter: brightness(0.6);
         }
 
         header {
@@ -204,12 +221,14 @@
             z-index: 1;
         }
 
-        .slide-img-front {
+        .slide-img-front, .slide-video-front {
             position: relative;
             z-index: 2;
             max-width: 100%;
             max-height: 100%;
             object-fit: contain;
+            width: 100%;
+            height: 100%;
         }
 
         .slide-overlay {
@@ -387,7 +406,6 @@
         }
         .modal-overlay.active .modal { transform: scale(1); }
 
-        /* ESTILOS REESTRUCTURADOS PARA EL PANEL ADMINISTRATIVO */
         .modal-admin-redesign {
             max-width: 680px !important;
             padding: 1.75rem !important;
@@ -578,6 +596,10 @@
 </head>
 <body>
 
+    <div id="bg-video-container">
+        <video id="bg-video-element" autoplay muted loop playsinline></video>
+    </div>
+
     <header>
         <div class="logo-container" onclick="handleLogoClick(event)">
             <div class="logo-mark">LS</div>
@@ -726,18 +748,22 @@
                 <button class="btn-gold" style="padding:6px 14px; font-size:0.85rem;" onclick="closeAdminPanel()">✕ Cerrar</button>
             </div>
 
-            <!-- SECCIÓN 1: CAMBIAR FONDO DESDE LA GALERÍA -->
+            <!-- SECCIÓN 1: CAMBIAR FONDO (IMAGEN O VIDEO DESDE LA GALERÍA) -->
             <div class="admin-section-card">
                 <div class="admin-section-title">🎨 Personalización del Fondo del Sitio</div>
                 <div class="form-group">
-                    <label>Selecciona una imagen de tu galería para el fondo:</label>
+                    <label>Selecciona una imagen de fondo:</label>
                     <input type="file" id="bg-custom-file" accept="image/*" onchange="previewCustomBg(this)">
-                    <div id="bg-preview-container" style="height:110px; border:1px dashed var(--border-highlight); margin-top:8px; border-radius:12px; display:flex; align-items:center; justify-content:center; overflow:hidden; background:rgba(0,0,0,0.3);">
-                        <span style="font-size:0.85rem; color:var(--text-secondary);">Vista previa del fondo</span>
-                    </div>
                 </div>
-                <div style="display:flex; gap:8px;">
-                    <button class="btn-gold" style="flex:1;" onclick="saveCustomBg()">Aplicar Nuevo Fondo</button>
+                <div class="form-group">
+                    <label>O selecciona un video de fondo desde tu galería:</label>
+                    <input type="file" id="bg-video-file" accept="video/*" onchange="previewCustomBgVideo(this)">
+                </div>
+                <div id="bg-preview-container" style="height:110px; border:1px dashed var(--border-highlight); margin-top:8px; border-radius:12px; display:flex; align-items:center; justify-content:center; overflow:hidden; background:rgba(0,0,0,0.3);">
+                    <span style="font-size:0.85rem; color:var(--text-secondary);">Vista previa del fondo</span>
+                </div>
+                <div style="display:flex; gap:8px; margin-top:10px;">
+                    <button class="btn-gold" style="flex:1;" onclick="saveCustomBg()">Aplicar Cambios</button>
                     <button class="btn-danger" style="font-size:0.8rem; padding:8px 12px;" onclick="resetCustomBg()">Restablecer Fondo Estelar</button>
                 </div>
             </div>
@@ -748,16 +774,20 @@
                 <div id="admin-orders-list" style="max-height: 220px; overflow-y: auto;"></div>
             </div>
 
-            <!-- SECCIÓN 3: BANNERS DE NOVEDADES -->
+            <!-- SECCIÓN 3: BANNERS DE NOVEDADES (IMAGEN O VIDEO DESDE LA GALERÍA) -->
             <div class="admin-section-card">
                 <div class="admin-section-title">✨ Banners Promocionales</div>
                 <div class="form-group">
-                    <label>Subir nuevo banner:</label>
+                    <label>Subir banner (Imagen):</label>
                     <input type="file" id="new-banner-img-file" accept="image/*" onchange="previewBannerImage(this, 'new-banner-img-preview')">
-                    <div id="new-banner-img-preview" style="height:80px; border:1px dashed var(--border-color); margin-top:6px; display:flex; align-items:center; justify-content:center; overflow:hidden; border-radius:12px;">Vista Previa Banner</div>
                 </div>
-                <button class="btn-secondary" style="width: 100%; margin-bottom: 1rem;" onclick="addBannerItem()">Guardar Banner</button>
-                <div id="admin-banners-list" style="max-height: 150px; overflow-y: auto;"></div>
+                <div class="form-group">
+                    <label>O subir banner (Video desde galería):</label>
+                    <input type="file" id="new-banner-video-file" accept="video/*" onchange="previewBannerVideo(this, 'new-banner-img-preview')">
+                </div>
+                <div id="new-banner-img-preview" style="height:80px; border:1px dashed var(--border-color); margin-top:6px; display:flex; align-items:center; justify-content:center; overflow:hidden; border-radius:12px;">Vista Previa Banner</div>
+                <button class="btn-secondary" style="width: 100%; margin-top: 1rem;" onclick="addBannerItem()">Guardar Banner</button>
+                <div id="admin-banners-list" style="max-height: 150px; overflow-y: auto; margin-top: 1rem;"></div>
             </div>
 
             <!-- SECCIÓN 4: NAVEGACIÓN Y CATEGORÍAS -->
@@ -905,10 +935,14 @@
             <h2 style="font-family:'Playfair Display', serif;">Editar Banner</h2>
             <input type="hidden" id="edit-banner-id">
             <div class="form-group">
-                <label>Cambiar Imagen:</label>
+                <label>Cambiar Banner (Imagen):</label>
                 <input type="file" id="edit-banner-img-file" accept="image/*" onchange="previewBannerImage(this, 'edit-banner-img-preview')">
-                <div id="edit-banner-img-preview" style="height:90px; border:1px dashed var(--border-color); margin-top:6px; display:flex; align-items:center; justify-content:center; overflow:hidden; border-radius:12px;">Vista Previa</div>
             </div>
+            <div class="form-group">
+                <label>O Cambiar Banner (Video galería):</label>
+                <input type="file" id="edit-banner-video-file" accept="video/*" onchange="previewBannerVideo(this, 'edit-banner-img-preview')">
+            </div>
+            <div id="edit-banner-img-preview" style="height:90px; border:1px dashed var(--border-color); margin-top:6px; display:flex; align-items:center; justify-content:center; overflow:hidden; border-radius:12px;">Vista Previa</div>
             <button class="btn-primary" style="width: 100%; margin-top: 1rem;" onclick="saveBannerEdits()">Guardar Cambios</button>
             <button class="btn-secondary" style="width: 100%; margin-top: 8px;" onclick="closeEditBannerModal()">Cancelar</button>
         </div>
@@ -1040,8 +1074,10 @@
         let favorites = JSON.parse(localStorage.getItem('ls_favs')) || [];
         let clientName = localStorage.getItem('ls_client_name') || "";
         let tempImagesList = [];
-        let tempBannerBase64Image = "";
+        let tempBannerBase64 = "";
+        let tempBannerIsVideo = false;
         let tempCustomBgBase64 = "";
+        let tempCustomBgIsVideo = false;
 
         let logoClickCount = 0;
         let logoClickTimer = null;
@@ -1155,10 +1191,21 @@
             document.getElementById(`${prefix}-offer-box`).style.display = isOffer ? 'block' : 'none';
         }
 
-        function applyBgToBody(bgUrl) {
+        function applyBgToBody(bgData, isVideo = false) {
             const defaultBg = "https://images.unsplash.com/photo-1506703719100-a0f3a48c0f86?w=1600";
-            const urlToUse = bgUrl || defaultBg;
-            document.body.style.backgroundImage = `linear-gradient(rgba(5, 7, 12, 0.75), rgba(5, 7, 12, 0.75)), url('${urlToUse}')`;
+            const videoContainer = document.getElementById('bg-video-container');
+            const videoElement = document.getElementById('bg-video-element');
+
+            if (isVideo || (bgData && bgData.startsWith('data:video'))) {
+                videoElement.src = bgData;
+                videoContainer.style.display = 'block';
+                document.body.style.backgroundImage = 'none';
+            } else {
+                videoContainer.style.display = 'none';
+                videoElement.src = '';
+                const urlToUse = bgData || defaultBg;
+                document.body.style.backgroundImage = `linear-gradient(rgba(5, 7, 12, 0.75), rgba(5, 7, 12, 0.75)), url('${urlToUse}')`;
+            }
         }
 
         function previewCustomBg(inputElement) {
@@ -1167,24 +1214,39 @@
                 const reader = new FileReader();
                 reader.onload = function(e) {
                     tempCustomBgBase64 = e.target.result;
+                    tempCustomBgIsVideo = false;
                     document.getElementById('bg-preview-container').innerHTML = `<img src="${tempCustomBgBase64}" style="width:100%; height:100%; object-fit:cover;">`;
                 };
                 reader.readAsDataURL(file);
             }
         }
 
+        function previewCustomBgVideo(inputElement) {
+            const file = inputElement.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    tempCustomBgBase64 = e.target.result;
+                    tempCustomBgIsVideo = true;
+                    document.getElementById('bg-preview-container').innerHTML = `<video src="${tempCustomBgBase64}" style="width:100%; height:100%; object-fit:cover;" muted autoplay loop></video>`;
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+
         async function saveCustomBg() {
-            if(!tempCustomBgBase64) return alert("Por favor selecciona una imagen de tu galería.");
-            await window.setDoc(window.doc(window.db, "config", "background"), { bgUrl: tempCustomBgBase64 });
+            if(!tempCustomBgBase64) return alert("Por favor selecciona una imagen o video de tu galería.");
+            await window.setDoc(window.doc(window.db, "config", "background"), { bgUrl: tempCustomBgBase64, isVideo: tempCustomBgIsVideo });
             alert("¡Fondo de pantalla actualizado con éxito!");
         }
 
         async function resetCustomBg() {
             if(confirm("¿Deseas volver al fondo estelar predeterminado?")) {
                 const defaultBg = "https://images.unsplash.com/photo-1506703719100-a0f3a48c0f86?w=1600";
-                await window.setDoc(window.doc(window.db, "config", "background"), { bgUrl: defaultBg });
+                await window.setDoc(window.doc(window.db, "config", "background"), { bgUrl: defaultBg, isVideo: false });
                 document.getElementById('bg-preview-container').innerHTML = `<span style="font-size:0.85rem; color:var(--text-secondary);">Vista previa del fondo</span>`;
                 tempCustomBgBase64 = "";
+                tempCustomBgIsVideo = false;
                 alert("Fondo restablecido.");
             }
         }
@@ -1223,7 +1285,7 @@
 
             window.onSnapshot(window.doc(window.db, "config", "background"), (docSnap) => {
                 if(docSnap.exists() && docSnap.data().bgUrl) {
-                    applyBgToBody(docSnap.data().bgUrl);
+                    applyBgToBody(docSnap.data().bgUrl, docSnap.data().isVideo);
                 } else {
                     applyBgToBody();
                 }
@@ -1333,20 +1395,33 @@
                 const reader = new FileReader();
                 reader.onload = function(e) {
                     document.getElementById(previewId).innerHTML = `<img src="${e.target.result}" style="width:100%; height:100%; object-fit:contain;">`;
-                    tempBannerBase64Image = e.target.result;
+                    tempBannerBase = e.target.result;
+                    tempBannerIsVideo = false;
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+
+        function previewBannerVideo(inputElement, previewId) {
+            const file = inputElement.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    document.getElementById(previewId).innerHTML = `<video src="${e.target.result}" style="width:100%; height:100%; object-fit:cover;" muted autoplay loop></video>`;
+                    tempBannerBase = e.target.result;
+                    tempBannerIsVideo = true;
                 };
                 reader.readAsDataURL(file);
             }
         }
 
         async function addBannerItem() {
-            const img = tempBannerBase64Image;
-            if(!img) return alert("Sube una imagen para el banner.");
-
-            await window.addDoc(window.collection(window.db, "banners"), { img });
+            if(!tempBannerBase) return alert("Sube una imagen o un video de banner desde tu galería.");
+            await window.addDoc(window.collection(window.db, "banners"), { img: tempBannerBase, isVideo: tempBannerIsVideo });
             alert("¡Banner agregado!");
             document.getElementById('new-banner-img-preview').innerHTML = 'Vista Previa Banner';
-            tempBannerBase64Image = "";
+            tempBannerBase = "";
+            tempBannerIsVideo = false;
         }
 
         async function deleteBanner(id) {
@@ -1359,8 +1434,13 @@
             const b = banners.find(item => item.id === id);
             if(!b) return;
             document.getElementById('edit-banner-id').value = b.id;
-            document.getElementById('edit-banner-img-preview').innerHTML = b.img ? `<img src="${b.img}" style="width:100%; height:100%; object-fit:contain;">` : 'Vista Previa';
-            tempBannerBase64Image = "";
+            if(b.isVideo) {
+                document.getElementById('edit-banner-img-preview').innerHTML = `<video src="${b.img}" style="width:100%; height:100%; object-fit:cover;" muted autoplay loop></video>`;
+            } else {
+                document.getElementById('edit-banner-img-preview').innerHTML = b.img ? `<img src="${b.img}" style="width:100%; height:100%; object-fit:contain;">` : 'Vista Previa';
+            }
+            tempBannerBase = "";
+            tempBannerIsVideo = false;
             document.getElementById('edit-banner-modal').classList.add('active');
         }
 
@@ -1371,12 +1451,16 @@
         async function saveBannerEdits() {
             const id = document.getElementById('edit-banner-id').value;
             let data = {};
-            if(tempBannerBase64Image) data.img = tempBannerBase64Image;
+            if(tempBannerBase) {
+                data.img = tempBannerBase;
+                data.isVideo = tempBannerIsVideo;
+            }
 
             await window.updateDoc(window.doc(window.db, "banners", id), data);
             closeEditBannerModal();
             alert("¡Banner actualizado!");
-            tempBannerBase64Image = "";
+            tempBannerBase = "";
+            tempBannerIsVideo = false;
         }
 
         function renderAdminBanners() {
@@ -1391,8 +1475,7 @@
                 const row = document.createElement('div');
                 row.className = 'admin-item';
                 row.innerHTML = `
-                    <img src="${b.img}" style="width:40px; height:40px; border-radius:6px; object-fit:contain; background:rgba(0,0,0,0.2);">
-                    <span style="font-weight:600; flex:1; margin-left:8px;">Banner Novedad</span>
+                    <span style="font-weight:600; flex:1;">${b.isVideo ? '🎬 Banner Video' : '🖼️ Banner Imagen'}</span>
                     <button class="btn-secondary" style="font-size:0.75rem; padding:4px 8px;" onclick="openEditBannerModal('${b.id}')">✏️ Editar</button>
                     <button class="btn-danger" style="font-size:0.75rem; padding:4px 8px;" onclick="deleteBanner('${b.id}')">Eliminar</button>
                 `;
@@ -1415,11 +1498,19 @@
             banners.forEach((b, idx) => {
                 const slide = document.createElement('div');
                 slide.className = `slide-item ${idx === 0 ? 'active' : ''}`;
-                slide.innerHTML = `
-                    <div class="slide-bg-blur" style="background-image: url('${b.img}');"></div>
-                    <img class="slide-img-front" src="${b.img}" alt="Banner">
-                    <div class="slide-overlay"></div>
-                `;
+                
+                if(b.isVideo) {
+                    slide.innerHTML = `
+                        <video class="slide-video-front banner-vid" src="${b.img}" autoplay muted playsinline></video>
+                        <div class="slide-overlay"></div>
+                    `;
+                } else {
+                    slide.innerHTML = `
+                        <div class="slide-bg-blur" style="background-image: url('${b.img}');"></div>
+                        <img class="slide-img-front" src="${b.img}" alt="Banner">
+                        <div class="slide-overlay"></div>
+                    `;
+                }
                 sliderContainer.appendChild(slide);
             });
 
@@ -1429,21 +1520,58 @@
             const nextSlide = () => {
                 if(!slides || slides.length === 0) return;
                 slides[currentSlide].classList.remove('active');
+                
+                const currentVideo = slides[currentSlide].querySelector('video');
+                if(currentVideo) { currentVideo.pause(); currentVideo.currentTime = 0; }
+
                 currentSlide = (currentSlide + 1) % slides.length;
                 slides[currentSlide].classList.add('active');
+
+                const nextVideo = slides[currentSlide].querySelector('video');
+                if(nextVideo) {
+                    nextVideo.currentTime = 0;
+                    nextVideo.play().catch(e => console.log(e));
+                }
             };
 
             const prevSlide = () => {
                 if(!slides || slides.length === 0) return;
                 slides[currentSlide].classList.remove('active');
+                
+                const currentVideo = slides[currentSlide].querySelector('video');
+                if(currentVideo) { currentVideo.pause(); currentVideo.currentTime = 0; }
+
                 currentSlide = (currentSlide - 1 + slides.length) % slides.length;
                 slides[currentSlide].classList.add('active');
+
+                const prevVideo = slides[currentSlide].querySelector('video');
+                if(prevVideo) {
+                    prevVideo.currentTime = 0;
+                    prevVideo.play().catch(e => console.log(e));
+                }
             };
 
             setupSwipeSupport(sliderContainer, nextSlide, prevSlide);
 
+            slides.forEach((slide, idx) => {
+                const vid = slide.querySelector('video');
+                if(vid) {
+                    vid.onended = () => {
+                        if(idx === currentSlide) {
+                            nextSlide();
+                        }
+                    };
+                }
+            });
+
             if (banners.length >= 2) {
-                sliderInterval = setInterval(nextSlide, 5000);
+                sliderInterval = setInterval(() => {
+                    const activeSlide = sliderContainer.querySelector('.slide-item.active');
+                    const activeVid = activeSlide ? activeSlide.querySelector('video') : null;
+                    if(!activeVid) {
+                        nextSlide();
+                    }
+                }, 5000);
             }
         }
 
