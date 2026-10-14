@@ -326,11 +326,11 @@
            ========================================================================== */
 
         /* 1. AURORA MULTICOLOR ONDULADA */
-        .card.style-aurora {
-            border: 2px solid transparent;
+        .card.style-aurora, .modal-legendary.style-aurora {
+            border: 2px solid transparent !important;
             background: linear-gradient(var(--bg-card), var(--bg-card)) padding-box,
-                        linear-gradient(120deg, var(--leg-c1, #e2b714), var(--leg-c2, #ff007f), var(--leg-c3, #00f0ff), var(--leg-c1, #e2b714)) border-box;
-            background-size: 300% 300%;
+                        linear-gradient(120deg, var(--leg-c1, #e2b714), var(--leg-c2, #ff007f), #00f0ff, var(--leg-c1, #e2b714)) border-box !important;
+            background-size: 300% 300% !important;
             animation: auroraWave 4s infinite linear, fadeIn 0.4s ease-out forwards;
         }
         @keyframes auroraWave {
@@ -340,8 +340,8 @@
         }
 
         /* 2. PULSO DUAL DE NEÓN FLUIDO */
-        .card.style-neon-pulse {
-            border: 2px solid var(--leg-c1, #00f0ff);
+        .card.style-neon-pulse, .modal-legendary.style-neon-pulse {
+            border: 2px solid var(--leg-c1, #00f0ff) !important;
             animation: neonPulseWave 2s infinite ease-in-out, fadeIn 0.4s ease-out forwards;
         }
         @keyframes neonPulseWave {
@@ -350,12 +350,12 @@
             100% { box-shadow: 0 0 8px var(--leg-c1, #00f0ff), inset 0 0 4px var(--leg-c2, #7000ff); }
         }
 
-        /* 3. DESTALLO CÁSMICO Y MARCO DORADO */
-        .card.style-cosmic-gold {
-            border: 2px solid var(--leg-c1, #e2b714);
-            box-shadow: 0 0 20px rgba(226, 183, 20, 0.35);
+        /* 3. DESTALLO CÓSMICO Y MARCO DORADO */
+        .card.style-cosmic-gold, .modal-legendary.style-cosmic-gold {
+            border: 2px solid var(--leg-c1, #e2b714) !important;
+            box-shadow: 0 0 20px rgba(226, 183, 20, 0.35) !important;
         }
-        .card.style-cosmic-gold::before {
+        .card.style-cosmic-gold::before, .modal-legendary.style-cosmic-gold::before {
             content: '';
             position: absolute;
             top: -50%; left: -50%; width: 200%; height: 200%;
@@ -370,10 +370,10 @@
         }
 
         /* 4. ONDA DE ENERGÍA PLASMA */
-        .card.style-plasma-wave {
-            border: 2px solid transparent;
+        .card.style-plasma-wave, .modal-legendary.style-plasma-wave {
+            border: 2px solid transparent !important;
             background: linear-gradient(var(--bg-card), var(--bg-card)) padding-box,
-                        conic-gradient(from 0deg, var(--leg-c1, #ff0055), var(--leg-c2, #7000ff), var(--leg-c1, #ff0055)) border-box;
+                        conic-gradient(from 0deg, var(--leg-c1, #ff0055), var(--leg-c2, #7000ff), var(--leg-c1, #ff0055)) border-box !important;
             animation: rotatePlasma 3s infinite linear;
         }
         @keyframes rotatePlasma {
@@ -383,16 +383,16 @@
         }
 
         /* 5. RESPLANDOR ROYALE ESMERALDA/ORO */
-        .card.style-emerald-royale {
-            border: 2px solid var(--leg-c1, #00ff87);
-            background: linear-gradient(145deg, rgba(0, 255, 135, 0.05), var(--bg-card));
-            box-shadow: 0 0 20px var(--leg-c1, rgba(0, 255, 135, 0.3));
+        .card.style-emerald-royale, .modal-legendary.style-emerald-royale {
+            border: 2px solid var(--leg-c1, #00ff87) !important;
+            background: linear-gradient(145deg, rgba(0, 255, 135, 0.05), var(--bg-card)) !important;
+            box-shadow: 0 0 20px var(--leg-c1, rgba(0, 255, 135, 0.3)) !important;
         }
 
         /* 6. HALO AMATISTA CELESTIAL */
-        .card.style-amethyst-halo {
-            border: 2px solid var(--leg-c1, #9d4edd);
-            box-shadow: 0 0 15px var(--leg-c1, #9d4edd), inset 0 0 15px var(--leg-c2, rgba(157, 78, 221, 0.2));
+        .card.style-amethyst-halo, .modal-legendary.style-amethyst-halo {
+            border: 2px solid var(--leg-c1, #9d4edd) !important;
+            box-shadow: 0 0 15px var(--leg-c1, #9d4edd), inset 0 0 15px var(--leg-c2, rgba(157, 78, 221, 0.2)) !important;
             animation: amethystBreath 3s infinite ease-in-out;
         }
         @keyframes amethystBreath {
@@ -401,30 +401,114 @@
         }
 
         /* 7. LAVA FUEGO INFERNAL */
-        .card.style-inferno-fire {
-            border: 2px solid var(--leg-c1, #ff4500);
-            background: linear-gradient(0deg, rgba(255, 69, 0, 0.08) 0%, var(--bg-card) 100%);
-            box-shadow: 0 0 22px var(--leg-c1, #ff4500);
+        .card.style-inferno-fire, .modal-legendary.style-inferno-fire {
+            border: 2px solid var(--leg-c1, #ff4500) !important;
+            background: linear-gradient(0deg, rgba(255, 69, 0, 0.08) 0%, var(--bg-card) 100%) !important;
+            box-shadow: 0 0 22px var(--leg-c1, #ff4500) !important;
         }
 
         /* 8. BORDADO DIAMANTE CRISTAL */
-        .card.style-diamond-lux {
-            border: 2px solid #ffffff;
-            box-shadow: 0 0 20px rgba(255, 255, 255, 0.4), inset 0 0 10px rgba(255, 255, 255, 0.2);
+        .card.style-diamond-lux, .modal-legendary.style-diamond-lux {
+            border: 2px solid #ffffff !important;
+            box-shadow: 0 0 20px rgba(255, 255, 255, 0.4), inset 0 0 10px rgba(255, 255, 255, 0.2) !important;
         }
 
         /* 9. NUBES CIBERNETICAS VIP */
-        .card.style-cyber-vip {
-            border: 2px dashed var(--leg-c1, #00f0ff);
-            box-shadow: 0 0 18px var(--leg-c1, #00f0ff);
-            animation: dashRotate 10s infinite linear;
+        .card.style-cyber-vip, .modal-legendary.style-cyber-vip {
+            border: 2px dashed var(--leg-c1, #00f0ff) !important;
+            box-shadow: 0 0 18px var(--leg-c1, #00f0ff) !important;
         }
 
         /* 10. SOMBRA ETERNA ECLIPSE */
-        .card.style-eclipse-dark {
-            border: 2px solid var(--leg-c1, #ffffff);
-            box-shadow: 0 0 30px rgba(255, 255, 255, 0.25);
-            background: #000000;
+        .card.style-eclipse-dark, .modal-legendary.style-eclipse-dark {
+            border: 2px solid var(--leg-c1, #ffffff) !important;
+            box-shadow: 0 0 30px rgba(255, 255, 255, 0.25) !important;
+            background: #000000 !important;
+        }
+
+        /* ==========================================================================
+           10 TIPOS DE TEXTURAS EXCLUSIVAS PARA LAS PUBLICACIONES (Y MODAL DE DETALLE)
+           ========================================================================== */
+        
+        /* Textura 1: Mármol Elegante */
+        .tex-marble {
+            background-image: radial-gradient(at 80% 20%, rgba(255,255,255,0.06) 0px, transparent 50%),
+                              radial-gradient(at 0% 50%, rgba(255,255,255,0.04) 0px, transparent 50%),
+                              linear-gradient(135deg, rgba(255,255,255,0.03) 25%, transparent 25%, transparent 50%, rgba(255,255,255,0.03) 50%, rgba(255,255,255,0.03) 75%, transparent 75%, transparent);
+            background-size: 100% 100%, 100% 100%, 40px 40px;
+        }
+
+        /* Textura 2: Fibra de Carbono VIP */
+        .tex-carbon {
+            background: radial-gradient(black 15%, transparent 16%) 0 0,
+                        radial-gradient(black 15%, transparent 16%) 8px 8px,
+                        radial-gradient(rgba(255,255,255,.1) 15%, transparent 20%) 0 1px,
+                        radial-gradient(rgba(255,255,255,.1) 15%, transparent 20%) 8px 9px;
+            background-color: #0d0d0d;
+            background-size: 16px 16px;
+        }
+
+        /* Textura 3: Cuero Cosido Italiano */
+        .tex-leather {
+            background-color: #12100e;
+            background-image: radial-gradient(rgba(255,255,255,0.08) 1px, transparent 0);
+            background-size: 8px 8px;
+            box-shadow: inset 0 0 15px rgba(0,0,0,0.8);
+        }
+
+        /* Textura 4: Seda Fluida Saten */
+        .tex-silk {
+            background: linear-gradient(45deg, rgba(255,255,255,0.02) 0%, rgba(255,255,255,0.08) 50%, rgba(0,0,0,0.3) 100%);
+            background-size: 200% 200%;
+            animation: silkShift 8s infinite alternate ease-in-out;
+        }
+        @keyframes silkShift { 0% { background-position: 0% 0%; } 100% { background-position: 100% 100%; } }
+
+        /* Textura 5: Hoja de Oro Escuadrada */
+        .tex-gold-leaf {
+            background: linear-gradient(135deg, rgba(226,183,20,0.12) 0%, rgba(0,0,0,0.4) 50%, rgba(226,183,20,0.1) 100%);
+            background-size: 100% 100%;
+            border-image: linear-gradient(to bottom right, #e2b714, transparent) 1;
+        }
+
+        /* Textura 6: Escamas de Dragón / Panal */
+        .tex-scales {
+            background: radial-gradient(circle, transparent 20%, var(--bg-card) 20%, var(--bg-card) 80%, transparent 80%, transparent),
+                        radial-gradient(circle, transparent 20%, var(--bg-card) 20%, var(--bg-card) 80%, transparent 80%, transparent) 15px 15px,
+                        linear-gradient(rgba(255,255,255,0.05) 1.2px, transparent 1.2px) 0 -0.6px,
+                        linear-gradient(90deg, rgba(255,255,255,0.05) 1.2px, var(--bg-card) 1.2px) -0.6px 0;
+            background-size: 30px 30px, 30px 30px, 15px 15px, 15px 15px;
+        }
+
+        /* Textura 7: Terciopelo Imperial Oscuro */
+        .tex-velvet {
+            background: radial-gradient(circle at 50% 50%, rgba(255, 255, 255, 0.05) 0%, rgba(0, 0, 0, 0.6) 100%);
+            backdrop-filter: contrast(120%);
+        }
+
+        /* Textura 8: Cristal Templado Esmerilado */
+        .tex-glass {
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255,255,255,0.12);
+        }
+
+        /* Textura 9: Geométrico Cubos 3D */
+        .tex-cubes {
+            background: linear-gradient(135deg, rgba(255,255,255,0.05) 25%, transparent 25%) -20px 0,
+                        linear-gradient(225deg, rgba(255,255,255,0.05) 25%, transparent 25%) -20px 0,
+                        linear-gradient(315deg, rgba(255,255,255,0.05) 25%, transparent 25%),
+                        linear-gradient(45deg, rgba(255,255,255,0.05) 25%, transparent 25%);
+            background-size: 40px 40px;
+        }
+
+        /* Textura 10: Granito Volcánico */
+        .tex-granite {
+            background-image: radial-gradient(rgba(255, 255, 255, 0.1) 1px, transparent 0), radial-gradient(rgba(255, 255, 255, 0.05) 1px, transparent 0);
+            background-position: 0 0, 4px 4px;
+            background-size: 8px 8px;
+            background-color: #07090e;
         }
 
         .legendary-badge {
@@ -785,7 +869,7 @@
 
     <!-- Modal Detalle -->
     <div class="modal-overlay" id="detail-modal">
-        <div class="modal">
+        <div class="modal" id="detail-modal-box">
             <div id="detail-content"></div>
             <button class="btn-secondary" style="margin-top: 1rem; width: 100%;" onclick="closeDetailModal()">Cerrar</button>
         </div>
@@ -951,7 +1035,7 @@
                     </div>
                 </div>
 
-                <!-- SECCIÓN DECORACIÓN LEGENDARIA CON 10 ESTILOS Y VISTA PREVIA -->
+                <!-- SECCIÓN DECORACIÓN LEGENDARIA Y TEXTURAS -->
                 <div class="form-group" style="background:rgba(226, 183, 20, 0.05); padding:12px; border-radius:12px; border:1px dashed rgba(226, 183, 20, 0.4);">
                     <label style="color:var(--accent-gold); font-weight:700;"><input type="checkbox" id="new-legendary" onchange="toggleLegendaryFields('new')"> ✨ Activar Decoración Legendaria Exclusiva</label>
                     <div id="new-legendary-box" style="display:none; margin-top:10px; display:flex; flex-direction:column; gap:8px;">
@@ -968,6 +1052,22 @@
                                 <option value="style-diamond-lux">8. Bordado Diamante Cristal</option>
                                 <option value="style-cyber-vip">9. Nubes Ciberpunk VIP</option>
                                 <option value="style-eclipse-dark">10. Sombra Eterna Eclipse</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Textura Exclusiva de Fondo:</label>
+                            <select id="new-legendary-texture" onchange="updateLivePreview('new')">
+                                <option value="">Sin Textura (Liso)</option>
+                                <option value="tex-marble">1. Mármol Elegante</option>
+                                <option value="tex-carbon">2. Fibra de Carbono VIP</option>
+                                <option value="tex-leather">3. Cuero Cosido Italiano</option>
+                                <option value="tex-silk">4. Seda Fluida Satén</option>
+                                <option value="tex-gold-leaf">5. Hoja de Oro Escuadrada</option>
+                                <option value="tex-scales">6. Escamas de Dragón / Panal</option>
+                                <option value="tex-velvet">7. Terciopelo Imperial Oscuro</option>
+                                <option value="tex-glass">8. Cristal Templado Esmerilado</option>
+                                <option value="tex-cubes">9. Geométrico Cubos 3D</option>
+                                <option value="tex-granite">10. Granito Volcánico</option>
                             </select>
                         </div>
                         <div style="display:flex; gap:8px;">
@@ -1064,7 +1164,7 @@
                 </div>
             </div>
 
-            <!-- DECORACIÓN LEGENDARIA PARA EDITAR PRODUCTO -->
+            <!-- DECORACIÓN LEGENDARIA Y TEXTURAS PARA EDITAR PRODUCTO -->
             <div class="form-group" style="background:rgba(226, 183, 20, 0.05); padding:12px; border-radius:12px; border:1px dashed rgba(226, 183, 20, 0.4);">
                 <label style="color:var(--accent-gold); font-weight:700;"><input type="checkbox" id="edit-legendary" onchange="toggleLegendaryFields('edit')"> ✨ Activar Decoración Legendaria Exclusiva</label>
                 <div id="edit-legendary-box" style="display:none; margin-top:10px; display:flex; flex-direction:column; gap:8px;">
@@ -1081,6 +1181,22 @@
                             <option value="style-diamond-lux">8. Bordado Diamante Cristal</option>
                             <option value="style-cyber-vip">9. Nubes Ciberpunk VIP</option>
                             <option value="style-eclipse-dark">10. Sombra Eterna Eclipse</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Textura Exclusiva de Fondo:</label>
+                        <select id="edit-legendary-texture" onchange="updateLivePreview('edit')">
+                            <option value="">Sin Textura (Liso)</option>
+                            <option value="tex-marble">1. Mármol Elegante</option>
+                            <option value="tex-carbon">2. Fibra de Carbono VIP</option>
+                            <option value="tex-leather">3. Cuero Cosido Italiano</option>
+                            <option value="tex-silk">4. Seda Fluida Satén</option>
+                            <option value="tex-gold-leaf">5. Hoja de Oro Escuadrada</option>
+                            <option value="tex-scales">6. Escamas de Dragón / Panal</option>
+                            <option value="tex-velvet">7. Terciopelo Imperial Oscuro</option>
+                            <option value="tex-glass">8. Cristal Templado Esmerilado</option>
+                            <option value="tex-cubes">9. Geométrico Cubos 3D</option>
+                            <option value="tex-granite">10. Granito Volcánico</option>
                         </select>
                     </div>
                     <div style="display:flex; gap:8px;">
@@ -1374,6 +1490,7 @@
 
         function updateLivePreview(prefix) {
             const style = document.getElementById(`${prefix}-legendary-style`).value;
+            const texture = document.getElementById(`${prefix}-legendary-texture`).value;
             const c1 = document.getElementById(`${prefix}-legendary-c1`).value;
             const c2 = document.getElementById(`${prefix}-legendary-c2`).value;
             const badgeText = document.getElementById(`${prefix}-legendary-badge`).value.trim() || 'EXCLUSIVO';
@@ -1382,7 +1499,7 @@
             const previewBadge = document.getElementById(`${prefix}-preview-badge`);
 
             if(previewCard) {
-                previewCard.className = `card ${style}`;
+                previewCard.className = `card ${style} ${texture}`;
                 previewCard.style.cssText = `--leg-c1: ${c1}; --leg-c2: ${c2}; pointer-events:none; margin-top:4px;`;
             }
             if(previewBadge) {
@@ -1984,7 +2101,7 @@
                 let cardStyle = '';
 
                 if(p.isLegendary) {
-                    cardClasses += ` ${p.legendaryStyle || 'style-aurora'}`;
+                    cardClasses += ` ${p.legendaryStyle || 'style-aurora'} ${p.legendaryTexture || ''}`;
                     cardStyle = `--leg-c1: ${p.legendaryC1 || '#e2b714'}; --leg-c2: ${p.legendaryC2 || '#ff007f'};`;
                 }
 
@@ -2050,8 +2167,18 @@
                 `<span class="old-price">$${parseFloat(p.price).toFixed(2)}</span>$${parseFloat(p.offerPrice).toFixed(2)}` : 
                 `$${parseFloat(p.price).toFixed(2)}`;
 
+            const modalBox = document.getElementById('detail-modal-box');
+            if(p.isLegendary) {
+                modalBox.className = `modal modal-legendary ${p.legendaryStyle || 'style-aurora'} ${p.legendaryTexture || ''}`;
+                modalBox.style.cssText = `--leg-c1: ${p.legendaryC1 || '#e2b714'}; --leg-c2: ${p.legendaryC2 || '#ff007f'};`;
+            } else {
+                modalBox.className = 'modal';
+                modalBox.style.cssText = '';
+            }
+
             const container = document.getElementById('detail-content');
             container.innerHTML = `
+                ${(p.isLegendary && p.legendaryBadge) ? `<div class="legendary-badge" style="position:relative; top:0; right:0; margin-bottom:10px; width:fit-content;">✨ ${p.legendaryBadge}</div>` : ''}
                 <div style="position:relative; margin-bottom:1rem; border-radius:16px; overflow:hidden; display:flex; align-items:center; justify-content:center; height:260px; background:#0a0e17;">
                     <div id="detail-bg-blur" class="card-bg-blur" style="background-image: url('${imgs[0]}');"></div>
                     <img id="detail-active-img" src="${imgs[0]}" onclick="openFullscreen(this.src)" style="position:relative; z-index:1; width:100%; height:100%; object-fit:contain; padding:10px; cursor:pointer;" title="Haz clic para ver en pantalla completa">
@@ -2367,6 +2494,7 @@
 
             const isLegendary = document.getElementById('new-legendary').checked;
             const legendaryStyle = document.getElementById('new-legendary-style').value;
+            const legendaryTexture = document.getElementById('new-legendary-texture').value;
             const legendaryC1 = document.getElementById('new-legendary-c1').value;
             const legendaryC2 = document.getElementById('new-legendary-c2').value;
             const legendaryBadge = document.getElementById('new-legendary-badge').value.trim();
@@ -2396,7 +2524,7 @@
             const images = tempImagesList.length > 0 ? tempImagesList : ["https://images.unsplash.com/photo-1592945403244-b3fbafd7f539?w=400"];
 
             await window.addDoc(window.collection(window.db, "products"), {
-                name, category, price, initialPay, note, isOffer, offerPrice, offerUntil, isLegendary, legendaryStyle, legendaryC1, legendaryC2, legendaryBadge, images, img: images[0], subvariants, order: products.length
+                name, category, price, initialPay, note, isOffer, offerPrice, offerUntil, isLegendary, legendaryStyle, legendaryTexture, legendaryC1, legendaryC2, legendaryBadge, images, img: images[0], subvariants, order: products.length
             });
 
             alert("¡Producto agregado!");
@@ -2438,6 +2566,7 @@
 
             document.getElementById('edit-legendary').checked = !!p.isLegendary;
             document.getElementById('edit-legendary-style').value = p.legendaryStyle || 'style-aurora';
+            document.getElementById('edit-legendary-texture').value = p.legendaryTexture || '';
             document.getElementById('edit-legendary-c1').value = p.legendaryC1 || '#e2b714';
             document.getElementById('edit-legendary-c2').value = p.legendaryC2 || '#ff007f';
             document.getElementById('edit-legendary-badge').value = p.legendaryBadge || '';
@@ -2478,6 +2607,7 @@
 
             const isLegendary = document.getElementById('edit-legendary').checked;
             const legendaryStyle = document.getElementById('edit-legendary-style').value;
+            const legendaryTexture = document.getElementById('edit-legendary-texture').value;
             const legendaryC1 = document.getElementById('edit-legendary-c1').value;
             const legendaryC2 = document.getElementById('edit-legendary-c2').value;
             const legendaryBadge = document.getElementById('edit-legendary-badge').value.trim();
@@ -2502,7 +2632,7 @@
                 }
             });
 
-            let data = { name, category, price, initialPay, note, isOffer, offerPrice, offerUntil, isLegendary, legendaryStyle, legendaryC1, legendaryC2, legendaryBadge, subvariants };
+            let data = { name, category, price, initialPay, note, isOffer, offerPrice, offerUntil, isLegendary, legendaryStyle, legendaryTexture, legendaryC1, legendaryC2, legendaryBadge, subvariants };
             if (tempImagesList.length > 0) {
                 data.images = tempImagesList;
                 data.img = tempImagesList[0];
