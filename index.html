@@ -321,6 +321,47 @@
             animation: fadeIn 0.4s ease-out forwards;
         }
 
+        /* ESTILOS DECORATIVOS LEGENDARIOS Y ANIMADOS */
+        .card.legendary-glow {
+            border: 2px solid var(--legendary-color, #e2b714);
+            animation: legendaryPulse 2.5s infinite ease-in-out, fadeIn 0.4s ease-out forwards;
+        }
+
+        @keyframes legendaryPulse {
+            0% { box-shadow: 0 0 10px var(--legendary-color, #e2b714), inset 0 0 5px var(--legendary-color, #e2b714); }
+            50% { box-shadow: 0 0 25px var(--legendary-color, #e2b714), inset 0 0 12px var(--legendary-color, #e2b714); }
+            100% { box-shadow: 0 0 10px var(--legendary-color, #e2b714), inset 0 0 5px var(--legendary-color, #e2b714); }
+        }
+
+        .card.legendary-shine::before {
+            content: '';
+            position: absolute;
+            top: -50%; left: -50%; width: 200%; height: 200%;
+            background: linear-gradient(45deg, transparent 45%, rgba(255, 255, 255, 0.15) 50%, transparent 55%);
+            transform: rotate(35deg);
+            pointer-events: none;
+            animation: legendaryShineSweep 4s infinite linear;
+        }
+
+        @keyframes legendaryShineSweep {
+            0% { transform: translateY(-100%) rotate(35deg); }
+            100% { transform: translateY(100%) rotate(35deg); }
+        }
+
+        .legendary-badge {
+            position: absolute;
+            top: 10px; right: 10px;
+            background: linear-gradient(135deg, var(--legendary-color, #e2b714), #000);
+            color: #fff;
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 0.7rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            z-index: 3;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.5);
+        }
+
         @keyframes fadeIn {
             from { opacity: 0; transform: translateY(10px); }
             to { opacity: 1; transform: translateY(0); }
@@ -328,7 +369,6 @@
 
         .card:hover { 
             transform: translateY(-6px) scale(1.01); 
-            border-color: var(--border-highlight);
             background: var(--bg-card-hover);
         }
 
@@ -752,15 +792,15 @@
                     <label>Video de fondo (Solo por enlace URL directo MP4/WebM):</label>
                     <div style="display:flex; gap:8px;">
                         <input type="text" id="bg-video-url-input" placeholder="https://...video.mp4" style="flex:1;">
-                        <button class="btn-secondary" onclick="saveCustomBgVideo()">Usar Video</button>
+                        <button class="btn-secondary" type="button" onclick="saveCustomBgVideo()">Usar Video</button>
                     </div>
                 </div>
                 <div id="bg-preview-container" style="height:110px; border:1px dashed var(--border-highlight); margin-top:8px; border-radius:12px; display:flex; align-items:center; justify-content:center; overflow:hidden; background:rgba(0,0,0,0.3);">
                     <span style="font-size:0.85rem; color:var(--text-secondary);">Vista previa del fondo</span>
                 </div>
                 <div style="display:flex; gap:8px; margin-top:10px;">
-                    <button class="btn-gold" style="flex:1;" onclick="saveCustomBg()">Aplicar Imagen de Galería</button>
-                    <button class="btn-danger" style="font-size:0.8rem; padding:8px 12px;" onclick="resetCustomBg()">Restablecer Fondo Estelar</button>
+                    <button class="btn-gold" style="flex:1;" type="button" onclick="saveCustomBg()">Aplicar Imagen de Galería</button>
+                    <button class="btn-danger" style="font-size:0.8rem; padding:8px 12px;" type="button" onclick="resetCustomBg()">Restablecer Fondo Estelar</button>
                 </div>
             </div>
 
@@ -782,7 +822,7 @@
                     <input type="text" id="new-banner-video-url" placeholder="https://...video.mp4">
                 </div>
                 <div id="new-banner-img-preview" style="height:80px; border:1px dashed var(--border-color); margin-top:6px; display:flex; align-items:center; justify-content:center; overflow:hidden; border-radius:12px;">Vista Previa Banner</div>
-                <button class="btn-secondary" style="width: 100%; margin-top: 1rem;" onclick="addBannerItem()">Guardar Banner</button>
+                <button class="btn-secondary" style="width: 100%; margin-top: 1rem;" type="button" onclick="addBannerItem()">Guardar Banner</button>
                 <div id="admin-banners-list" style="max-height: 150px; overflow-y: auto; margin-top: 1rem;"></div>
             </div>
 
@@ -793,7 +833,7 @@
                     <label>Agregar nueva categoría:</label>
                     <div style="display:flex; gap:8px;">
                         <input type="text" id="new-category-name" placeholder="Ej: Relojes, Árabes..." style="flex:1;">
-                        <button class="btn-secondary" onclick="addCustomCategory()">Agregar</button>
+                        <button class="btn-secondary" type="button" onclick="addCustomCategory()">Agregar</button>
                     </div>
                 </div>
                 <div id="admin-categories-list" style="max-height: 140px; overflow-y: auto;"></div>
@@ -809,7 +849,7 @@
                         <option value="horizontal">Horizontal (Deslizable)</option>
                     </select>
                 </div>
-                <button class="btn-secondary" style="width: 100%;" onclick="saveLayoutConfig()">Guardar Formato</button>
+                <button class="btn-secondary" style="width: 100%;" type="button" onclick="saveLayoutConfig()">Guardar Formato</button>
             </div>
 
             <!-- SECCIÓN 6: AGREGAR PRODUCTO NUEVO (FOTOS DESDE GALERÍA) -->
@@ -832,6 +872,15 @@
                     </div>
                 </div>
 
+                <!-- SECCIÓN DECORACIÓN LEGENDARIA PARA NUEVO PRODUCTO -->
+                <div class="form-group" style="background:rgba(226, 183, 20, 0.05); padding:12px; border-radius:12px; border:1px dashed rgba(226, 183, 20, 0.4);">
+                    <label style="color:var(--accent-gold); font-weight:700;"><input type="checkbox" id="new-legendary" onchange="toggleLegendaryFields('new')"> ✨ Activar Decoración Legendaria (Brillo y Glowing)</label>
+                    <div id="new-legendary-box" style="display:none; margin-top:10px; display:flex; flex-direction:column; gap:8px;">
+                        <div class="form-group"><label>Color del Brillo / Glowing:</label><input type="color" id="new-legendary-color" value="#e2b714" style="height:42px; padding:4px; cursor:pointer;"></div>
+                        <div class="form-group"><label>Texto de Etiqueta Decorativa (Ej: ÉLITE, VIP):</label><input type="text" id="new-legendary-badge" placeholder="EJ: EXCLUSIVO"></div>
+                    </div>
+                </div>
+
                 <div class="form-group">
                     <label>Variantes / Presentaciones / Sets:</label>
                     <div id="subvariants-container"></div>
@@ -844,7 +893,7 @@
                     <div id="new-img-preview-container" style="display:flex; gap:8px; flex-wrap:wrap; margin-top:6px; min-height:80px; border:1px dashed var(--border-color); border-radius:12px; padding:8px; align-items:center;">Vista Previa</div>
                 </div>
 
-                <button class="btn-primary" style="width: 100%; margin-top:0.5rem;" onclick="addNewProduct()">Guardar en la Nube</button>
+                <button class="btn-primary" style="width: 100%; margin-top:0.5rem;" type="button" onclick="addNewProduct()">Guardar en la Nube</button>
             </div>
 
             <!-- SECCIÓN 7: INVENTARIO Y REORDENAR -->
@@ -866,22 +915,22 @@
                 <div class="form-group"><label>Banco:</label><input type="text" id="cfg-pm-banco"></div>
                 <div class="form-group"><label>Teléfono:</label><input type="text" id="cfg-pm-telf"></div>
                 <div class="form-group"><label>Cédula / RIF:</label><input type="text" id="cfg-pm-cedula"></div>
-                <button class="btn-secondary" style="width: 100%; margin-bottom: 1.25rem;" onclick="savePayMethodsConfig()">Guardar Datos Pago Móvil</button>
+                <button class="btn-secondary" style="width: 100%; margin-bottom: 1.25rem;" type="button" onclick="savePayMethodsConfig()">Guardar Datos Pago Móvil</button>
 
                 <h4 style="margin-bottom: 0.5rem; font-size:0.9rem;">Parámetros de Cuotas:</h4>
                 <div class="form-group"><label>N° Cuotas:</label><input type="number" id="cfg-num-cuotas"></div>
                 <div class="form-group"><label>Frecuencia:</label><input type="text" id="cfg-frecuencia"></div>
-                <button class="btn-secondary" style="width: 100%;" onclick="saveCuotasConfig()">Guardar Cuotas</button>
+                <button class="btn-secondary" style="width: 100%;" type="button" onclick="saveCuotasConfig()">Guardar Cuotas</button>
             </div>
 
             <!-- SECCIÓN 9: SEGURIDAD Y PIN -->
             <div class="admin-section-card">
                 <div class="admin-section-title">🔒 Seguridad del Panel</div>
                 <div class="form-group"><label>Nuevo PIN (8 dígitos):</label><input type="password" id="new-pass-input" maxlength="8"></div>
-                <button class="btn-secondary" style="width: 100%;" onclick="changePassword()">Cambiar PIN</button>
+                <button class="btn-secondary" style="width: 100%;" type="button" onclick="changePassword()">Cambiar PIN</button>
             </div>
 
-            <button class="btn-gold" style="margin-top: 1rem; width: 100%;" onclick="closeAdminPanel()">Finalizar y Cerrar Panel</button>
+            <button class="btn-gold" style="margin-top: 1rem; width: 100%;" type="button" onclick="closeAdminPanel()">Finalizar y Cerrar Panel</button>
         </div>
     </div>
 
@@ -908,6 +957,15 @@
                 </div>
             </div>
 
+            <!-- DECORACIÓN LEGENDARIA PARA EDITAR PRODUCTO -->
+            <div class="form-group" style="background:rgba(226, 183, 20, 0.05); padding:12px; border-radius:12px; border:1px dashed rgba(226, 183, 20, 0.4);">
+                <label style="color:var(--accent-gold); font-weight:700;"><input type="checkbox" id="edit-legendary" onchange="toggleLegendaryFields('edit')"> ✨ Activar Decoración Legendaria (Brillo y Glowing)</label>
+                <div id="edit-legendary-box" style="display:none; margin-top:10px; display:flex; flex-direction:column; gap:8px;">
+                    <div class="form-group"><label>Color del Brillo / Glowing:</label><input type="color" id="edit-legendary-color" value="#e2b714" style="height:42px; padding:4px; cursor:pointer;"></div>
+                    <div class="form-group"><label>Texto de Etiqueta Decorativa (Ej: ÉLITE, VIP):</label><input type="text" id="edit-legendary-badge" placeholder="EJ: EXCLUSIVO"></div>
+                </div>
+            </div>
+
             <div class="form-group">
                 <label>Editar / Agregar Variantes o Sets:</label>
                 <div id="edit-subvariants-container"></div>
@@ -920,8 +978,8 @@
                 <div id="edit-img-preview-container" style="display:flex; gap:8px; flex-wrap:wrap; margin-top:6px; min-height:80px; border:1px dashed var(--border-color); border-radius:12px; padding:8px; align-items:center;">Vista Previa</div>
             </div>
 
-            <button class="btn-primary" style="width: 100%; margin-top: 1rem;" onclick="saveProductEdits()">Guardar Cambios</button>
-            <button class="btn-secondary" style="width: 100%; margin-top: 8px;" onclick="closeEditModal()">Cancelar</button>
+            <button class="btn-primary" style="width: 100%; margin-top: 1rem;" type="button" onclick="saveProductEdits()">Guardar Cambios</button>
+            <button class="btn-secondary" style="width: 100%; margin-top: 8px;" type="button" onclick="closeEditModal()">Cancelar</button>
         </div>
     </div>
 
@@ -939,8 +997,8 @@
                 <input type="text" id="edit-banner-video-url" placeholder="https://...video.mp4">
             </div>
             <div id="edit-banner-img-preview" style="height:90px; border:1px dashed var(--border-color); margin-top:6px; display:flex; align-items:center; justify-content:center; overflow:hidden; border-radius:12px;">Vista Previa</div>
-            <button class="btn-primary" style="width: 100%; margin-top: 1rem;" onclick="saveBannerEdits()">Guardar Cambios</button>
-            <button class="btn-secondary" style="width: 100%; margin-top: 8px;" onclick="closeEditBannerModal()">Cancelar</button>
+            <button class="btn-primary" style="width: 100%; margin-top: 1rem;" type="button" onclick="saveBannerEdits()">Guardar Cambios</button>
+            <button class="btn-secondary" style="width: 100%; margin-top: 8px;" type="button" onclick="closeEditBannerModal()">Cancelar</button>
         </div>
     </div>
 
@@ -1173,6 +1231,11 @@
             document.getElementById(`${prefix}-offer-box`).style.display = isOffer ? 'block' : 'none';
         }
 
+        function toggleLegendaryFields(prefix) {
+            const isLegendary = document.getElementById(`${prefix}-legendary`).checked;
+            document.getElementById(`${prefix}-legendary-box`).style.display = isLegendary ? 'flex' : 'none';
+        }
+
         function applyBgToBody(bgData, isVideo = false) {
             const defaultBg = "https://images.unsplash.com/photo-1506703719100-a0f3a48c0f86?w=1600";
             const videoContainer = document.getElementById('bg-video-container');
@@ -1289,12 +1352,12 @@
             const container = document.getElementById('category-filters');
             if(!container) return;
             container.innerHTML = `
-                <button class="btn-${currentCategoryFilter === 'all' ? 'gold' : 'secondary'} filter-btn" onclick="filterCategory('all', this)">✨ Todos</button>
+                <button class="btn-${currentCategoryFilter === 'all' ? 'gold' : 'secondary'} filter-btn" type="button" onclick="filterCategory('all', this)">✨ Todos</button>
             `;
             categories.forEach(cat => {
                 const isActive = currentCategoryFilter === cat;
                 container.innerHTML += `
-                    <button class="btn-${isActive ? 'gold' : 'secondary'} filter-btn" onclick="filterCategory('${cat}', this)">📁 ${cat}</button>
+                    <button class="btn-${isActive ? 'gold' : 'secondary'} filter-btn" type="button" onclick="filterCategory('${cat}', this)">📁 ${cat}</button>
                 `;
             });
         }
@@ -1323,7 +1386,7 @@
                 row.className = 'admin-item';
                 row.innerHTML = `
                     <span style="font-weight:600; flex:1;">${cat}</span>
-                    <button class="btn-danger" style="font-size:0.75rem; padding:4px 8px;" onclick="deleteCustomCategory(${index})">Eliminar</button>
+                    <button class="btn-danger" style="font-size:0.75rem; padding:4px 8px;" type="button" onclick="deleteCustomCategory(${index})">Eliminar</button>
                 `;
                 container.appendChild(row);
             });
@@ -1444,8 +1507,8 @@
                 row.className = 'admin-item';
                 row.innerHTML = `
                     <span style="font-weight:600; flex:1;">${b.isVideo ? '🎬 Banner Video (URL)' : '🖼️ Banner Foto'}</span>
-                    <button class="btn-secondary" style="font-size:0.75rem; padding:4px 8px;" onclick="openEditBannerModal('${b.id}')">✏️ Editar</button>
-                    <button class="btn-danger" style="font-size:0.75rem; padding:4px 8px;" onclick="deleteBanner('${b.id}')">Eliminar</button>
+                    <button class="btn-secondary" style="font-size:0.75rem; padding:4px 8px;" type="button" onclick="openEditBannerModal('${b.id}')">✏️ Editar</button>
+                    <button class="btn-danger" style="font-size:0.75rem; padding:4px 8px;" type="button" onclick="deleteBanner('${b.id}')">Eliminar</button>
                 `;
                 container.appendChild(row);
             });
@@ -1712,7 +1775,7 @@
                     row.innerHTML = `
                         <img src="${mainImg}">
                         <div style="flex:1;"><div style="font-weight:600;">${p.name}</div><div style="font-size:0.85rem; color:var(--text-secondary);">$${priceShow.toFixed(2)}</div></div>
-                        <button class="btn-primary" style="padding:4px 10px; font-size:0.8rem;" onclick="addToCart('${p.id}')">+ Añadir</button>
+                        <button class="btn-primary" style="padding:4px 10px; font-size:0.8rem;" type="button" onclick="addToCart('${p.id}')">+ Añadir</button>
                     `;
                     container.appendChild(row);
                 }
@@ -1763,12 +1826,24 @@
 
             displayProducts.forEach(p => {
                 const card = document.createElement('div');
-                card.className = 'card';
+                let cardClasses = 'card';
+                let cardStyle = '';
+
+                if(p.isLegendary) {
+                    cardClasses += ' legendary-glow legendary-shine';
+                    cardStyle = `--legendary-color: ${p.legendaryColor || '#e2b714'};`;
+                }
+
+                card.className = cardClasses;
+                if(cardStyle) card.style.cssText = cardStyle;
+
                 card.id = `card-product-${p.id}`;
                 card.onclick = () => openDetailModal(p.id);
 
                 const isFav = favorites.includes(p.id);
                 const mainImg = (p.images && p.images.length > 0) ? p.images[0] : (p.img || 'https://images.unsplash.com/photo-1592945403244-b3fbafd7f539?w=400');
+
+                let legendaryBadgeHTML = (p.isLegendary && p.legendaryBadge) ? `<div class="legendary-badge">✨ ${p.legendaryBadge}</div>` : '';
 
                 let subvariantsHTML = '';
                 if(p.subvariants && p.subvariants.length > 0) {
@@ -1789,6 +1864,7 @@
                     `$${parseFloat(p.price).toFixed(2)}`;
 
                 card.innerHTML = `
+                    ${legendaryBadgeHTML}
                     <div class="card-img-wrapper">
                         <div class="card-bg-blur" style="background-image: url('${mainImg}');"></div>
                         <div class="fav-btn-card ${isFav ? 'active' : ''}" onclick="toggleFavorite('${p.id}', event)">${isFav ? '❤️' : '🤍'}</div>
@@ -1801,7 +1877,7 @@
                         <div class="card-price">
                             ${priceDisplay}
                         </div>
-                        <button class="btn-primary" style="padding: 6px 14px; font-size: 0.85rem;" onclick="event.stopPropagation(); addToCartWithVariant('${p.id}', this)">
+                        <button class="btn-primary" style="padding: 6px 14px; font-size: 0.85rem;" type="button" onclick="event.stopPropagation(); addToCartWithVariant('${p.id}', this)">
                             + Añadir
                         </button>
                     </div>
@@ -1838,7 +1914,7 @@
                 </div>
                 ${p.initialPay ? `<div style="font-size:0.85rem; color:var(--text-secondary);">Cuota inicial desde: $${parseFloat(p.initialPay).toFixed(2)}</div>` : ''}
                 <p style="color:var(--text-secondary); line-height: 1.5; margin-top:8px;">${p.note || 'Fragancia importada de alta concentración.'}</p>
-                <button class="btn-primary" style="width:100%; margin-top:1.5rem;" onclick="addToCartWithVariant('${p.id}', this); closeDetailModal();">Agregar al Carrito</button>
+                <button class="btn-primary" style="width:100%; margin-top:1.5rem;" type="button" onclick="addToCartWithVariant('${p.id}', this); closeDetailModal();">Agregar al Carrito</button>
             `;
             document.getElementById('detail-modal').classList.add('active');
         }
@@ -1910,9 +1986,9 @@
                     <img src="${item.img}">
                     <div style="flex:1;"><div style="font-weight:600;">${item.name}</div><div style="font-size:0.85rem; color:var(--text-secondary);">$${parseFloat(item.price).toFixed(2)} c/u</div></div>
                     <div class="cart-controls">
-                        <button class="btn-secondary" style="padding:2px 8px;" onclick="changeQty(${index}, -1)">-</button>
+                        <button class="btn-secondary" style="padding:2px 8px;" type="button" onclick="changeQty(${index}, -1)">-</button>
                         <span>${item.qty}</span>
-                        <button class="btn-secondary" style="padding:2px 8px;" onclick="changeQty(${index}, 1)">+</button>
+                        <button class="btn-secondary" style="padding:2px 8px;" type="button" onclick="changeQty(${index}, 1)">+</button>
                     </div>
                 `;
                 container.appendChild(row);
@@ -2073,10 +2149,10 @@
                     <div><strong>Total:</strong> $${o.totalPrice} | <strong>Pago:</strong> ${o.payMethod}</div>
                     <div style="font-size:0.75rem; color:var(--text-secondary); margin-top:4px;">📅 ${o.date || ''}</div>
                     <div style="display:flex; gap:6px; margin-top:8px;">
-                        <button class="btn-secondary" style="font-size:0.75rem; padding:4px 8px;" onclick="toggleOrderStatus('${o.id}', '${o.status || 'Pendiente'}')">
+                        <button class="btn-secondary" style="font-size:0.75rem; padding:4px 8px;" type="button" onclick="toggleOrderStatus('${o.id}', '${o.status || 'Pendiente'}')">
                             ${isPaid ? 'Marcar Pendiente' : 'Marcar Pagado'}
                         </button>
-                        <button class="btn-danger" style="font-size:0.75rem; padding:4px 8px;" onclick="deleteOrder('${o.id}')">Eliminar</button>
+                        <button class="btn-danger" style="font-size:0.75rem; padding:4px 8px;" type="button" onclick="deleteOrder('${o.id}')">Eliminar</button>
                     </div>
                 `;
                 container.appendChild(card);
@@ -2103,10 +2179,10 @@
                 row.innerHTML = `
                     <span style="font-weight: 600; flex:1;">${p.name} <span style="font-size:0.75rem; color:var(--text-secondary);">[${p.category || categories[0]}]</span></span>
                     <div class="admin-item-controls">
-                        <button class="btn-secondary" style="font-size:0.8rem; padding:4px 8px;" onclick="moveProductOrder(${index}, -1)">⬆️</button>
-                        <button class="btn-secondary" style="font-size:0.8rem; padding:4px 8px;" onclick="moveProductOrder(${index}, 1)">⬇️</button>
-                        <button class="btn-secondary" style="font-size: 0.8rem; padding: 6px 10px;" onclick="openEditModal('${p.id}')">✏️ Editar</button>
-                        <button class="btn-danger" style="font-size: 0.8rem; padding: 6px 10px;" onclick="deleteProduct('${p.id}')">🗑️ Eliminar</button>
+                        <button class="btn-secondary" style="font-size:0.8rem; padding:4px 8px;" type="button" onclick="moveProductOrder(${index}, -1)">⬆️</button>
+                        <button class="btn-secondary" style="font-size:0.8rem; padding:4px 8px;" type="button" onclick="moveProductOrder(${index}, 1)">⬇️</button>
+                        <button class="btn-secondary" style="font-size: 0.8rem; padding: 6px 10px;" type="button" onclick="openEditModal('${p.id}')">✏️ Editar</button>
+                        <button class="btn-danger" style="font-size: 0.8rem; padding: 6px 10px;" type="button" onclick="deleteProduct('${p.id}')">🗑️ Eliminar</button>
                     </div>
                 `;
                 priceList.appendChild(row);
@@ -2135,6 +2211,10 @@
             const offerPrice = parseFloat(document.getElementById('new-offer-price').value) || 0;
             const offerUntil = document.getElementById('new-offer-until').value || "";
 
+            const isLegendary = document.getElementById('new-legendary').checked;
+            const legendaryColor = document.getElementById('new-legendary-color').value;
+            const legendaryBadge = document.getElementById('new-legendary-badge').value.trim();
+
             if (!name || isNaN(price)) return alert("Nombre y precio requeridos.");
 
             const subvariantRows = document.querySelectorAll('#subvariants-container .subvariant-row');
@@ -2160,7 +2240,7 @@
             const images = tempImagesList.length > 0 ? tempImagesList : ["https://images.unsplash.com/photo-1592945403244-b3fbafd7f539?w=400"];
 
             await window.addDoc(window.collection(window.db, "products"), {
-                name, category, price, initialPay, note, isOffer, offerPrice, offerUntil, images, img: images[0], subvariants, order: products.length
+                name, category, price, initialPay, note, isOffer, offerPrice, offerUntil, isLegendary, legendaryColor, legendaryBadge, images, img: images[0], subvariants, order: products.length
             });
 
             alert("¡Producto agregado!");
@@ -2172,6 +2252,9 @@
             document.getElementById('new-offer-price').value = '';
             document.getElementById('new-offer-until').value = '';
             document.getElementById('new-offer-box').style.display = 'none';
+            document.getElementById('new-legendary').checked = false;
+            document.getElementById('new-legendary-box').style.display = 'none';
+            document.getElementById('new-legendary-badge').value = '';
             document.getElementById('subvariants-container').innerHTML = '';
             document.getElementById('new-img-preview-container').innerHTML = 'Vista Previa';
             tempImagesList = [];
@@ -2196,6 +2279,11 @@
             document.getElementById('edit-offer-price').value = p.offerPrice || '';
             document.getElementById('edit-offer-until').value = p.offerUntil || '';
             toggleOfferFields('edit');
+
+            document.getElementById('edit-legendary').checked = !!p.isLegendary;
+            document.getElementById('edit-legendary-color').value = p.legendaryColor || '#e2b714';
+            document.getElementById('edit-legendary-badge').value = p.legendaryBadge || '';
+            toggleLegendaryFields('edit');
 
             const subContainer = document.getElementById('edit-subvariants-container');
             subContainer.innerHTML = '';
@@ -2230,6 +2318,10 @@
             const offerPrice = parseFloat(document.getElementById('edit-offer-price').value) || 0;
             const offerUntil = document.getElementById('edit-offer-until').value || "";
 
+            const isLegendary = document.getElementById('edit-legendary').checked;
+            const legendaryColor = document.getElementById('edit-legendary-color').value;
+            const legendaryBadge = document.getElementById('edit-legendary-badge').value.trim();
+
             const subvariantRows = document.querySelectorAll('#edit-subvariants-container .subvariant-row');
             let subvariants = [];
             subvariantRows.forEach(row => {
@@ -2250,13 +2342,13 @@
                 }
             });
 
-            let data = { name, category, price, initialPay, note, isOffer, offerPrice, offerUntil, subvariants };
+            let data = { name, category, price, initialPay, note, isOffer, offerPrice, offerUntil, isLegendary, legendaryColor, legendaryBadge, subvariants };
             if (tempImagesList.length > 0) {
                 data.images = tempImagesList;
                 data.img = tempImagesList[0];
             }
 
-            await window.updateDoc(window.doc(window.doc(window.db, "products", id)), data);
+            await window.updateDoc(window.doc(window.db, "products", id), data);
             closeEditModal();
             alert("¡Cambios guardados!");
             tempImagesList = [];
