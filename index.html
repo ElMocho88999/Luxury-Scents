@@ -426,84 +426,90 @@
         }
 
         /* ==========================================================================
-           10 TEXTURAS ULTRA REALISTAS APLICADAS AL FONDO NEGRO (Y VISTA PREVIA)
+           10 TEXTURAS FOTORREALISTAS (MOVIMIENTO LENTO Y FLUIDO)
            ========================================================================== */
         
-        /* Textura 1: Mármol Elegante */
-        .card.tex-marble, .modal-legendary.tex-marble {
-            background-color: #0b0d13 !important;
-            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200' viewBox='0 0 200 200'%3E%3Cpath d='M0,40 Q50,10 100,50 T200,30 M0,120 Q70,160 130,110 T200,150 M0,90 Q90,30 140,80 T200,70' fill='none' stroke='rgba(255,255,255,0.08)' stroke-width='1.5'/%3E%3C/svg%3E"),
-                              radial-gradient(circle, rgba(255,255,255,0.05) 0%, rgba(10,14,23,0.95) 100%) !important;
-            background-size: 200px 200px, cover !important;
+        @keyframes textureDrift {
+            0% { background-position: 0% 0%; }
+            100% { background-position: 100% 100%; }
         }
 
-        /* Textura 2: Fibra de Carbono VIP */
+        /* 1. Mármol Elegante */
+        .card.tex-marble, .modal-legendary.tex-marble {
+            background-color: #0b0d13 !important;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300' viewBox='0 0 300 300'%3E%3Cpath d='M0,60 Q80,20 150,70 T300,50 M0,180 Q100,240 200,160 T300,220' fill='none' stroke='rgba(255,255,255,0.08)' stroke-width='1.8'/%3E%3C/svg%3E"),
+                              radial-gradient(circle, rgba(255,255,255,0.04) 0%, rgba(10,14,23,0.98) 100%) !important;
+            background-size: 300px 300px, cover !important;
+            animation: textureDrift 25s infinite linear alternate;
+        }
+
+        /* 2. Fibra de Carbono VIP */
         .card.tex-carbon, .modal-legendary.tex-carbon {
             background-color: #0a0a0d !important;
-            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 16 16'%3E%3Crect width='8' height='8' fill='%2318181c'/%3E%3Crect x='8' y='8' width='8' height='8' fill='%2318181c'/%3E%3Cpath d='M0 0l8 8M8 0l8 8M0 8l8 8M8 8l8 8' stroke='rgba(255,255,255,0.07)' stroke-width='1'/%3E%3C/svg%3E") !important;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 16 16'%3E%3Crect width='8' height='8' fill='%23141417'/%3E%3Crect x='8' y='8' width='8' height='8' fill='%23141417'/%3E%3Cpath d='M0 0l8 8M8 0l8 8M0 8l8 8M8 8l8 8' stroke='rgba(255,255,255,0.08)' stroke-width='1'/%3E%3C/svg%3E") !important;
             background-size: 16px 16px !important;
         }
 
-        /* Textura 3: Cuero Cosido Italiano */
+        /* 3. Cuero Cosido Italiano */
         .card.tex-leather, .modal-legendary.tex-leather {
             background-color: #0e0c0a !important;
-            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 20 20'%3E%3Ccircle cx='10' cy='10' r='1.5' fill='rgba(255,255,255,0.06)'/%3E%3Cpath d='M0,10 H20 M10,0 V20' stroke='rgba(0,0,0,0.5)' stroke-width='1'/%3E%3C/svg%3E"),
-                              radial-gradient(circle, rgba(255,255,255,0.03) 0%, rgba(0,0,0,0.8) 100%) !important;
-            background-size: 20px 20px, cover !important;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24'%3E%3Ccircle cx='12' cy='12' r='1.5' fill='rgba(255,255,255,0.07)'/%3E%3Cpath d='M0,12 H24 M12,0 V24' stroke='rgba(0,0,0,0.6)' stroke-width='1'/%3E%3C/svg%3E") !important;
+            background-size: 24px 24px !important;
         }
 
-        /* Textura 4: Seda Fluida Satén */
+        /* 4. Seda Fluida Satén */
         .card.tex-silk, .modal-legendary.tex-silk {
             background-color: #090a10 !important;
-            background-image: repeating-linear-gradient(135deg, rgba(255,255,255,0.03) 0px, rgba(255,255,255,0.08) 15px, rgba(0,0,0,0.4) 30px) !important;
+            background-image: repeating-linear-gradient(135deg, rgba(255,255,255,0.02) 0px, rgba(255,255,255,0.08) 20px, rgba(0,0,0,0.5) 40px) !important;
             background-size: 200% 200% !important;
-            animation: silkShift 8s infinite alternate ease-in-out;
+            animation: textureDrift 15s infinite alternate ease-in-out;
         }
-        @keyframes silkShift { 0% { background-position: 0% 0%; } 100% { background-position: 100% 100%; } }
 
-        /* Textura 5: Hoja de Oro Escuadrada */
+        /* 5. Hoja de Oro Escuadrada */
         .card.tex-gold-leaf, .modal-legendary.tex-gold-leaf {
             background-color: #0c0b05 !important;
-            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='60' height='60' viewBox='0 0 60 60'%3E%3Cpath d='M0 0h60v60H0z' fill='none'/%3E%3Cpath d='M0 30 L30 0 L60 30 L30 60 Z' fill='none' stroke='rgba(226,183,20,0.18)' stroke-width='1.5'/%3E%3Cpath d='M15 30 L30 15 L45 30 L30 45 Z' fill='rgba(226,183,20,0.05)' stroke='rgba(226,183,20,0.1)' stroke-width='1'/%3E%3C/svg%3E"),
-                              radial-gradient(circle, rgba(226,183,20,0.08) 0%, rgba(10,14,23,0.95) 100%) !important;
-            background-size: 60px 60px, cover !important;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='80' height='80' viewBox='0 0 80 80'%3E%3Cpath d='M0 40 L40 0 L80 40 L40 80 Z' fill='none' stroke='rgba(226,183,20,0.15)' stroke-width='1.5'/%3E%3C/svg%3E") !important;
+            background-size: 80px 80px !important;
+            animation: textureDrift 30s infinite linear;
         }
 
-        /* Textura 6: Escamas de Dragón / Panal */
+        /* 6. Hojas Orgánicas (Estilo Natural / Plantas) */
         .card.tex-scales, .modal-legendary.tex-scales {
-            background-color: #080c12 !important;
-            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='28' height='49' viewBox='0 0 28 49'%3E%3Cg fill='none' stroke='rgba(255,255,255,0.09)' stroke-width='1.2'%3E%3Cpath d='M14 0l14 8v16l-14 8L0 24V8z'/%3E%3Cpath d='M14 24.5l14 8v16l-14 8L0 48.5v-16z'/%3E%3C/g%3E%3C/svg%3E") !important;
-            background-size: 28px 49px !important;
+            background-color: #07100b !important;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120' viewBox='0 0 120 120'%3E%3Cpath d='M60 10 Q80 40 110 60 Q80 80 60 110 Q40 80 10 60 Q40 40 60 10 Z' fill='none' stroke='rgba(34, 197, 94, 0.12)' stroke-width='1.5'/%3E%3C/svg%3E"),
+                              radial-gradient(circle, rgba(34,197,94,0.06) 0%, rgba(5,15,10,0.95) 100%) !important;
+            background-size: 120px 120px, cover !important;
+            animation: textureDrift 20s infinite alternate ease-in-out;
         }
 
-        /* Textura 7: Terciopelo Imperial Oscuro */
+        /* 7. Terciopelo Imperial Oscuro */
         .card.tex-velvet, .modal-legendary.tex-velvet {
             background-color: #0b0710 !important;
-            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 100 100'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100' height='100' filter='url(%23n)' opacity='0.08'/%3E%3C/svg%3E"),
-                              radial-gradient(circle at 50% 50%, rgba(255, 255, 255, 0.08) 0%, rgba(5, 4, 8, 0.95) 100%) !important;
-            background-size: 100px 100px, cover !important;
+            background-image: radial-gradient(circle at 50% 50%, rgba(255, 255, 255, 0.08) 0%, rgba(5, 4, 8, 0.98) 100%) !important;
+            background-size: cover !important;
         }
 
-        /* Textura 8: Cristal Templado Esmerilado */
+        /* 8. Cristal Templado Esmerilado */
         .card.tex-glass, .modal-legendary.tex-glass {
             background-color: rgba(18, 24, 38, 0.85) !important;
-            background-image: linear-gradient(135deg, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0.01) 100%) !important;
+            background-image: linear-gradient(135deg, rgba(255, 255, 255, 0.12) 0%, rgba(255, 255, 255, 0.02) 100%) !important;
             backdrop-filter: blur(16px) !important;
             -webkit-backdrop-filter: blur(16px) !important;
         }
 
-        /* Textura 9: Geométrico Cubos 3D */
+        /* 9. Geométrico Minimalista */
         .card.tex-cubes, .modal-legendary.tex-cubes {
             background-color: #0a0e17 !important;
-            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='30' height='52' viewBox='0 0 30 52'%3E%3Cpath d='M15 0l15 8.66v17.32L15 34.64 0 25.98V8.66z' fill='none' stroke='rgba(255,255,255,0.08)' stroke-width='1'/%3E%3Cpath d='M15 0v34.64M0 8.66l30 17.32M30 8.66L0 25.98' stroke='rgba(255,255,255,0.05)' stroke-width='1'/%3E%3C/svg%3E") !important;
-            background-size: 30px 52px !important;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='40' height='40' viewBox='0 0 40 40'%3E%3Cpath d='M0 40 L40 0 H20 L0 20 Z' fill='rgba(255,255,255,0.03)'/%3E%3Cpath d='M40 40 L20 40 L40 20 Z' fill='rgba(255,255,255,0.05)'/%3E%3C/svg%3E") !important;
+            background-size: 40px 40px !important;
+            animation: textureDrift 25s infinite linear;
         }
 
-        /* Textura 10: Granito Volcánico */
+        /* 10. Granito Volcánico */
         .card.tex-granite, .modal-legendary.tex-granite {
             background-color: #07080a !important;
-            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Ccircle cx='2' cy='2' r='1' fill='rgba(255,255,255,0.09)'/%3E%3Ccircle cx='8' cy='7' r='1.2' fill='rgba(255,255,255,0.05)'/%3E%3Ccircle cx='4' cy='10' r='0.8' fill='rgba(255,255,255,0.12)'/%3E%3C/svg%3E") !important;
-            background-size: 12px 12px !important;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 16 16'%3E%3Ccircle cx='3' cy='3' r='1' fill='rgba(255,255,255,0.08)'/%3E%3Ccircle cx='11' cy='10' r='1.2' fill='rgba(255,255,255,0.04)'/%3E%3C/svg%3E") !important;
+            background-size: 16px 16px !important;
         }
 
         .legendary-badge {
@@ -1035,8 +1041,9 @@
                     <label style="color:var(--accent-gold); font-weight:700;"><input type="checkbox" id="new-legendary" onchange="toggleLegendaryFields('new')"> ✨ Activar Decoración Legendaria Exclusiva</label>
                     <div id="new-legendary-box" style="display:none; margin-top:10px; display:flex; flex-direction:column; gap:8px;">
                         <div class="form-group">
-                            <label>Estilo de Decoración Interactiva (Glowing + Ondulaciones):</label>
+                            <label>Estilo de Luz / Glowing (Opcional):</label>
                             <select id="new-legendary-style" onchange="updateLivePreview('new')">
+                                <option value="">Sin Luces (Solo Color Base)</option>
                                 <option value="style-aurora">1. Aurora Multicolor Ondulada</option>
                                 <option value="style-neon-pulse">2. Pulso Dual de Neón Fluido</option>
                                 <option value="style-cosmic-gold">3. Destello Cósmico Dorado</option>
@@ -1050,18 +1057,18 @@
                             </select>
                         </div>
                         <div class="form-group">
-                            <label>Textura Exclusiva de Fondo:</label>
+                            <label>Textura Exclusiva de Fondo (Opcional):</label>
                             <select id="new-legendary-texture" onchange="updateLivePreview('new')">
-                                <option value="">Sin Textura (Liso)</option>
+                                <option value="">Sin Textura (Fondo Liso)</option>
                                 <option value="tex-marble">1. Mármol Elegante</option>
                                 <option value="tex-carbon">2. Fibra de Carbono VIP</option>
                                 <option value="tex-leather">3. Cuero Cosido Italiano</option>
                                 <option value="tex-silk">4. Seda Fluida Satén</option>
                                 <option value="tex-gold-leaf">5. Hoja de Oro Escuadrada</option>
-                                <option value="tex-scales">6. Escamas de Dragón / Panal</option>
+                                <option value="tex-scales">6. Hojas Orgánicas (Plantas)</option>
                                 <option value="tex-velvet">7. Terciopelo Imperial Oscuro</option>
                                 <option value="tex-glass">8. Cristal Templado Esmerilado</option>
-                                <option value="tex-cubes">9. Geométrico Cubos 3D</option>
+                                <option value="tex-cubes">9. Geométrico Minimalista</option>
                                 <option value="tex-granite">10. Granito Volcánico</option>
                             </select>
                         </div>
@@ -1164,8 +1171,9 @@
                 <label style="color:var(--accent-gold); font-weight:700;"><input type="checkbox" id="edit-legendary" onchange="toggleLegendaryFields('edit')"> ✨ Activar Decoración Legendaria Exclusiva</label>
                 <div id="edit-legendary-box" style="display:none; margin-top:10px; display:flex; flex-direction:column; gap:8px;">
                     <div class="form-group">
-                        <label>Estilo de Decoración Interactiva (Glowing + Ondulaciones):</label>
+                        <label>Estilo de Luz / Glowing (Opcional):</label>
                         <select id="edit-legendary-style" onchange="updateLivePreview('edit')">
+                            <option value="">Sin Luces (Solo Color Base)</option>
                             <option value="style-aurora">1. Aurora Multicolor Ondulada</option>
                             <option value="style-neon-pulse">2. Pulso Dual de Neón Fluido</option>
                             <option value="style-cosmic-gold">3. Destello Cósmico Dorado</option>
@@ -1179,18 +1187,18 @@
                         </select>
                     </div>
                     <div class="form-group">
-                        <label>Textura Exclusiva de Fondo:</label>
+                        <label>Textura Exclusiva de Fondo (Opcional):</label>
                         <select id="edit-legendary-texture" onchange="updateLivePreview('edit')">
-                            <option value="">Sin Textura (Liso)</option>
+                            <option value="">Sin Textura (Fondo Liso)</option>
                             <option value="tex-marble">1. Mármol Elegante</option>
                             <option value="tex-carbon">2. Fibra de Carbono VIP</option>
                             <option value="tex-leather">3. Cuero Cosido Italiano</option>
                             <option value="tex-silk">4. Seda Fluida Satén</option>
                             <option value="tex-gold-leaf">5. Hoja de Oro Escuadrada</option>
-                            <option value="tex-scales">6. Escamas de Dragón / Panal</option>
+                            <option value="tex-scales">6. Hojas Orgánicas (Plantas)</option>
                             <option value="tex-velvet">7. Terciopelo Imperial Oscuro</option>
                             <option value="tex-glass">8. Cristal Templado Esmerilado</option>
-                            <option value="tex-cubes">9. Geométrico Cubos 3D</option>
+                            <option value="tex-cubes">9. Geométrico Minimalista</option>
                             <option value="tex-granite">10. Granito Volcánico</option>
                         </select>
                     </div>
@@ -2096,7 +2104,8 @@
                 let cardStyle = '';
 
                 if(p.isLegendary) {
-                    cardClasses += ` ${p.legendaryStyle || 'style-aurora'} ${p.legendaryTexture || ''}`;
+                    if (p.legendaryStyle) cardClasses += ` ${p.legendaryStyle}`;
+                    if (p.legendaryTexture) cardClasses += ` ${p.legendaryTexture}`;
                     cardStyle = `--leg-c1: ${p.legendaryC1 || '#e2b714'}; --leg-c2: ${p.legendaryC2 || '#ff007f'};`;
                 }
 
@@ -2164,7 +2173,10 @@
 
             const modalBox = document.getElementById('detail-modal-box');
             if(p.isLegendary) {
-                modalBox.className = `modal modal-legendary ${p.legendaryStyle || 'style-aurora'} ${p.legendaryTexture || ''}`;
+                let modalClasses = 'modal modal-legendary';
+                if (p.legendaryStyle) modalClasses += ` ${p.legendaryStyle}`;
+                if (p.legendaryTexture) modalClasses += ` ${p.legendaryTexture}`;
+                modalBox.className = modalClasses;
                 modalBox.style.cssText = `--leg-c1: ${p.legendaryC1 || '#e2b714'}; --leg-c2: ${p.legendaryC2 || '#ff007f'};`;
             } else {
                 modalBox.className = 'modal';
@@ -2560,7 +2572,7 @@
             toggleOfferFields('edit');
 
             document.getElementById('edit-legendary').checked = !!p.isLegendary;
-            document.getElementById('edit-legendary-style').value = p.legendaryStyle || 'style-aurora';
+            document.getElementById('edit-legendary-style').value = p.legendaryStyle || '';
             document.getElementById('edit-legendary-texture').value = p.legendaryTexture || '';
             document.getElementById('edit-legendary-c1').value = p.legendaryC1 || '#e2b714';
             document.getElementById('edit-legendary-c2').value = p.legendaryC2 || '#ff007f';
