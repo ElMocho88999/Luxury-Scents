@@ -321,37 +321,116 @@
             animation: fadeIn 0.4s ease-out forwards;
         }
 
-        /* ESTILOS DECORATIVOS LEGENDARIOS Y ANIMADOS */
-        .card.legendary-glow {
-            border: 2px solid var(--legendary-color, #e2b714);
-            animation: legendaryPulse 2.5s infinite ease-in-out, fadeIn 0.4s ease-out forwards;
+        /* ==========================================================================
+           10 ESTILOS DE DECORACIÓN LEGENDARIA Y EXCLUSIVA (MULTICOLOR Y ONDULACIONES)
+           ========================================================================== */
+
+        /* 1. AURORA MULTICOLOR ONDULADA */
+        .card.style-aurora {
+            border: 2px solid transparent;
+            background: linear-gradient(var(--bg-card), var(--bg-card)) padding-box,
+                        linear-gradient(120deg, var(--leg-c1, #e2b714), var(--leg-c2, #ff007f), var(--leg-c3, #00f0ff), var(--leg-c1, #e2b714)) border-box;
+            background-size: 300% 300%;
+            animation: auroraWave 4s infinite linear, fadeIn 0.4s ease-out forwards;
+        }
+        @keyframes auroraWave {
+            0% { background-position: 0% 50%; box-shadow: 0 0 15px var(--leg-c1, #e2b714); }
+            50% { background-position: 100% 50%; box-shadow: 0 0 25px var(--leg-c2, #ff007f); }
+            100% { background-position: 0% 50%; box-shadow: 0 0 15px var(--leg-c1, #e2b714); }
         }
 
-        @keyframes legendaryPulse {
-            0% { box-shadow: 0 0 10px var(--legendary-color, #e2b714), inset 0 0 5px var(--legendary-color, #e2b714); }
-            50% { box-shadow: 0 0 25px var(--legendary-color, #e2b714), inset 0 0 12px var(--legendary-color, #e2b714); }
-            100% { box-shadow: 0 0 10px var(--legendary-color, #e2b714), inset 0 0 5px var(--legendary-color, #e2b714); }
+        /* 2. PULSO DUAL DE NEÓN FLUIDO */
+        .card.style-neon-pulse {
+            border: 2px solid var(--leg-c1, #00f0ff);
+            animation: neonPulseWave 2s infinite ease-in-out, fadeIn 0.4s ease-out forwards;
+        }
+        @keyframes neonPulseWave {
+            0% { box-shadow: 0 0 8px var(--leg-c1, #00f0ff), inset 0 0 4px var(--leg-c2, #7000ff); }
+            50% { box-shadow: 0 0 28px var(--leg-c2, #7000ff), inset 0 0 14px var(--leg-c1, #00f0ff); }
+            100% { box-shadow: 0 0 8px var(--leg-c1, #00f0ff), inset 0 0 4px var(--leg-c2, #7000ff); }
         }
 
-        .card.legendary-shine::before {
+        /* 3. DESTALLO CÁSMICO Y MARCO DORADO */
+        .card.style-cosmic-gold {
+            border: 2px solid var(--leg-c1, #e2b714);
+            box-shadow: 0 0 20px rgba(226, 183, 20, 0.35);
+        }
+        .card.style-cosmic-gold::before {
             content: '';
             position: absolute;
             top: -50%; left: -50%; width: 200%; height: 200%;
-            background: linear-gradient(45deg, transparent 45%, rgba(255, 255, 255, 0.15) 50%, transparent 55%);
-            transform: rotate(35deg);
+            background: linear-gradient(45deg, transparent 40%, var(--leg-c2, rgba(255,255,255,0.4)) 50%, transparent 60%);
+            transform: rotate(30deg);
+            animation: cosmicSweep 3.5s infinite linear;
             pointer-events: none;
-            animation: legendaryShineSweep 4s infinite linear;
+        }
+        @keyframes cosmicSweep {
+            0% { transform: translateY(-100%) rotate(30deg); }
+            100% { transform: translateY(100%) rotate(30deg); }
         }
 
-        @keyframes legendaryShineSweep {
-            0% { transform: translateY(-100%) rotate(35deg); }
-            100% { transform: translateY(100%) rotate(35deg); }
+        /* 4. ONDA DE ENERGÍA PLASMA */
+        .card.style-plasma-wave {
+            border: 2px solid transparent;
+            background: linear-gradient(var(--bg-card), var(--bg-card)) padding-box,
+                        conic-gradient(from 0deg, var(--leg-c1, #ff0055), var(--leg-c2, #7000ff), var(--leg-c1, #ff0055)) border-box;
+            animation: rotatePlasma 3s infinite linear;
+        }
+        @keyframes rotatePlasma {
+            0% { transform: scale(1); box-shadow: 0 0 12px var(--leg-c1, #ff0055); }
+            50% { transform: scale(1.01); box-shadow: 0 0 24px var(--leg-c2, #7000ff); }
+            100% { transform: scale(1); box-shadow: 0 0 12px var(--leg-c1, #ff0055); }
+        }
+
+        /* 5. RESPLANDOR ROYALE ESMERALDA/ORO */
+        .card.style-emerald-royale {
+            border: 2px solid var(--leg-c1, #00ff87);
+            background: linear-gradient(145deg, rgba(0, 255, 135, 0.05), var(--bg-card));
+            box-shadow: 0 0 20px var(--leg-c1, rgba(0, 255, 135, 0.3));
+        }
+
+        /* 6. HALO AMATISTA CELESTIAL */
+        .card.style-amethyst-halo {
+            border: 2px solid var(--leg-c1, #9d4edd);
+            box-shadow: 0 0 15px var(--leg-c1, #9d4edd), inset 0 0 15px var(--leg-c2, rgba(157, 78, 221, 0.2));
+            animation: amethystBreath 3s infinite ease-in-out;
+        }
+        @keyframes amethystBreath {
+            0%, 100% { filter: drop-shadow(0 0 5px var(--leg-c1, #9d4edd)); }
+            50% { filter: drop-shadow(0 0 18px var(--leg-c2, #c77dff)); }
+        }
+
+        /* 7. LAVA FUEGO INFERNAL */
+        .card.style-inferno-fire {
+            border: 2px solid var(--leg-c1, #ff4500);
+            background: linear-gradient(0deg, rgba(255, 69, 0, 0.08) 0%, var(--bg-card) 100%);
+            box-shadow: 0 0 22px var(--leg-c1, #ff4500);
+        }
+
+        /* 8. BORDADO DIAMANTE CRISTAL */
+        .card.style-diamond-lux {
+            border: 2px solid #ffffff;
+            box-shadow: 0 0 20px rgba(255, 255, 255, 0.4), inset 0 0 10px rgba(255, 255, 255, 0.2);
+        }
+
+        /* 9. NUBES CIBERNETICAS VIP */
+        .card.style-cyber-vip {
+            border: 2px dashed var(--leg-c1, #00f0ff);
+            box-shadow: 0 0 18px var(--leg-c1, #00f0ff);
+            animation: dashRotate 10s infinite linear;
+        }
+
+        /* 10. SOMBRA ETERNA ECLIPSE */
+        .card.style-eclipse-dark {
+            border: 2px solid var(--leg-c1, #ffffff);
+            box-shadow: 0 0 30px rgba(255, 255, 255, 0.25);
+            background: #000000;
         }
 
         .legendary-badge {
             position: absolute;
             top: 10px; right: 10px;
-            background: linear-gradient(135deg, var(--legendary-color, #e2b714), #000);
+            background: linear-gradient(135deg, var(--leg-c1, #e2b714), #000);
             color: #fff;
             padding: 4px 10px;
             border-radius: 20px;
@@ -872,12 +951,40 @@
                     </div>
                 </div>
 
-                <!-- SECCIÓN DECORACIÓN LEGENDARIA PARA NUEVO PRODUCTO -->
+                <!-- SECCIÓN DECORACIÓN LEGENDARIA CON 10 ESTILOS Y VISTA PREVIA -->
                 <div class="form-group" style="background:rgba(226, 183, 20, 0.05); padding:12px; border-radius:12px; border:1px dashed rgba(226, 183, 20, 0.4);">
-                    <label style="color:var(--accent-gold); font-weight:700;"><input type="checkbox" id="new-legendary" onchange="toggleLegendaryFields('new')"> ✨ Activar Decoración Legendaria (Brillo y Glowing)</label>
+                    <label style="color:var(--accent-gold); font-weight:700;"><input type="checkbox" id="new-legendary" onchange="toggleLegendaryFields('new')"> ✨ Activar Decoración Legendaria Exclusiva</label>
                     <div id="new-legendary-box" style="display:none; margin-top:10px; display:flex; flex-direction:column; gap:8px;">
-                        <div class="form-group"><label>Color del Brillo / Glowing:</label><input type="color" id="new-legendary-color" value="#e2b714" style="height:42px; padding:4px; cursor:pointer;"></div>
-                        <div class="form-group"><label>Texto de Etiqueta Decorativa (Ej: ÉLITE, VIP):</label><input type="text" id="new-legendary-badge" placeholder="EJ: EXCLUSIVO"></div>
+                        <div class="form-group">
+                            <label>Estilo de Decoración Interactiva:</label>
+                            <select id="new-legendary-style" onchange="updateLivePreview('new')">
+                                <option value="style-aurora">1. Aurora Multicolor Ondulada</option>
+                                <option value="style-neon-pulse">2. Pulso Dual de Neón Fluido</option>
+                                <option value="style-cosmic-gold">3. Destello Cósmico Dorado</option>
+                                <option value="style-plasma-wave">4. Onda de Energía Plasma</option>
+                                <option value="style-emerald-royale">5. Resplandor Royale Esmeralda</option>
+                                <option value="style-amethyst-halo">6. Halo Amatista Celestial</option>
+                                <option value="style-inferno-fire">7. Lava Fuego Infernal</option>
+                                <option value="style-diamond-lux">8. Bordado Diamante Cristal</option>
+                                <option value="style-cyber-vip">9. Nubes Ciberpunk VIP</option>
+                                <option value="style-eclipse-dark">10. Sombra Eterna Eclipse</option>
+                            </select>
+                        </div>
+                        <div style="display:flex; gap:8px;">
+                            <div class="form-group" style="flex:1;"><label>Color Principal (C1):</label><input type="color" id="new-legendary-c1" value="#e2b714" onchange="updateLivePreview('new')" style="height:40px; padding:2px; cursor:pointer;"></div>
+                            <div class="form-group" style="flex:1;"><label>Color Secundario (C2):</label><input type="color" id="new-legendary-c2" value="#ff007f" onchange="updateLivePreview('new')" style="height:40px; padding:2px; cursor:pointer;"></div>
+                        </div>
+                        <div class="form-group"><label>Texto de Etiqueta Decorativa (Ej: ÉLITE, VIP):</label><input type="text" id="new-legendary-badge" placeholder="EJ: EXCLUSIVO" oninput="updateLivePreview('new')"></div>
+                        
+                        <!-- RECUADRO DE VISTA PREVIA EN TIEMPO REAL -->
+                        <div class="form-group">
+                            <label style="color:var(--accent-gold);">👁️ Vista Previa en Tiempo Real:</label>
+                            <div id="new-legendary-preview-card" class="card style-aurora" style="pointer-events:none; margin-top:4px;">
+                                <div id="new-preview-badge" class="legendary-badge">✨ EXCLUSIVO</div>
+                                <div class="card-title" style="margin-top:10px;">Producto Exclusivo</div>
+                                <div class="card-price">$00.00</div>
+                            </div>
+                        </div>
                     </div>
                 </div>
 
@@ -959,10 +1066,38 @@
 
             <!-- DECORACIÓN LEGENDARIA PARA EDITAR PRODUCTO -->
             <div class="form-group" style="background:rgba(226, 183, 20, 0.05); padding:12px; border-radius:12px; border:1px dashed rgba(226, 183, 20, 0.4);">
-                <label style="color:var(--accent-gold); font-weight:700;"><input type="checkbox" id="edit-legendary" onchange="toggleLegendaryFields('edit')"> ✨ Activar Decoración Legendaria (Brillo y Glowing)</label>
+                <label style="color:var(--accent-gold); font-weight:700;"><input type="checkbox" id="edit-legendary" onchange="toggleLegendaryFields('edit')"> ✨ Activar Decoración Legendaria Exclusiva</label>
                 <div id="edit-legendary-box" style="display:none; margin-top:10px; display:flex; flex-direction:column; gap:8px;">
-                    <div class="form-group"><label>Color del Brillo / Glowing:</label><input type="color" id="edit-legendary-color" value="#e2b714" style="height:42px; padding:4px; cursor:pointer;"></div>
-                    <div class="form-group"><label>Texto de Etiqueta Decorativa (Ej: ÉLITE, VIP):</label><input type="text" id="edit-legendary-badge" placeholder="EJ: EXCLUSIVO"></div>
+                    <div class="form-group">
+                        <label>Estilo de Decoración Interactiva:</label>
+                        <select id="edit-legendary-style" onchange="updateLivePreview('edit')">
+                            <option value="style-aurora">1. Aurora Multicolor Ondulada</option>
+                            <option value="style-neon-pulse">2. Pulso Dual de Neón Fluido</option>
+                            <option value="style-cosmic-gold">3. Destello Cósmico Dorado</option>
+                            <option value="style-plasma-wave">4. Onda de Energía Plasma</option>
+                            <option value="style-emerald-royale">5. Resplandor Royale Esmeralda</option>
+                            <option value="style-amethyst-halo">6. Halo Amatista Celestial</option>
+                            <option value="style-inferno-fire">7. Lava Fuego Infernal</option>
+                            <option value="style-diamond-lux">8. Bordado Diamante Cristal</option>
+                            <option value="style-cyber-vip">9. Nubes Ciberpunk VIP</option>
+                            <option value="style-eclipse-dark">10. Sombra Eterna Eclipse</option>
+                        </select>
+                    </div>
+                    <div style="display:flex; gap:8px;">
+                        <div class="form-group" style="flex:1;"><label>Color Principal (C1):</label><input type="color" id="edit-legendary-c1" value="#e2b714" onchange="updateLivePreview('edit')" style="height:40px; padding:2px; cursor:pointer;"></div>
+                        <div class="form-group" style="flex:1;"><label>Color Secundario (C2):</label><input type="color" id="edit-legendary-c2" value="#ff007f" onchange="updateLivePreview('edit')" style="height:40px; padding:2px; cursor:pointer;"></div>
+                    </div>
+                    <div class="form-group"><label>Texto de Etiqueta Decorativa (Ej: ÉLITE, VIP):</label><input type="text" id="edit-legendary-badge" placeholder="EJ: EXCLUSIVO" oninput="updateLivePreview('edit')"></div>
+                    
+                    <!-- RECUADRO DE VISTA PREVIA EN EDICIÓN -->
+                    <div class="form-group">
+                        <label style="color:var(--accent-gold);">👁️ Vista Previa en Tiempo Real:</label>
+                        <div id="edit-legendary-preview-card" class="card style-aurora" style="pointer-events:none; margin-top:4px;">
+                            <div id="edit-preview-badge" class="legendary-badge">✨ EXCLUSIVO</div>
+                            <div class="card-title" style="margin-top:10px;">Producto Exclusivo</div>
+                            <div class="card-price">$00.00</div>
+                        </div>
+                    </div>
                 </div>
             </div>
 
@@ -1234,6 +1369,25 @@
         function toggleLegendaryFields(prefix) {
             const isLegendary = document.getElementById(`${prefix}-legendary`).checked;
             document.getElementById(`${prefix}-legendary-box`).style.display = isLegendary ? 'flex' : 'none';
+            if(isLegendary) updateLivePreview(prefix);
+        }
+
+        function updateLivePreview(prefix) {
+            const style = document.getElementById(`${prefix}-legendary-style`).value;
+            const c1 = document.getElementById(`${prefix}-legendary-c1`).value;
+            const c2 = document.getElementById(`${prefix}-legendary-c2`).value;
+            const badgeText = document.getElementById(`${prefix}-legendary-badge`).value.trim() || 'EXCLUSIVO';
+
+            const previewCard = document.getElementById(`${prefix}-legendary-preview-card`);
+            const previewBadge = document.getElementById(`${prefix}-preview-badge`);
+
+            if(previewCard) {
+                previewCard.className = `card ${style}`;
+                previewCard.style.cssText = `--leg-c1: ${c1}; --leg-c2: ${c2}; pointer-events:none; margin-top:4px;`;
+            }
+            if(previewBadge) {
+                previewBadge.innerText = `✨ ${badgeText}`;
+            }
         }
 
         function applyBgToBody(bgData, isVideo = false) {
@@ -1830,8 +1984,8 @@
                 let cardStyle = '';
 
                 if(p.isLegendary) {
-                    cardClasses += ' legendary-glow legendary-shine';
-                    cardStyle = `--legendary-color: ${p.legendaryColor || '#e2b714'};`;
+                    cardClasses += ` ${p.legendaryStyle || 'style-aurora'}`;
+                    cardStyle = `--leg-c1: ${p.legendaryC1 || '#e2b714'}; --leg-c2: ${p.legendaryC2 || '#ff007f'};`;
                 }
 
                 card.className = cardClasses;
@@ -2212,7 +2366,9 @@
             const offerUntil = document.getElementById('new-offer-until').value || "";
 
             const isLegendary = document.getElementById('new-legendary').checked;
-            const legendaryColor = document.getElementById('new-legendary-color').value;
+            const legendaryStyle = document.getElementById('new-legendary-style').value;
+            const legendaryC1 = document.getElementById('new-legendary-c1').value;
+            const legendaryC2 = document.getElementById('new-legendary-c2').value;
             const legendaryBadge = document.getElementById('new-legendary-badge').value.trim();
 
             if (!name || isNaN(price)) return alert("Nombre y precio requeridos.");
@@ -2240,7 +2396,7 @@
             const images = tempImagesList.length > 0 ? tempImagesList : ["https://images.unsplash.com/photo-1592945403244-b3fbafd7f539?w=400"];
 
             await window.addDoc(window.collection(window.db, "products"), {
-                name, category, price, initialPay, note, isOffer, offerPrice, offerUntil, isLegendary, legendaryColor, legendaryBadge, images, img: images[0], subvariants, order: products.length
+                name, category, price, initialPay, note, isOffer, offerPrice, offerUntil, isLegendary, legendaryStyle, legendaryC1, legendaryC2, legendaryBadge, images, img: images[0], subvariants, order: products.length
             });
 
             alert("¡Producto agregado!");
@@ -2281,7 +2437,9 @@
             toggleOfferFields('edit');
 
             document.getElementById('edit-legendary').checked = !!p.isLegendary;
-            document.getElementById('edit-legendary-color').value = p.legendaryColor || '#e2b714';
+            document.getElementById('edit-legendary-style').value = p.legendaryStyle || 'style-aurora';
+            document.getElementById('edit-legendary-c1').value = p.legendaryC1 || '#e2b714';
+            document.getElementById('edit-legendary-c2').value = p.legendaryC2 || '#ff007f';
             document.getElementById('edit-legendary-badge').value = p.legendaryBadge || '';
             toggleLegendaryFields('edit');
 
@@ -2319,7 +2477,9 @@
             const offerUntil = document.getElementById('edit-offer-until').value || "";
 
             const isLegendary = document.getElementById('edit-legendary').checked;
-            const legendaryColor = document.getElementById('edit-legendary-color').value;
+            const legendaryStyle = document.getElementById('edit-legendary-style').value;
+            const legendaryC1 = document.getElementById('edit-legendary-c1').value;
+            const legendaryC2 = document.getElementById('edit-legendary-c2').value;
             const legendaryBadge = document.getElementById('edit-legendary-badge').value.trim();
 
             const subvariantRows = document.querySelectorAll('#edit-subvariants-container .subvariant-row');
@@ -2342,7 +2502,7 @@
                 }
             });
 
-            let data = { name, category, price, initialPay, note, isOffer, offerPrice, offerUntil, isLegendary, legendaryColor, legendaryBadge, subvariants };
+            let data = { name, category, price, initialPay, note, isOffer, offerPrice, offerUntil, isLegendary, legendaryStyle, legendaryC1, legendaryC2, legendaryBadge, subvariants };
             if (tempImagesList.length > 0) {
                 data.images = tempImagesList;
                 data.img = tempImagesList[0];
