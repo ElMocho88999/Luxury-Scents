@@ -50,7 +50,7 @@
             background-image: linear-gradient(rgba(5, 7, 12, 0.75), rgba(5, 7, 12, 0.75)), url('https://images.unsplash.com/photo-1506703719100-a0f3a48c0f86?w=1600');
             background-size: cover;
             background-position: center;
-            background-attachment: scroll; /* Eliminado el 'fixed' para evitar el parpadeo en móviles al hacer scroll */
+            background-attachment: scroll;
             overflow-x: hidden;
             position: relative;
         }
@@ -192,8 +192,6 @@
         }
 
         .slide-item.active { opacity: 1; }
-
-        /* Eliminado el desenfoque pesado para evitar retraso en carruseles */
         .slide-bg-blur { display: none; }
 
         .slide-img-front, .slide-video-front {
@@ -241,11 +239,7 @@
             gap: 1rem;
         }
 
-        .sort-container {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
+        .sort-container { display: flex; align-items: center; gap: 8px; }
 
         .sort-select {
             padding: 8px 12px;
@@ -293,51 +287,22 @@
             box-shadow: var(--glass-shadow);
             position: relative;
             overflow: hidden;
-            transform: translateZ(0); /* Forzar aceleración por hardware de la GPU */
+            transform: translateZ(0);
             will-change: transform;
         }
 
-        /* ESTILOS LEGENDARIOS OPTIMIZADOS (Sin animaciones pesadas para garantizar fluidez) */
-        .card.style-aurora, .modal-legendary.style-aurora {
-            border: 2px solid var(--leg-c1, #e2b714) !important;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
-        }
-        .card.style-neon-pulse, .modal-legendary.style-neon-pulse {
-            border: 2px solid var(--leg-c1, #00f0ff) !important;
-            box-shadow: 0 0 15px rgba(0, 240, 255, 0.3);
-        }
-        .card.style-cosmic-gold, .modal-legendary.style-cosmic-gold {
-            border: 2px solid var(--leg-c1, #e2b714) !important;
-            box-shadow: 0 0 20px rgba(226, 183, 20, 0.35);
-        }
-        .card.style-plasma-wave, .modal-legendary.style-plasma-wave {
-            border: 2px solid var(--leg-c1, #ff0055) !important;
-        }
-        .card.style-emerald-royale, .modal-legendary.style-emerald-royale {
-            border: 2px solid var(--leg-c1, #00ff87) !important;
-            box-shadow: 0 0 20px rgba(0, 255, 135, 0.3);
-        }
-        .card.style-amethyst-halo, .modal-legendary.style-amethyst-halo {
-            border: 2px solid var(--leg-c1, #9d4edd) !important;
-            box-shadow: 0 0 15px rgba(157, 78, 221, 0.4);
-        }
-        .card.style-inferno-fire, .modal-legendary.style-inferno-fire {
-            border: 2px solid var(--leg-c1, #ff4500) !important;
-            box-shadow: 0 0 22px rgba(255, 69, 0, 0.4);
-        }
-        .card.style-diamond-lux, .modal-legendary.style-diamond-lux {
-            border: 2px solid #ffffff !important;
-            box-shadow: 0 0 20px rgba(255, 255, 255, 0.3);
-        }
-        .card.style-cyber-vip, .modal-legendary.style-cyber-vip {
-            border: 2px dashed var(--leg-c1, #00f0ff) !important;
-        }
-        .card.style-eclipse-dark, .modal-legendary.style-eclipse-dark {
-            border: 2px solid var(--leg-c1, #ffffff) !important;
-            box-shadow: 0 0 25px rgba(255, 255, 255, 0.2);
-        }
+        /* ESTILOS LEGENDARIOS OPTIMIZADOS */
+        .card.style-aurora, .modal-legendary.style-aurora { border: 2px solid var(--leg-c1, #e2b714) !important; box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4); }
+        .card.style-neon-pulse, .modal-legendary.style-neon-pulse { border: 2px solid var(--leg-c1, #00f0ff) !important; box-shadow: 0 0 15px rgba(0, 240, 255, 0.3); }
+        .card.style-cosmic-gold, .modal-legendary.style-cosmic-gold { border: 2px solid var(--leg-c1, #e2b714) !important; box-shadow: 0 0 20px rgba(226, 183, 20, 0.35); }
+        .card.style-plasma-wave, .modal-legendary.style-plasma-wave { border: 2px solid var(--leg-c1, #ff0055) !important; }
+        .card.style-emerald-royale, .modal-legendary.style-emerald-royale { border: 2px solid var(--leg-c1, #00ff87) !important; box-shadow: 0 0 20px rgba(0, 255, 135, 0.3); }
+        .card.style-amethyst-halo, .modal-legendary.style-amethyst-halo { border: 2px solid var(--leg-c1, #9d4edd) !important; box-shadow: 0 0 15px rgba(157, 78, 221, 0.4); }
+        .card.style-inferno-fire, .modal-legendary.style-inferno-fire { border: 2px solid var(--leg-c1, #ff4500) !important; box-shadow: 0 0 22px rgba(255, 69, 0, 0.4); }
+        .card.style-diamond-lux, .modal-legendary.style-diamond-lux { border: 2px solid #ffffff !important; box-shadow: 0 0 20px rgba(255, 255, 255, 0.3); }
+        .card.style-cyber-vip, .modal-legendary.style-cyber-vip { border: 2px dashed var(--leg-c1, #00f0ff) !important; }
+        .card.style-eclipse-dark, .modal-legendary.style-eclipse-dark { border: 2px solid var(--leg-c1, #ffffff) !important; box-shadow: 0 0 25px rgba(255, 255, 255, 0.2); }
 
-        /* TEXTURAS SIMPLIFICADAS PARA CERO LAG EN SCROLL */
         .card.tex-marble, .modal-legendary.tex-marble { background-color: #0b0d13 !important; }
         .card.tex-carbon, .modal-legendary.tex-carbon { background-color: #0a0a0d !important; }
         .card.tex-leather, .modal-legendary.tex-leather { background-color: #0e0c0a !important; }
@@ -363,10 +328,7 @@
             box-shadow: 0 2px 10px rgba(0,0,0,0.5);
         }
 
-        .card:hover { 
-            transform: translateY(-4px); 
-            background-color: var(--bg-card-hover);
-        }
+        .card:hover { transform: translateY(-4px); background-color: var(--bg-card-hover); }
 
         .card-img-wrapper {
             width: 100%; 
@@ -380,7 +342,6 @@
             background: #0a0e17;
         }
 
-        /* Eliminado el fondo difuminado en las tarjetas para acelerar el renderizado */
         .card-bg-blur { display: none; }
 
         .card img { 
@@ -402,11 +363,7 @@
             cursor: pointer; border: 1px solid rgba(255,255,255,0.2);
             font-size: 0.9rem; z-index: 2;
         }
-        .fav-btn-card.active {
-            background: rgba(239, 68, 68, 0.25);
-            border-color: #ef4444;
-            color: #ef4444;
-        }
+        .fav-btn-card.active { background: rgba(239, 68, 68, 0.25); border-color: #ef4444; color: #ef4444; }
 
         .card-title { font-size: 1.1rem; font-weight: 700; }
         .card-price { font-size: 1.35rem; font-weight: 800; color: var(--accent-gold); }
@@ -431,9 +388,39 @@
         }
 
         .modal-admin-redesign {
-            max-width: 680px !important;
+            max-width: 780px !important;
             padding: 1.75rem !important;
         }
+
+        /* NAVEGACIÓN DE PESTAÑAS DEL PANEL DE CONTROL */
+        .admin-nav-tabs {
+            display: flex;
+            gap: 8px;
+            overflow-x: auto;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 10px;
+            margin-bottom: 1.25rem;
+        }
+        .admin-nav-tabs::-webkit-scrollbar { display: none; }
+        .tab-btn {
+            background: rgba(255,255,255,0.04);
+            border: 1px solid var(--border-color);
+            color: var(--text-secondary);
+            padding: 8px 14px;
+            border-radius: var(--radius-btn);
+            font-size: 0.85rem;
+            white-space: nowrap;
+            cursor: pointer;
+        }
+        .tab-btn.active {
+            background: linear-gradient(135deg, #e2b714, #c59b08);
+            color: #000;
+            font-weight: 700;
+            border-color: var(--accent-gold);
+        }
+
+        .admin-tab-content { display: none; }
+        .admin-tab-content.active { display: block; }
 
         .admin-section-card {
             background: rgba(255, 255, 255, 0.02);
@@ -524,61 +511,22 @@
             transition: transform 0.6s cubic-bezier(0.2, 0.8, 0.2, 1), opacity 0.6s linear;
         }
 
-        .detail-gallery {
-            display: flex;
-            gap: 8px;
-            overflow-x: auto;
-            margin-bottom: 1rem;
-            padding-bottom: 4px;
-        }
-        .detail-thumb {
-            width: 60px;
-            height: 60px;
-            border-radius: 10px;
-            object-fit: contain;
-            background: rgba(0,0,0,0.25);
-            cursor: pointer;
-            border: 2px solid transparent;
-            opacity: 0.6;
-        }
-        .detail-thumb.active {
-            border-color: var(--accent-gold);
-            opacity: 1;
-        }
+        .detail-gallery { display: flex; gap: 8px; overflow-x: auto; margin-bottom: 1rem; padding-bottom: 4px; }
+        .detail-thumb { width: 60px; height: 60px; border-radius: 10px; object-fit: contain; background: rgba(0,0,0,0.25); cursor: pointer; border: 2px solid transparent; opacity: 0.6; }
+        .detail-thumb.active { border-color: var(--accent-gold); opacity: 1; }
 
         .fullscreen-overlay {
-            position: fixed;
-            top: 0; left: 0; right: 0; bottom: 0;
-            background: rgba(0,0,0,0.95);
-            z-index: 5000;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            opacity: 0;
-            pointer-events: none;
-            transition: opacity 0.2s ease;
+            position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0,0,0,0.95); z-index: 5000; display: flex;
+            justify-content: center; align-items: center; opacity: 0;
+            pointer-events: none; transition: opacity 0.2s ease;
         }
-        .fullscreen-overlay.active {
-            opacity: 1;
-            pointer-events: auto;
-        }
-        .fullscreen-overlay img {
-            max-width: 92%;
-            max-height: 92vh;
-            border-radius: 12px;
-            object-fit: contain;
-        }
+        .fullscreen-overlay.active { opacity: 1; pointer-events: auto; }
+        .fullscreen-overlay img { max-width: 92%; max-height: 92vh; border-radius: 12px; object-fit: contain; }
         .fullscreen-close {
-            position: absolute;
-            top: 20px; right: 20px;
-            background: rgba(255,255,255,0.1);
-            color: #fff;
-            border: none;
-            font-size: 1.5rem;
-            width: 45px; height: 45px;
-            border-radius: 50%;
-            cursor: pointer;
-            display: flex; align-items: center; justify-content: center;
+            position: absolute; top: 20px; right: 20px; background: rgba(255,255,255,0.1);
+            color: #fff; border: none; font-size: 1.5rem; width: 45px; height: 45px;
+            border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center;
         }
     </style>
 
@@ -634,13 +582,8 @@
     </header>
 
     <div class="container">
-        <!-- BANNER DE OFERTAS CON TIEMPO LÍMITE -->
         <div id="offer-slider" class="banner-slider-container" style="display:none;"></div>
-
-        <!-- BANNER DE NOVEDADES -->
         <div id="banner-slider" class="banner-slider-container" style="display:none;"></div>
-
-        <!-- BARRA DE FILTROS POR CATEGORÍA -->
         <div class="category-filters" id="category-filters"></div>
 
         <div class="catalog-header">
@@ -658,13 +601,11 @@
         <div class="grid" id="catalog-grid"></div>
     </div>
 
-    <!-- Visor de Imagen Pantalla Completa -->
     <div class="fullscreen-overlay" id="fullscreen-modal" onclick="closeFullscreen()">
         <button class="fullscreen-close">&times;</button>
         <img id="fullscreen-img" src="" alt="Pantalla completa">
     </div>
 
-    <!-- Modal Registro Nombre Cliente -->
     <div class="modal-overlay" id="user-modal">
         <div class="modal">
             <h2 style="font-family:'Playfair Display', serif;">¡Bienvenido a Luxury Scents!</h2>
@@ -677,7 +618,6 @@
         </div>
     </div>
 
-    <!-- Modal Favoritos -->
     <div class="modal-overlay" id="fav-modal">
         <div class="modal">
             <h2 style="font-family:'Playfair Display', serif;">❤️ Mis Favoritos</h2>
@@ -686,7 +626,6 @@
         </div>
     </div>
 
-    <!-- Modal Detalle -->
     <div class="modal-overlay" id="detail-modal">
         <div class="modal" id="detail-modal-box">
             <div id="detail-content"></div>
@@ -694,7 +633,6 @@
         </div>
     </div>
 
-    <!-- Modal Carrito -->
     <div class="modal-overlay" id="cart-modal">
         <div class="modal">
             <h2 style="font-family:'Playfair Display', serif;">Carrito de Compras</h2>
@@ -742,7 +680,6 @@
         </div>
     </div>
 
-    <!-- Modal Login -->
     <div class="modal-overlay" id="login-modal">
         <div class="modal">
             <h2 style="font-family:'Playfair Display', serif;">Acceso Administrativo</h2>
@@ -755,205 +692,243 @@
         </div>
     </div>
 
-    <!-- Panel de Control del Vendedor Reestructurado -->
+    <!-- PANEL DE CONTROL REDISEÑADO POR PESTAÑAS (CATEGORÍAS SEPARADAS) -->
     <div class="modal-overlay" id="admin-panel">
         <div class="modal modal-admin-redesign">
-            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1.25rem;">
-                <h2 style="font-family:'Playfair Display', serif; font-size:1.6rem; color:var(--accent-gold);">⚙️ Panel de Control</h2>
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1rem;">
+                <h2 style="font-family:'Playfair Display', serif; font-size:1.6rem; color:var(--accent-gold);">⚙️ Panel de Control Vendedor</h2>
                 <button class="btn-gold" style="padding:6px 14px; font-size:0.85rem;" onclick="closeAdminPanel()">✕ Cerrar</button>
             </div>
 
-            <!-- SECCIÓN 1: CAMBIAR FONDO -->
-            <div class="admin-section-card">
-                <div class="admin-section-title">🎨 Personalización del Fondo del Sitio</div>
-                <div class="form-group">
-                    <label>Foto de fondo (Desde tu Galería):</label>
-                    <input type="file" id="bg-custom-file" accept="image/*" onchange="previewCustomBg(this)">
-                </div>
-                <div class="form-group">
-                    <label>Video de fondo (Solo por enlace URL directo MP4/WebM):</label>
+            <!-- NAVEGACIÓN INDEPENDIENTE DE CATEGORÍAS EN EL PANEL -->
+            <div class="admin-nav-tabs">
+                <button class="tab-btn active" onclick="switchAdminTab('tab-clients', this)">💰 Clientes / Abonos</button>
+                <button class="tab-btn" onclick="switchAdminTab('tab-inventory', this)">📋 Inventario / Stock</button>
+                <button class="tab-btn" onclick="switchAdminTab('tab-add-prod', this)">➕ Publicar Producto</button>
+                <button class="tab-btn" onclick="switchAdminTab('tab-orders', this)">📦 Pedidos Tienda</button>
+                <button class="tab-btn" onclick="switchAdminTab('tab-banners', this)">✨ Banners</button>
+                <button class="tab-btn" onclick="switchAdminTab('tab-categories', this)">🏷️ Categorías</button>
+                <button class="tab-btn" onclick="switchAdminTab('tab-config', this)">🎨 Apariencia / Pagos</button>
+            </div>
+
+            <!-- INTERFAZ 1: CONTROL DE CLIENTES Y ABONOS -->
+            <div id="tab-clients" class="admin-tab-content active">
+                <div class="admin-section-card">
+                    <div class="admin-section-title">📝 Registrar Nuevo Cliente / Abono</div>
+                    <div class="form-group"><label>Nombre del Cliente:</label><input type="text" id="abono-client-name" placeholder="Ej: Pedro Pérez"></div>
+                    <div class="form-group"><label>Producto / Pedido Adquirido:</label><input type="text" id="abono-product" placeholder="Ej: Perfume Yara 100ml"></div>
                     <div style="display:flex; gap:8px;">
-                        <input type="text" id="bg-video-url-input" placeholder="https://...video.mp4" style="flex:1;">
-                        <button class="btn-secondary" type="button" onclick="saveCustomBgVideo()">Usar Video</button>
+                        <div class="form-group" style="flex:1;"><label>Monto Total ($):</label><input type="number" step="0.5" id="abono-total" placeholder="30.00"></div>
+                        <div class="form-group" style="flex:1;"><label>Monto Abonado ($):</label><input type="number" step="0.5" id="abono-paid" placeholder="10.00"></div>
                     </div>
+                    <button class="btn-primary" style="width:100%;" type="button" onclick="saveAbonoRecord()">Guardar Registro de Abono</button>
                 </div>
-                <div id="bg-preview-container" style="height:110px; border:1px dashed var(--border-highlight); margin-top:8px; border-radius:12px; display:flex; align-items:center; justify-content:center; overflow:hidden; background:rgba(0,0,0,0.3);">
-                    <span style="font-size:0.85rem; color:var(--text-secondary);">Vista previa del fondo</span>
-                </div>
-                <div style="display:flex; gap:8px; margin-top:10px;">
-                    <button class="btn-gold" style="flex:1;" type="button" onclick="saveCustomBg()">Aplicar Imagen de Galería</button>
-                    <button class="btn-danger" style="font-size:0.8rem; padding:8px 12px;" type="button" onclick="resetCustomBg()">Restablecer Fondo</button>
+
+                <div class="admin-section-card">
+                    <div class="admin-section-title">👥 Registro de Deudas y Abonos</div>
+                    <div id="admin-abonos-list" style="max-height: 250px; overflow-y: auto;"></div>
                 </div>
             </div>
 
-            <!-- SECCIÓN 2: PEDIDOS DE CLIENTES -->
-            <div class="admin-section-card">
-                <div class="admin-section-title">📦 Pedidos de Clientes</div>
-                <div id="admin-orders-list" style="max-height: 220px; overflow-y: auto;"></div>
+            <!-- INTERFAZ 2: INVENTARIO Y STOCK -->
+            <div id="tab-inventory" class="admin-tab-content">
+                <div class="admin-section-card">
+                    <div class="admin-section-title">📋 Inventario y Control de Stock</div>
+                    <div id="admin-price-list" style="max-height: 350px; overflow-y: auto;"></div>
+                </div>
             </div>
 
-            <!-- SECCIÓN 3: BANNERS DE NOVEDADES -->
-            <div class="admin-section-card">
-                <div class="admin-section-title">✨ Banners Promocionales</div>
-                <div class="form-group">
-                    <label>Subir banner (Foto desde Galería):</label>
-                    <input type="file" id="new-banner-img-file" accept="image/*" onchange="previewBannerImage(this, 'new-banner-img-preview')">
-                </div>
-                <div class="form-group">
-                    <label>O colocar banner (Video solo por enlace URL MP4):</label>
-                    <input type="text" id="new-banner-video-url" placeholder="https://...video.mp4">
-                </div>
-                <div id="new-banner-img-preview" style="height:80px; border:1px dashed var(--border-color); margin-top:6px; display:flex; align-items:center; justify-content:center; overflow:hidden; border-radius:12px;">Vista Previa Banner</div>
-                <button class="btn-secondary" style="width: 100%; margin-top: 1rem;" type="button" onclick="addBannerItem()">Guardar Banner</button>
-                <div id="admin-banners-list" style="max-height: 150px; overflow-y: auto; margin-top: 1rem;"></div>
-            </div>
-
-            <!-- SECCIÓN 4: CATEGORÍAS -->
-            <div class="admin-section-card">
-                <div class="admin-section-title">🏷️ Gestión de Categorías</div>
-                <div class="form-group">
-                    <label>Agregar nueva categoría:</label>
+            <!-- INTERFAZ 3: PUBLICAR PRODUCTO NUEVO -->
+            <div id="tab-add-prod" class="admin-tab-content">
+                <div class="admin-section-card">
+                    <div class="admin-section-title">➕ Publicar Nuevo Producto</div>
+                    <div class="form-group"><label>Nombre del Producto / Marca:</label><input type="text" id="new-name" placeholder="Ej: Colección Yara"></div>
+                    <div class="form-group">
+                        <label>Categoría:</label>
+                        <select id="new-category"></select>
+                    </div>
                     <div style="display:flex; gap:8px;">
-                        <input type="text" id="new-category-name" placeholder="Ej: Relojes, Árabes..." style="flex:1;">
-                        <button class="btn-secondary" type="button" onclick="addCustomCategory()">Agregar</button>
+                        <div class="form-group" style="flex:1;"><label>Precio Normal ($):</label><input type="number" id="new-price" step="0.5" placeholder="6.5"></div>
+                        <div class="form-group" style="flex:1;"><label>Cantidad Stock:</label><input type="number" id="new-stock" value="10" placeholder="10"></div>
                     </div>
-                </div>
-                <div id="admin-categories-list" style="max-height: 140px; overflow-y: auto;"></div>
-            </div>
-
-            <!-- SECCIÓN 5: DISEÑO DE VISTA -->
-            <div class="admin-section-card">
-                <div class="admin-section-title">📐 Estilo de Vista en Inicio</div>
-                <div class="form-group">
-                    <label>Disposición del catálogo:</label>
-                    <select id="cfg-layout-mode">
-                        <option value="grid">Grilla Tradicional</option>
-                        <option value="horizontal">Horizontal (Deslizable)</option>
-                    </select>
-                </div>
-                <button class="btn-secondary" style="width: 100%;" type="button" onclick="saveLayoutConfig()">Guardar Formato</button>
-            </div>
-
-            <!-- SECCIÓN 6: AGREGAR PRODUCTO -->
-            <div class="admin-section-card">
-                <div class="admin-section-title">➕ Publicar Nuevo Producto</div>
-                <div class="form-group"><label>Nombre del Producto / Marca:</label><input type="text" id="new-name" placeholder="Ej: Colección Yara"></div>
-                <div class="form-group">
-                    <label>Categoría:</label>
-                    <select id="new-category"></select>
-                </div>
-                <div class="form-group"><label>Precio Normal / Base ($):</label><input type="number" id="new-price" step="0.5" placeholder="6.5"></div>
-                <div class="form-group"><label>Cuota Inicial Individual ($):</label><input type="number" id="new-initial" step="0.5" placeholder="5.0"></div>
-                <div class="form-group"><label>Nota / Descripción corta:</label><input type="text" id="new-note" placeholder="Ej: Fragancias orientales Lattafa"></div>
-                
-                <div class="form-group" style="background:rgba(239, 68, 68, 0.05); padding:10px; border-radius:10px; border:1px dashed rgba(239, 68, 68, 0.3);">
-                    <label><input type="checkbox" id="new-is-offer" onchange="toggleOfferFields('new')"> 🔥 Activar Oferta Especial (Tacha el precio base)</label>
-                    <div id="new-offer-box" style="display:none; margin-top:8px;">
-                        <div class="form-group"><label>Precio en Oferta ($):</label><input type="number" id="new-offer-price" step="0.5" placeholder="5.0"></div>
-                        <div class="form-group"><label>Fecha y Hora Límite:</label><input type="datetime-local" id="new-offer-until"></div>
+                    <div class="form-group"><label>Cuota Inicial Individual ($):</label><input type="number" id="new-initial" step="0.5" placeholder="5.0"></div>
+                    <div class="form-group"><label>Nota / Descripción corta:</label><input type="text" id="new-note" placeholder="Ej: Fragancias orientales Lattafa"></div>
+                    
+                    <div class="form-group" style="background:rgba(239, 68, 68, 0.05); padding:10px; border-radius:10px; border:1px dashed rgba(239, 68, 68, 0.3);">
+                        <label><input type="checkbox" id="new-is-offer" onchange="toggleOfferFields('new')"> 🔥 Activar Oferta Especial (Tacha precio base)</label>
+                        <div id="new-offer-box" style="display:none; margin-top:8px;">
+                            <div class="form-group"><label>Precio en Oferta ($):</label><input type="number" id="new-offer-price" step="0.5" placeholder="5.0"></div>
+                            <div class="form-group"><label>Fecha y Hora Límite:</label><input type="datetime-local" id="new-offer-until"></div>
+                        </div>
                     </div>
-                </div>
 
-                <!-- DECORACIÓN LEGENDARIA Y TEXTURAS -->
-                <div class="form-group" style="background:rgba(226, 183, 20, 0.05); padding:12px; border-radius:12px; border:1px dashed rgba(226, 183, 20, 0.4);">
-                    <label style="color:var(--accent-gold); font-weight:700;"><input type="checkbox" id="new-legendary" onchange="toggleLegendaryFields('new')"> ✨ Activar Decoración Legendaria Exclusiva</label>
-                    <div id="new-legendary-box" style="display:none; margin-top:10px; display:flex; flex-direction:column; gap:8px;">
-                        <div class="form-group">
-                            <label>Estilo de Luz / Glowing (Opcional):</label>
-                            <select id="new-legendary-style" onchange="updateLivePreview('new')">
-                                <option value="">Sin Luces (Solo Color Base)</option>
-                                <option value="style-aurora">1. Aurora Multicolor</option>
-                                <option value="style-neon-pulse">2. Pulso Neón</option>
-                                <option value="style-cosmic-gold">3. Destello Dorado</option>
-                                <option value="style-plasma-wave">4. Onda Plasma</option>
-                                <option value="style-emerald-royale">5. Esmeralda Royale</option>
-                                <option value="style-amethyst-halo">6. Halo Amatista</option>
-                                <option value="style-inferno-fire">7. Lava Fuego</option>
-                                <option value="style-diamond-lux">8. Diamante Cristal</option>
-                                <option value="style-cyber-vip">9. Ciberpunk VIP</option>
-                                <option value="style-eclipse-dark">10. Eclipse</option>
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <label>Textura Exclusiva de Fondo (Opcional):</label>
-                            <select id="new-legendary-texture" onchange="updateLivePreview('new')">
-                                <option value="">Sin Textura (Fondo Liso)</option>
-                                <option value="tex-marble">1. Mármol</option>
-                                <option value="tex-carbon">2. Fibra de Carbono</option>
-                                <option value="tex-leather">3. Cuero</option>
-                                <option value="tex-silk">4. Seda</option>
-                                <option value="tex-gold-leaf">5. Hoja de Oro</option>
-                                <option value="tex-scales">6. Hojas Orgánicas</option>
-                                <option value="tex-velvet">7. Terciopelo</option>
-                                <option value="tex-glass">8. Cristal Esmerilado</option>
-                                <option value="tex-cubes">9. Geométrico</option>
-                                <option value="tex-granite">10. Granito</option>
-                            </select>
-                        </div>
-                        <div style="display:flex; gap:8px;">
-                            <div class="form-group" style="flex:1;"><label>Color Principal (C1):</label><input type="color" id="new-legendary-c1" value="#e2b714" onchange="updateLivePreview('new')" style="height:40px; padding:2px; cursor:pointer;"></div>
-                            <div class="form-group" style="flex:1;"><label>Color Secundario (C2):</label><input type="color" id="new-legendary-c2" value="#ff007f" onchange="updateLivePreview('new')" style="height:40px; padding:2px; cursor:pointer;"></div>
-                        </div>
-                        <div class="form-group"><label>Texto de Etiqueta (Ej: VIP):</label><input type="text" id="new-legendary-badge" placeholder="EJ: EXCLUSIVO" oninput="updateLivePreview('new')"></div>
-                        
-                        <div class="form-group">
-                            <label style="color:var(--accent-gold);">👁️ Vista Previa en Tiempo Real:</label>
-                            <div id="new-legendary-preview-card" class="card style-aurora tex-marble" style="pointer-events:none; margin-top:4px;">
-                                <div id="new-preview-badge" class="legendary-badge">✨ EXCLUSIVO</div>
-                                <div class="card-title" style="margin-top:10px;">Producto Exclusivo</div>
-                                <div class="card-price">$00.00</div>
+                    <div class="form-group" style="background:rgba(226, 183, 20, 0.05); padding:12px; border-radius:12px; border:1px dashed rgba(226, 183, 20, 0.4);">
+                        <label style="color:var(--accent-gold); font-weight:700;"><input type="checkbox" id="new-legendary" onchange="toggleLegendaryFields('new')"> ✨ Activar Decoración Legendaria Exclusiva</label>
+                        <div id="new-legendary-box" style="display:none; margin-top:10px; display:flex; flex-direction:column; gap:8px;">
+                            <div class="form-group">
+                                <label>Estilo de Luz / Glowing (Opcional):</label>
+                                <select id="new-legendary-style" onchange="updateLivePreview('new')">
+                                    <option value="">Sin Luces (Solo Color Base)</option>
+                                    <option value="style-aurora">1. Aurora Multicolor</option>
+                                    <option value="style-neon-pulse">2. Pulso Neón</option>
+                                    <option value="style-cosmic-gold">3. Destello Dorado</option>
+                                    <option value="style-plasma-wave">4. Onda Plasma</option>
+                                    <option value="style-emerald-royale">5. Esmeralda Royale</option>
+                                    <option value="style-amethyst-halo">6. Halo Amatista</option>
+                                    <option value="style-inferno-fire">7. Lava Fuego</option>
+                                    <option value="style-diamond-lux">8. Diamante Cristal</option>
+                                    <option value="style-cyber-vip">9. Ciberpunk VIP</option>
+                                    <option value="style-eclipse-dark">10. Eclipse</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label>Textura Exclusiva de Fondo (Opcional):</label>
+                                <select id="new-legendary-texture" onchange="updateLivePreview('new')">
+                                    <option value="">Sin Textura (Fondo Liso)</option>
+                                    <option value="tex-marble">1. Mármol</option>
+                                    <option value="tex-carbon">2. Fibra de Carbono</option>
+                                    <option value="tex-leather">3. Cuero</option>
+                                    <option value="tex-silk">4. Seda</option>
+                                    <option value="tex-gold-leaf">5. Hoja de Oro</option>
+                                    <option value="tex-scales">6. Hojas Orgánicas</option>
+                                    <option value="tex-velvet">7. Terciopelo</option>
+                                    <option value="tex-glass">8. Cristal Esmerilado</option>
+                                    <option value="tex-cubes">9. Geométrico</option>
+                                    <option value="tex-granite">10. Granito</option>
+                                </select>
+                            </div>
+                            <div style="display:flex; gap:8px;">
+                                <div class="form-group" style="flex:1;"><label>Color Principal (C1):</label><input type="color" id="new-legendary-c1" value="#e2b714" onchange="updateLivePreview('new')" style="height:40px; padding:2px; cursor:pointer;"></div>
+                                <div class="form-group" style="flex:1;"><label>Color Secundario (C2):</label><input type="color" id="new-legendary-c2" value="#ff007f" onchange="updateLivePreview('new')" style="height:40px; padding:2px; cursor:pointer;"></div>
+                            </div>
+                            <div class="form-group"><label>Texto de Etiqueta (Ej: VIP):</label><input type="text" id="new-legendary-badge" placeholder="EJ: EXCLUSIVO" oninput="updateLivePreview('new')"></div>
+                            
+                            <div class="form-group">
+                                <label style="color:var(--accent-gold);">👁️ Vista Previa en Tiempo Real:</label>
+                                <div id="new-legendary-preview-card" class="card style-aurora tex-marble" style="pointer-events:none; margin-top:4px;">
+                                    <div id="new-preview-badge" class="legendary-badge">✨ EXCLUSIVO</div>
+                                    <div class="card-title" style="margin-top:10px;">Producto Exclusivo</div>
+                                    <div class="card-price">$00.00</div>
+                                </div>
                             </div>
                         </div>
                     </div>
-                </div>
 
-                <div class="form-group">
-                    <label>Variantes / Presentaciones / Sets:</label>
-                    <div id="subvariants-container"></div>
-                    <button class="btn-secondary" type="button" style="padding:4px 10px; font-size:0.8rem; margin-top:4px;" onclick="addSubvariantField('subvariants-container')">+ Agregar Variante / Set</button>
-                </div>
+                    <div class="form-group">
+                        <label>Variantes / Presentaciones / Sets:</label>
+                        <div id="subvariants-container"></div>
+                        <button class="btn-secondary" type="button" style="padding:4px 10px; font-size:0.8rem; margin-top:4px;" onclick="addSubvariantField('subvariants-container')">+ Agregar Variante / Set</button>
+                    </div>
 
-                <div class="form-group">
-                    <label>Fotos del Producto (Desde tu Galería):</label>
-                    <input type="file" id="new-img-files" accept="image/*" multiple onchange="previewMultipleImages(this, 'new-img-preview-container')">
-                    <div id="new-img-preview-container" style="display:flex; gap:8px; flex-wrap:wrap; margin-top:6px; min-height:80px; border:1px dashed var(--border-color); border-radius:12px; padding:8px; align-items:center;">Vista Previa</div>
-                </div>
+                    <div class="form-group">
+                        <label>Fotos del Producto (Desde tu Galería):</label>
+                        <input type="file" id="new-img-files" accept="image/*" multiple onchange="previewMultipleImages(this, 'new-img-preview-container')">
+                        <div id="new-img-preview-container" style="display:flex; gap:8px; flex-wrap:wrap; margin-top:6px; min-height:80px; border:1px dashed var(--border-color); border-radius:12px; padding:8px; align-items:center;">Vista Previa</div>
+                    </div>
 
-                <button class="btn-primary" style="width: 100%; margin-top:0.5rem;" type="button" onclick="addNewProduct()">Guardar en la Nube</button>
+                    <button class="btn-primary" style="width: 100%; margin-top:0.5rem;" type="button" onclick="addNewProduct()">Guardar en la Nube</button>
+                </div>
             </div>
 
-            <!-- SECCIÓN 7: INVENTARIO -->
-            <div class="admin-section-card">
-                <div class="admin-section-title">📋 Inventario y Posición de Productos</div>
-                <div id="admin-price-list" style="max-height: 250px; overflow-y: auto;"></div>
+            <!-- INTERFAZ 4: PEDIDOS DE LA TIENDA -->
+            <div id="tab-orders" class="admin-tab-content">
+                <div class="admin-section-card">
+                    <div class="admin-section-title">📦 Pedidos Registrados</div>
+                    <div id="admin-orders-list" style="max-height: 350px; overflow-y: auto;"></div>
+                </div>
             </div>
 
-            <!-- SECCIÓN 8: MÉTODOS DE PAGO -->
-            <div class="admin-section-card">
-                <div class="admin-section-title">💳 Ajustes de Pagos y Financiamiento</div>
-                <div style="display:flex; flex-direction:column; gap:8px; margin-bottom:1rem;">
-                    <label><input type="checkbox" id="cfg-pay-pm"> Pago Móvil</label>
-                    <label><input type="checkbox" id="cfg-pay-efectivo"> Efectivo</label>
-                    <label><input type="checkbox" id="cfg-pay-cuotas"> Cuotas</label>
+            <!-- INTERFAZ 5: BANNERS -->
+            <div id="tab-banners" class="admin-tab-content">
+                <div class="admin-section-card">
+                    <div class="admin-section-title">✨ Banners Promocionales</div>
+                    <div class="form-group">
+                        <label>Subir banner (Foto desde Galería):</label>
+                        <input type="file" id="new-banner-img-file" accept="image/*" onchange="previewBannerImage(this, 'new-banner-img-preview')">
+                    </div>
+                    <div class="form-group">
+                        <label>O colocar banner (Video solo por enlace URL MP4):</label>
+                        <input type="text" id="new-banner-video-url" placeholder="https://...video.mp4">
+                    </div>
+                    <div id="new-banner-img-preview" style="height:80px; border:1px dashed var(--border-color); margin-top:6px; display:flex; align-items:center; justify-content:center; overflow:hidden; border-radius:12px;">Vista Previa Banner</div>
+                    <button class="btn-secondary" style="width: 100%; margin-top: 1rem;" type="button" onclick="addBannerItem()">Guardar Banner</button>
+                    <div id="admin-banners-list" style="max-height: 180px; overflow-y: auto; margin-top: 1rem;"></div>
+                </div>
+            </div>
+
+            <!-- INTERFAZ 6: GESTIÓN DE CATEGORÍAS -->
+            <div id="tab-categories" class="admin-tab-content">
+                <div class="admin-section-card">
+                    <div class="admin-section-title">🏷️ Gestión de Categorías</div>
+                    <div class="form-group">
+                        <label>Agregar nueva categoría:</label>
+                        <div style="display:flex; gap:8px;">
+                            <input type="text" id="new-category-name" placeholder="Ej: Relojes, Árabes..." style="flex:1;">
+                            <button class="btn-secondary" type="button" onclick="addCustomCategory()">Agregar</button>
+                        </div>
+                    </div>
+                    <div id="admin-categories-list" style="max-height: 250px; overflow-y: auto;"></div>
+                </div>
+            </div>
+
+            <!-- INTERFAZ 7: APARIENCIA, PAGOS Y SEGURIDAD -->
+            <div id="tab-config" class="admin-tab-content">
+                <div class="admin-section-card">
+                    <div class="admin-section-title">🎨 Fondo del Sitio</div>
+                    <div class="form-group">
+                        <label>Foto de fondo (Desde Galería):</label>
+                        <input type="file" id="bg-custom-file" accept="image/*" onchange="previewCustomBg(this)">
+                    </div>
+                    <div class="form-group">
+                        <label>Video de fondo (Enlace URL MP4):</label>
+                        <div style="display:flex; gap:8px;">
+                            <input type="text" id="bg-video-url-input" placeholder="https://...video.mp4" style="flex:1;">
+                            <button class="btn-secondary" type="button" onclick="saveCustomBgVideo()">Usar Video</button>
+                        </div>
+                    </div>
+                    <div id="bg-preview-container" style="height:90px; border:1px dashed var(--border-highlight); margin-top:8px; border-radius:12px; display:flex; align-items:center; justify-content:center; overflow:hidden; background:rgba(0,0,0,0.3);">
+                        <span style="font-size:0.85rem; color:var(--text-secondary);">Vista previa</span>
+                    </div>
+                    <div style="display:flex; gap:8px; margin-top:10px;">
+                        <button class="btn-gold" style="flex:1;" type="button" onclick="saveCustomBg()">Aplicar Imagen</button>
+                        <button class="btn-danger" style="font-size:0.8rem; padding:8px 12px;" type="button" onclick="resetCustomBg()">Restablecer Fondo</button>
+                    </div>
                 </div>
 
-                <h4 style="margin-bottom: 0.5rem; font-size:0.9rem;">Datos Pago Móvil:</h4>
-                <div class="form-group"><label>Banco:</label><input type="text" id="cfg-pm-banco"></div>
-                <div class="form-group"><label>Teléfono:</label><input type="text" id="cfg-pm-telf"></div>
-                <div class="form-group"><label>Cédula / RIF:</label><input type="text" id="cfg-pm-cedula"></div>
-                <button class="btn-secondary" style="width: 100%; margin-bottom: 1.25rem;" type="button" onclick="savePayMethodsConfig()">Guardar Datos Pago Móvil</button>
+                <div class="admin-section-card">
+                    <div class="admin-section-title">📐 Disposición de Inicio</div>
+                    <div class="form-group">
+                        <label>Formato del catálogo:</label>
+                        <select id="cfg-layout-mode">
+                            <option value="grid">Grilla Tradicional</option>
+                            <option value="horizontal">Horizontal (Deslizable)</option>
+                        </select>
+                    </div>
+                    <button class="btn-secondary" style="width: 100%;" type="button" onclick="saveLayoutConfig()">Guardar Formato</button>
+                </div>
 
-                <h4 style="margin-bottom: 0.5rem; font-size:0.9rem;">Parámetros de Cuotas:</h4>
-                <div class="form-group"><label>N° Cuotas:</label><input type="number" id="cfg-num-cuotas"></div>
-                <div class="form-group"><label>Frecuencia:</label><input type="text" id="cfg-frecuencia"></div>
-                <button class="btn-secondary" style="width: 100%;" type="button" onclick="saveCuotasConfig()">Guardar Cuotas</button>
-            </div>
+                <div class="admin-section-card">
+                    <div class="admin-section-title">💳 Métodos de Pago y Cuotas</div>
+                    <div style="display:flex; flex-direction:column; gap:8px; margin-bottom:1rem;">
+                        <label><input type="checkbox" id="cfg-pay-pm"> Pago Móvil</label>
+                        <label><input type="checkbox" id="cfg-pay-efectivo"> Efectivo</label>
+                        <label><input type="checkbox" id="cfg-pay-cuotas"> Cuotas</label>
+                    </div>
+                    <div class="form-group"><label>Banco:</label><input type="text" id="cfg-pm-banco"></div>
+                    <div class="form-group"><label>Teléfono:</label><input type="text" id="cfg-pm-telf"></div>
+                    <div class="form-group"><label>Cédula / RIF:</label><input type="text" id="cfg-pm-cedula"></div>
+                    <button class="btn-secondary" style="width: 100%; margin-bottom: 1rem;" type="button" onclick="savePayMethodsConfig()">Guardar Pago Móvil</button>
 
-            <!-- SECCIÓN 9: SEGURIDAD -->
-            <div class="admin-section-card">
-                <div class="admin-section-title">🔒 Seguridad del Panel</div>
-                <div class="form-group"><label>Nuevo PIN (8 dígitos):</label><input type="password" id="new-pass-input" maxlength="8"></div>
-                <button class="btn-secondary" style="width: 100%;" type="button" onclick="changePassword()">Cambiar PIN</button>
+                    <div class="form-group"><label>N° Cuotas:</label><input type="number" id="cfg-num-cuotas"></div>
+                    <div class="form-group"><label>Frecuencia:</label><input type="text" id="cfg-frecuencia"></div>
+                    <button class="btn-secondary" style="width: 100%;" type="button" onclick="saveCuotasConfig()">Guardar Parámetros Cuotas</button>
+                </div>
+
+                <div class="admin-section-card">
+                    <div class="admin-section-title">🔒 Cambiar PIN</div>
+                    <div class="form-group"><label>Nuevo PIN (8 dígitos):</label><input type="password" id="new-pass-input" maxlength="8"></div>
+                    <button class="btn-secondary" style="width: 100%;" type="button" onclick="changePassword()">Cambiar PIN</button>
+                </div>
             </div>
 
             <button class="btn-gold" style="margin-top: 1rem; width: 100%;" type="button" onclick="closeAdminPanel()">Finalizar y Cerrar Panel</button>
@@ -971,12 +946,15 @@
                 <label>Categoría (Una sola):</label>
                 <select id="edit-category"></select>
             </div>
-            <div class="form-group"><label>Precio Normal / Base ($):</label><input type="number" step="0.5" id="edit-price"></div>
-            <div class="form-group"><label>Inicial para Cuota Individual ($):</label><input type="number" step="0.5" id="edit-initial"></div>
-            <div class="form-group"><label>Nota / Especificaciones:</label><input type="text" id="edit-note"></div>
+            <div style="display:flex; gap:8px;">
+                <div class="form-group" style="flex:1;"><label>Precio Normal ($):</label><input type="number" step="0.5" id="edit-price"></div>
+                <div class="form-group" style="flex:1;"><label>Stock Disponible:</label><input type="number" id="edit-stock"></div>
+            </div>
+            <div class="form-group"><label>Inicial Cuota ($):</label><input type="number" step="0.5" id="edit-initial"></div>
+            <div class="form-group"><label>Nota / Descripción:</label><input type="text" id="edit-note"></div>
 
             <div class="form-group" style="background:rgba(239, 68, 68, 0.05); padding:10px; border-radius:10px; border:1px dashed rgba(239, 68, 68, 0.3);">
-                <label><input type="checkbox" id="edit-is-offer" onchange="toggleOfferFields('edit')"> 🔥 Activar Oferta Especial (Tacha el precio base)</label>
+                <label><input type="checkbox" id="edit-is-offer" onchange="toggleOfferFields('edit')"> 🔥 Activar Oferta Especial (Tacha precio base)</label>
                 <div id="edit-offer-box" style="display:none; margin-top:8px;">
                     <div class="form-group"><label>Precio en Oferta ($):</label><input type="number" id="edit-offer-price" step="0.5"></div>
                     <div class="form-group"><label>Fecha y Hora Límite:</label><input type="datetime-local" id="edit-offer-until"></div>
@@ -1175,6 +1153,7 @@
         let products = [];
         let orders = [];
         let banners = [];
+        let abonos = [];
         let categories = ["Árabes", "Diseñador", "Relojes", "Sets"];
         let adminPass = "12345678";
         let layoutMode = "grid";
@@ -1193,6 +1172,14 @@
         let sliderInterval = null;
         let offerSliderInterval = null;
         let countdownTimers = [];
+
+        function switchAdminTab(tabId, btnElement) {
+            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+            document.querySelectorAll('.admin-tab-content').forEach(content => content.classList.remove('active'));
+
+            btnElement.classList.add('active');
+            document.getElementById(tabId).classList.add('active');
+        }
 
         function getEffectivePrice(p) {
             return (p.isOffer && p.offerPrice) ? parseFloat(p.offerPrice) : parseFloat(p.price);
@@ -1371,7 +1358,7 @@
             if(confirm("¿Deseas volver al fondo predeterminado?")) {
                 const defaultBg = "https://images.unsplash.com/photo-1506703719100-a0f3a48c0f86?w=1600";
                 await window.setDoc(window.doc(window.db, "config", "background"), { bgUrl: defaultBg, isVideo: false });
-                document.getElementById('bg-preview-container').innerHTML = `<span style="font-size:0.85rem; color:var(--text-secondary);">Vista previa del fondo</span>`;
+                document.getElementById('bg-preview-container').innerHTML = `<span style="font-size:0.85rem; color:var(--text-secondary);">Vista previa</span>`;
                 tempCustomBgBase64 = "";
                 alert("Fondo restablecido.");
             }
@@ -1400,6 +1387,12 @@
                 renderAdminBanners();
             });
 
+            window.onSnapshot(window.collection(window.db, "abonos"), (snapshot) => {
+                abonos = [];
+                snapshot.forEach(doc => { abonos.push({ id: doc.id, ...doc.data() }); });
+                renderAdminAbonos();
+            });
+
             window.onSnapshot(window.doc(window.db, "config", "categories"), (docSnap) => {
                 if(docSnap.exists() && docSnap.data().list) {
                     categories = docSnap.data().list;
@@ -1417,7 +1410,7 @@
                 }
             });
 
-            window.onSnapshot(window.doc(window.db, "config", "cuotas"), (docSnap) => {
+            window.onSnapshot(window.doc(window.doc(window.db, "config", "cuotas")), (docSnap) => {
                 if(docSnap.exists()) cuotasConfig = docSnap.data();
             });
 
@@ -1435,6 +1428,75 @@
                     renderCatalog();
                 }
             });
+        }
+
+        /* GESTIÓN DE CLIENTES Y ABONOS */
+        async function saveAbonoRecord() {
+            const clientName = document.getElementById('abono-client-name').value.trim();
+            const product = document.getElementById('abono-product').value.trim();
+            const total = parseFloat(document.getElementById('abono-total').value) || 0;
+            const paid = parseFloat(document.getElementById('abono-paid').value) || 0;
+
+            if(!clientName || !product || total <= 0) return alert("Por favor ingresa nombre, producto y total.");
+
+            await window.addDoc(window.collection(window.db, "abonos"), {
+                clientName, product, total, paid,
+                date: new Date().toLocaleDateString()
+            });
+
+            alert("Abono registrado correctamente.");
+            document.getElementById('abono-client-name').value = '';
+            document.getElementById('abono-product').value = '';
+            document.getElementById('abono-total').value = '';
+            document.getElementById('abono-paid').value = '';
+        }
+
+        function renderAdminAbonos() {
+            const container = document.getElementById('admin-abonos-list');
+            if(!container) return;
+            container.innerHTML = '';
+
+            if(abonos.length === 0) {
+                container.innerHTML = '<div style="font-size:0.85rem; color:var(--text-secondary);">No hay registros de clientes o abonos.</div>';
+                return;
+            }
+
+            abonos.forEach(a => {
+                const debt = Math.max(0, a.total - a.paid);
+                const isCleared = debt === 0;
+
+                const row = document.createElement('div');
+                row.className = 'admin-item';
+                row.style.cssText = 'flex-direction:column; align-items:flex-start; gap:4px;';
+                row.innerHTML = `
+                    <div style="display:flex; justify-content:space-between; width:100%;">
+                        <strong style="color:var(--accent-gold);">${a.clientName}</strong>
+                        <span class="order-badge ${isCleared ? 'badge-paid' : 'badge-pending'}">${isCleared ? 'PAGADO' : 'DEBE $' + debt.toFixed(2)}</span>
+                    </div>
+                    <div style="font-size:0.85rem; color:var(--text-secondary);">📦 ${a.product} | Total: $${parseFloat(a.total).toFixed(2)} | Abonado: $${parseFloat(a.paid).toFixed(2)}</div>
+                    <div style="display:flex; gap:6px; margin-top:4px; width:100%;">
+                        <input type="number" placeholder="Sumar abono $" id="add-abono-${a.id}" style="padding:4px 8px; font-size:0.8rem; flex:1;">
+                        <button class="btn-secondary" style="font-size:0.75rem; padding:4px 8px;" type="button" onclick="updateAbono('${a.id}', ${a.paid})">+ Abonar</button>
+                        <button class="btn-danger" style="font-size:0.75rem; padding:4px 8px;" type="button" onclick="deleteAbono('${a.id}')">Eliminar</button>
+                    </div>
+                `;
+                container.appendChild(row);
+            });
+        }
+
+        async function updateAbono(id, currentPaid) {
+            const extraInput = document.getElementById(`add-abono-${id}`);
+            const extra = parseFloat(extraInput.value) || 0;
+            if(extra <= 0) return alert("Ingresa un monto válido para abonar.");
+
+            await window.updateDoc(window.doc(window.db, "abonos", id), { paid: currentPaid + extra });
+            alert("Abono actualizado con éxito.");
+        }
+
+        async function deleteAbono(id) {
+            if(confirm("¿Deseas borrar este registro de cliente/abono?")) {
+                await window.deleteDoc(window.doc(window.db, "abonos", id));
+            }
         }
 
         function renderCategoryFilters() {
@@ -1951,6 +2013,8 @@
                     `<span class="old-price">$${parseFloat(p.price).toFixed(2)}</span>$${parseFloat(p.offerPrice).toFixed(2)}` : 
                     `$${parseFloat(p.price).toFixed(2)}`;
 
+                const stockBadge = p.stock !== undefined ? `<div style="font-size:0.75rem; color:var(--text-secondary); font-weight:600;">Stock: ${p.stock} unid.</div>` : '';
+
                 card.innerHTML = `
                     ${legendaryBadgeHTML}
                     <div class="card-img-wrapper">
@@ -1958,6 +2022,7 @@
                         <img id="img-product-${p.id}" src="${mainImg}" alt="${p.name}">
                     </div>
                     <div class="card-title">${p.name}</div>
+                    ${stockBadge}
                     ${p.note ? `<div style="font-size:0.85rem; color: var(--text-secondary);">${p.note}</div>` : ''}
                     ${subvariantsHTML}
                     <div style="display:flex; justify-content:space-between; align-items:center; margin-top: auto; padding-top: 8px;">
@@ -2011,6 +2076,7 @@
                 <div style="font-size:1.5rem; font-weight:800; color:var(--accent-gold); margin: 6px 0;">
                     ${priceDisplay}
                 </div>
+                ${p.stock !== undefined ? `<div style="font-size:0.85rem; color:var(--text-secondary);">Stock disponible: ${p.stock} unidades</div>` : ''}
                 ${p.initialPay ? `<div style="font-size:0.85rem; color:var(--text-secondary);">Cuota inicial desde: $${parseFloat(p.initialPay).toFixed(2)}</div>` : ''}
                 <p style="color:var(--text-secondary); line-height: 1.5; margin-top:8px;">${p.note || 'Fragancia importada de alta concentración.'}</p>
                 <button class="btn-primary" style="width:100%; margin-top:1.5rem;" type="button" onclick="addToCartWithVariant('${p.id}', this); closeDetailModal();">Agregar al Carrito</button>
@@ -2197,6 +2263,7 @@
             renderAdminOrders();
             renderAdminCategories();
             renderAdminBanners();
+            renderAdminAbonos();
             renderCategorySelects();
 
             document.getElementById('cfg-layout-mode').value = layoutMode;
@@ -2271,10 +2338,14 @@
             const priceList = document.getElementById('admin-price-list');
             priceList.innerHTML = '';
             products.forEach((p, index) => {
+                const stockVal = p.stock !== undefined ? p.stock : 0;
                 const row = document.createElement('div');
                 row.className = 'admin-item';
                 row.innerHTML = `
-                    <span style="font-weight: 600; flex:1;">${p.name} <span style="font-size:0.75rem; color:var(--text-secondary);">[${p.category || categories[0]}]</span></span>
+                    <div style="flex:1;">
+                        <div style="font-weight: 600;">${p.name} <span style="font-size:0.75rem; color:var(--text-secondary);">[${p.category || categories[0]}]</span></div>
+                        <div style="font-size:0.8rem; color:var(--accent-gold);">Stock actual: <strong>${stockVal}</strong> unid.</div>
+                    </div>
                     <div class="admin-item-controls">
                         <button class="btn-secondary" style="font-size:0.8rem; padding:4px 8px;" type="button" onclick="moveProductOrder(${index}, -1)">⬆️</button>
                         <button class="btn-secondary" style="font-size:0.8rem; padding:4px 8px;" type="button" onclick="moveProductOrder(${index}, 1)">⬇️</button>
@@ -2301,6 +2372,7 @@
             const name = document.getElementById('new-name').value.trim();
             const category = document.getElementById('new-category').value;
             const price = parseFloat(document.getElementById('new-price').value);
+            const stock = parseInt(document.getElementById('new-stock').value) || 0;
             const initialPay = parseFloat(document.getElementById('new-initial').value) || 0;
             const note = document.getElementById('new-note').value.trim();
 
@@ -2340,12 +2412,13 @@
             const images = tempImagesList.length > 0 ? tempImagesList : ["https://images.unsplash.com/photo-1592945403244-b3fbafd7f539?w=400"];
 
             await window.addDoc(window.collection(window.db, "products"), {
-                name, category, price, initialPay, note, isOffer, offerPrice, offerUntil, isLegendary, legendaryStyle, legendaryTexture, legendaryC1, legendaryC2, legendaryBadge, images, img: images[0], subvariants, order: products.length
+                name, category, price, stock, initialPay, note, isOffer, offerPrice, offerUntil, isLegendary, legendaryStyle, legendaryTexture, legendaryC1, legendaryC2, legendaryBadge, images, img: images[0], subvariants, order: products.length
             });
 
             alert("¡Producto agregado!");
             document.getElementById('new-name').value = '';
             document.getElementById('new-price').value = '';
+            document.getElementById('new-stock').value = '10';
             document.getElementById('new-initial').value = '';
             document.getElementById('new-note').value = '';
             document.getElementById('new-is-offer').checked = false;
@@ -2372,6 +2445,7 @@
             document.getElementById('edit-name').value = p.name || '';
             document.getElementById('edit-category').value = p.category || categories[0];
             document.getElementById('edit-price').value = p.price || 0;
+            document.getElementById('edit-stock').value = p.stock !== undefined ? p.stock : 10;
             document.getElementById('edit-initial').value = p.initialPay || 0;
             document.getElementById('edit-note').value = p.note || '';
             
@@ -2414,6 +2488,7 @@
             const name = document.getElementById('edit-name').value.trim();
             const category = document.getElementById('edit-category').value;
             const price = parseFloat(document.getElementById('edit-price').value);
+            const stock = parseInt(document.getElementById('edit-stock').value) || 0;
             const initialPay = parseFloat(document.getElementById('edit-initial').value) || 0;
             const note = document.getElementById('edit-note').value.trim();
 
@@ -2448,7 +2523,7 @@
                 }
             });
 
-            let data = { name, category, price, initialPay, note, isOffer, offerPrice, offerUntil, isLegendary, legendaryStyle, legendaryTexture, legendaryC1, legendaryC2, legendaryBadge, subvariants };
+            let data = { name, category, price, stock, initialPay, note, isOffer, offerPrice, offerUntil, isLegendary, legendaryStyle, legendaryTexture, legendaryC1, legendaryC2, legendaryBadge, subvariants };
             if (tempImagesList.length > 0) {
                 data.images = tempImagesList;
                 data.img = tempImagesList[0];
