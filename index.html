@@ -291,7 +291,6 @@
             will-change: transform;
         }
 
-        /* ESTILOS LEGENDARIOS OPTIMIZADOS */
         .card.style-aurora, .modal-legendary.style-aurora { border: 2px solid var(--leg-c1, #e2b714) !important; box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4); }
         .card.style-neon-pulse, .modal-legendary.style-neon-pulse { border: 2px solid var(--leg-c1, #00f0ff) !important; box-shadow: 0 0 15px rgba(0, 240, 255, 0.3); }
         .card.style-cosmic-gold, .modal-legendary.style-cosmic-gold { border: 2px solid var(--leg-c1, #e2b714) !important; box-shadow: 0 0 20px rgba(226, 183, 20, 0.35); }
@@ -392,7 +391,6 @@
             padding: 1.75rem !important;
         }
 
-        /* NAVEGACIÓN DE PESTAÑAS DEL PANEL DE CONTROL */
         .admin-nav-tabs {
             display: flex;
             gap: 8px;
@@ -527,6 +525,32 @@
             position: absolute; top: 20px; right: 20px; background: rgba(255,255,255,0.1);
             color: #fff; border: none; font-size: 1.5rem; width: 45px; height: 45px;
             border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center;
+        }
+
+        /* METRICAS CAPITAL */
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 12px;
+            margin-bottom: 1rem;
+        }
+        .metric-card {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid var(--border-color);
+            border-radius: 14px;
+            padding: 1rem;
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+        .metric-card .val {
+            font-size: 1.4rem;
+            font-weight: 800;
+            color: var(--accent-gold);
+        }
+        .metric-card .lbl {
+            font-size: 0.8rem;
+            color: var(--text-secondary);
         }
     </style>
 
@@ -692,7 +716,7 @@
         </div>
     </div>
 
-    <!-- PANEL DE CONTROL REDISEÑADO POR PESTAÑAS (CATEGORÍAS SEPARADAS) -->
+    <!-- PANEL DE CONTROL REDISEÑADO POR PESTAÑAS -->
     <div class="modal-overlay" id="admin-panel">
         <div class="modal modal-admin-redesign">
             <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1rem;">
@@ -700,9 +724,10 @@
                 <button class="btn-gold" style="padding:6px 14px; font-size:0.85rem;" onclick="closeAdminPanel()">✕ Cerrar</button>
             </div>
 
-            <!-- NAVEGACIÓN INDEPENDIENTE DE CATEGORÍAS EN EL PANEL -->
             <div class="admin-nav-tabs">
                 <button class="tab-btn active" onclick="switchAdminTab('tab-clients', this)">💰 Clientes / Abonos</button>
+                <button class="tab-btn" onclick="switchAdminTab('tab-registered-users', this)">👤 Cuentas Registradas</button>
+                <button class="tab-btn" onclick="switchAdminTab('tab-capital', this)">📊 Finanzas y Capital</button>
                 <button class="tab-btn" onclick="switchAdminTab('tab-inventory', this)">📋 Inventario / Stock</button>
                 <button class="tab-btn" onclick="switchAdminTab('tab-add-prod', this)">➕ Publicar Producto</button>
                 <button class="tab-btn" onclick="switchAdminTab('tab-orders', this)">📦 Pedidos Tienda</button>
@@ -730,7 +755,36 @@
                 </div>
             </div>
 
-            <!-- INTERFAZ 2: INVENTARIO Y STOCK -->
+            <!-- NUEVA INTERFAZ 2: CUENTAS REGISTRADAS DE PERSONAS INICIADAS / INGRESADAS -->
+            <div id="tab-registered-users" class="admin-tab-content">
+                <div class="admin-section-card">
+                    <div class="admin-section-title">👤 Cuentas y Personas Registradas</div>
+                    <div id="admin-users-list" style="max-height: 350px; overflow-y: auto;"></div>
+                </div>
+            </div>
+
+            <!-- NUEVA INTERFAZ 3: CONTROL DE CAPITAL TOTAL, VENDIDO Y GANANCIAS -->
+            <div id="tab-capital" class="admin-tab-content">
+                <div class="admin-section-card">
+                    <div class="admin-section-title">📊 Resumen General de Capital y Ventas</div>
+                    <div class="metrics-grid">
+                        <div class="metric-card">
+                            <span class="lbl">Total Vendido (Ventas Brutas)</span>
+                            <span class="val" id="cap-total-sales">$0.00</span>
+                        </div>
+                        <div class="metric-card">
+                            <span class="lbl">Dinero Cobrado / Ganancias Reales</span>
+                            <span class="val" id="cap-total-collected">$0.00</span>
+                        </div>
+                        <div class="metric-card">
+                            <span class="lbl">Cuentas por Cobrar (Deudas Pendientes)</span>
+                            <span class="val" id="cap-total-debt">$0.00</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- INTERFAZ 4: INVENTARIO Y STOCK -->
             <div id="tab-inventory" class="admin-tab-content">
                 <div class="admin-section-card">
                     <div class="admin-section-title">📋 Inventario y Control de Stock</div>
@@ -738,7 +792,7 @@
                 </div>
             </div>
 
-            <!-- INTERFAZ 3: PUBLICAR PRODUCTO NUEVO -->
+            <!-- INTERFAZ 5: PUBLICAR PRODUCTO NUEVO -->
             <div id="tab-add-prod" class="admin-tab-content">
                 <div class="admin-section-card">
                     <div class="admin-section-title">➕ Publicar Nuevo Producto</div>
@@ -830,7 +884,7 @@
                 </div>
             </div>
 
-            <!-- INTERFAZ 4: PEDIDOS DE LA TIENDA -->
+            <!-- INTERFAZ 6: PEDIDOS DE LA TIENDA -->
             <div id="tab-orders" class="admin-tab-content">
                 <div class="admin-section-card">
                     <div class="admin-section-title">📦 Pedidos Registrados</div>
@@ -838,7 +892,7 @@
                 </div>
             </div>
 
-            <!-- INTERFAZ 5: BANNERS -->
+            <!-- INTERFAZ 7: BANNERS -->
             <div id="tab-banners" class="admin-tab-content">
                 <div class="admin-section-card">
                     <div class="admin-section-title">✨ Banners Promocionales</div>
@@ -856,7 +910,7 @@
                 </div>
             </div>
 
-            <!-- INTERFAZ 6: GESTIÓN DE CATEGORÍAS -->
+            <!-- INTERFAZ 8: GESTIÓN DE CATEGORÍAS -->
             <div id="tab-categories" class="admin-tab-content">
                 <div class="admin-section-card">
                     <div class="admin-section-title">🏷️ Gestión de Categorías</div>
@@ -871,7 +925,7 @@
                 </div>
             </div>
 
-            <!-- INTERFAZ 7: APARIENCIA, PAGOS Y SEGURIDAD -->
+            <!-- INTERFAZ 9: APARIENCIA, PAGOS Y SEGURIDAD -->
             <div id="tab-config" class="admin-tab-content">
                 <div class="admin-section-card">
                     <div class="admin-section-title">🎨 Fondo del Sitio</div>
@@ -1154,6 +1208,7 @@
         let orders = [];
         let banners = [];
         let abonos = [];
+        let registeredUsers = [];
         let categories = ["Árabes", "Diseñador", "Relojes", "Sets"];
         let adminPass = "12345678";
         let layoutMode = "grid";
@@ -1271,11 +1326,24 @@
             }, 100);
         });
 
+        async function registerUserInFirebase(name) {
+            if(!window.db || !name) return;
+            try {
+                await window.addDoc(window.collection(window.db, "users"), {
+                    name: name,
+                    registeredAt: new Date().toLocaleString()
+                });
+            } catch(e) {
+                console.log("Error registrando usuario:", e);
+            }
+        }
+
         function saveClientName() {
             const val = document.getElementById('client-name-input').value.trim();
             if(!val) return alert("Ingresa tu nombre por favor.");
             clientName = val;
             localStorage.setItem('ls_client_name', clientName);
+            registerUserInFirebase(clientName);
             document.getElementById('user-modal').classList.remove('active');
         }
 
@@ -1378,6 +1446,7 @@
                 orders = [];
                 snapshot.forEach(doc => { orders.push({ id: doc.id, ...doc.data() }); });
                 renderAdminOrders();
+                calculateCapitalMetrics();
             });
 
             window.onSnapshot(window.collection(window.db, "banners"), (snapshot) => {
@@ -1391,6 +1460,13 @@
                 abonos = [];
                 snapshot.forEach(doc => { abonos.push({ id: doc.id, ...doc.data() }); });
                 renderAdminAbonos();
+                calculateCapitalMetrics();
+            });
+
+            window.onSnapshot(window.collection(window.db, "users"), (snapshot) => {
+                registeredUsers = [];
+                snapshot.forEach(doc => { registeredUsers.push({ id: doc.id, ...doc.data() }); });
+                renderAdminUsers();
             });
 
             window.onSnapshot(window.doc(window.db, "config", "categories"), (docSnap) => {
@@ -1410,7 +1486,7 @@
                 }
             });
 
-            window.onSnapshot(window.doc(window.doc(window.db, "config", "cuotas")), (docSnap) => {
+            window.onSnapshot(window.doc(window.db, "config", "cuotas"), (docSnap) => {
                 if(docSnap.exists()) cuotasConfig = docSnap.data();
             });
 
@@ -1419,7 +1495,9 @@
             });
 
             window.onSnapshot(window.doc(window.db, "config", "security"), (docSnap) => {
-                if(docSnap.exists()) adminPass = docSnap.data().pin || "12345678";
+                if(docSnap.exists() && docSnap.data().pin) {
+                    adminPass = docSnap.data().pin;
+                }
             });
 
             window.onSnapshot(window.doc(window.db, "config", "layout"), (docSnap) => {
@@ -1428,6 +1506,71 @@
                     renderCatalog();
                 }
             });
+        }
+
+        /* 1. SECCIÓN DE CUENTAS / PERSONAS REGISTRADAS */
+        function renderAdminUsers() {
+            const container = document.getElementById('admin-users-list');
+            if(!container) return;
+            container.innerHTML = '';
+
+            if(registeredUsers.length === 0) {
+                container.innerHTML = '<div style="font-size:0.85rem; color:var(--text-secondary);">No hay usuarios registrados aún.</div>';
+                return;
+            }
+
+            registeredUsers.forEach(u => {
+                const row = document.createElement('div');
+                row.className = 'admin-item';
+                row.innerHTML = `
+                    <div style="flex:1;">
+                        <strong style="color:var(--accent-gold);">👤 ${u.name || 'Usuario'}</strong>
+                        <div style="font-size:0.75rem; color:var(--text-secondary);">Registrado el: ${u.registeredAt || 'Fecha no registrada'}</div>
+                    </div>
+                    <button class="btn-danger" style="font-size:0.75rem; padding:4px 8px;" type="button" onclick="deleteUserRecord('${u.id}')">Eliminar</button>
+                `;
+                container.appendChild(row);
+            });
+        }
+
+        async function deleteUserRecord(id) {
+            if(confirm("¿Deseas eliminar este usuario del registro?")) {
+                await window.deleteDoc(window.doc(window.db, "users", id));
+            }
+        }
+
+        /* 2. SECCIÓN DE CAPITAL, TOTAL VENDIDO Y GANANCIAS CONECTADO CON ABONOS Y PEDIDOS */
+        function calculateCapitalMetrics() {
+            let totalSales = 0;
+            let totalCollected = 0;
+            let totalDebt = 0;
+
+            orders.forEach(o => {
+                const amount = parseFloat(o.totalPrice) || 0;
+                totalSales += amount;
+                if(o.status === 'Pagado') {
+                    totalCollected += amount;
+                } else {
+                    totalDebt += amount;
+                }
+            });
+
+            abonos.forEach(a => {
+                const totalAbono = parseFloat(a.total) || 0;
+                const paidAbono = parseFloat(a.paid) || 0;
+                
+                totalSales += totalAbono;
+                totalCollected += paidAbono;
+                totalDebt += Math.max(0, totalAbono - paidAbono);
+            });
+
+            const salesEl = document.getElementById('cap-total-sales');
+            const collectedEl = document.getElementById('cap-total-collected');
+            const debtEl = document.getElementById('cap-total-debt');
+
+            if(salesEl) salesEl.innerText = `$${totalSales.toFixed(2)}`;
+            if(collectedEl) collectedEl.innerText = `$${totalCollected.toFixed(2)}`;
+            if(debtEl) debtEl.innerText = `$${totalDebt.toFixed(2)}`;
         }
 
         /* GESTIÓN DE CLIENTES Y ABONOS */
@@ -2264,6 +2407,8 @@
             renderAdminCategories();
             renderAdminBanners();
             renderAdminAbonos();
+            renderAdminUsers();
+            calculateCapitalMetrics();
             renderCategorySelects();
 
             document.getElementById('cfg-layout-mode').value = layoutMode;
@@ -2557,13 +2702,17 @@
             alert("Parámetros guardados.");
         }
 
+        /* 3. CORRECCIÓN DEL CAMBIO DE PIN EN FIREBASE */
         async function changePassword() {
-            const newPass = document.getElementById('new-pass-input').value;
+            const newPass = document.getElementById('new-pass-input').value.trim();
             if(newPass.length === 8) {
                 await window.setDoc(window.doc(window.db, "config", "security"), { pin: newPass });
-                alert("PIN actualizado.");
+                adminPass = newPass;
+                alert("¡PIN guardado y actualizado con éxito!");
                 document.getElementById('new-pass-input').value = '';
-            } else alert("El PIN debe ser de 8 dígitos.");
+            } else {
+                alert("El PIN debe ser exactamente de 8 dígitos.");
+            }
         }
     </script>
 </body>
