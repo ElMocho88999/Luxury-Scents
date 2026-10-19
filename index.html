@@ -55,21 +55,22 @@
             position: relative;
         }
 
-        /* Banner de Bienvenida Temporal */
+        /* Banner de Bienvenida Temporal Modificado */
         #welcome-toast {
             position: fixed;
             top: 20px;
             left: 50%;
             transform: translateX(-50%) translateY(-20px);
-            background: linear-gradient(135deg, #e2b714, #c59b08);
-            color: #000;
-            padding: 12px 24px;
+            background: #0f172a;
+            color: #e2b714;
+            border: 2px solid #e2b714;
+            padding: 12px 28px;
             border-radius: 30px;
             font-family: 'Playfair Display', serif;
             font-weight: 700;
-            font-size: 1.1rem;
+            font-size: 1.15rem;
             z-index: 9999;
-            box-shadow: 0 10px 25px rgba(226, 183, 20, 0.4);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.6);
             opacity: 0;
             pointer-events: none;
             transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
@@ -611,7 +612,7 @@
 </head>
 <body>
 
-    <!-- CARTEL DE BIENVENIDA -->
+    <!-- CARTEL DE BIENVENIDA MODIFICADO -->
     <div id="welcome-toast"></div>
 
     <div id="bg-video-container">
@@ -663,7 +664,7 @@
 
     <div class="modal-overlay" id="user-modal">
         <div class="modal">
-            <h2 style="font-family:'Playfair Display', serif;" id="user-modal-title">¡Bienvenido a Luxury Scents!</h2>
+            <h2 style="font-family:'Playfair Display', serif;" id="user-modal-title">Bienvenido a Luxury Scents</h2>
             <p style="color:var(--text-secondary); margin-bottom:1rem; font-size:0.9rem;" id="user-modal-desc">Por favor ingresa tus datos para personalizar tu experiencia:</p>
             
             <div class="form-group" id="group-client-name">
@@ -673,7 +674,7 @@
             
             <div class="form-group" id="group-client-phone">
                 <label>Número de Teléfono (WhatsApp):</label>
-                <input type="text" id="client-phone-input" placeholder="Ej: 584120000000">
+                <input type="text" id="client-phone-input" placeholder="Ej: 04249327643">
             </div>
             
             <button class="btn-gold" style="width:100%; margin-top:0.5rem;" onclick="saveClientName()">Ingresar a la tienda</button>
@@ -787,7 +788,7 @@
                     </div>
 
                     <div class="form-group"><label>Nombre del Cliente:</label><input type="text" id="abono-client-name" placeholder="Ej: Pedro Pérez"></div>
-                    <div class="form-group"><label>Número de Teléfono (WhatsApp):</label><input type="text" id="abono-client-phone" placeholder="Ej: 584120000000"></div>
+                    <div class="form-group"><label>Número de Teléfono (WhatsApp):</label><input type="text" id="abono-client-phone" placeholder="Ej: 04249327643"></div>
                     <div class="form-group"><label>Producto / Pedido Adquirido:</label><input type="text" id="abono-product" placeholder="Ej: Perfume Yara 100ml"></div>
                     <div style="display:flex; gap:8px;">
                         <div class="form-group" style="flex:1;"><label>Monto Total ($):</label><input type="number" step="0.5" id="abono-total" placeholder="30.00"></div>
@@ -1163,6 +1164,29 @@
     </div>
 
     <script>
+        // Función de Inteligencia para auto-corregir número a formato +58 424-9327643
+        function formatVenezuelanPhone(phoneStr) {
+            if (!phoneStr) return '';
+            let digits = phoneStr.replace(/\D/g, '');
+            if (digits.startsWith('58')) {
+                digits = digits.substring(2);
+            }
+            if (digits.startsWith('0')) {
+                digits = digits.substring(1);
+            }
+            if (digits.length === 10) {
+                const area = digits.substring(0, 3);
+                const part1 = digits.substring(3, 6);
+                const part2 = digits.substring(6);
+                return `+58 ${area}-${part1}${part2}`;
+            } else if (digits.length > 3) {
+                const area = digits.substring(0, 3);
+                const rest = digits.substring(3);
+                return `+58 ${area}-${rest}`;
+            }
+            return phoneStr;
+        }
+
         let audioCtx = null;
         function getAudioContext() {
             if (!audioCtx) {
@@ -1299,11 +1323,11 @@
         function showWelcomeToast(name) {
             const toast = document.getElementById('welcome-toast');
             if(!toast || !name) return;
-            toast.innerText = `✨ ¡Bienvenido, ${name}! ✨`;
+            toast.innerText = `Bienvenido ${name}`;
             toast.classList.add('show');
             setTimeout(() => {
                 toast.classList.remove('show');
-            }, 1500);
+            }, 3000);
         }
 
         function checkUserRegistrationState() {
@@ -1314,22 +1338,19 @@
             const groupPhone = document.getElementById('group-client-phone');
 
             if(!clientName) {
-                // Registro Completo desde cero
-                title.innerText = "¡Bienvenido a Luxury Scents!";
+                title.innerText = "Bienvenido a Luxury Scents";
                 desc.innerText = "Por favor ingresa tu nombre y número de teléfono:";
                 groupName.style.display = "flex";
                 groupPhone.style.display = "flex";
                 modal.classList.add('active');
             } else if(clientName && !clientPhone) {
-                // Usuario Antiguo: Ya tiene nombre pero le falta el teléfono
-                title.innerText = `¡Hola de nuevo, ${clientName}!`;
+                title.innerText = `Hola de nuevo, ${clientName}`;
                 desc.innerText = "Para continuar, por favor ingresa tu número de WhatsApp:";
                 groupName.style.display = "none";
                 groupPhone.style.display = "flex";
                 document.getElementById('client-name-input').value = clientName;
                 modal.classList.add('active');
             } else {
-                // Usuario listo
                 modal.classList.remove('active');
                 showWelcomeToast(clientName);
             }
@@ -1427,21 +1448,21 @@
 
         async function registerUserInFirebase(name, phone) {
             if(!window.db || !name) return;
+            const formattedPhone = formatVenezuelanPhone(phone);
             try {
-                // Verificar si ya existía para actualizar su teléfono
                 const q = window.query(window.collection(window.db, "users"), window.where("name", "==", name));
                 const querySnap = await window.getDocs(q);
 
                 if (!querySnap.empty) {
                     querySnap.forEach(async (userDoc) => {
                         await window.updateDoc(window.doc(window.db, "users", userDoc.id), {
-                            phone: phone || ''
+                            phone: formattedPhone || ''
                         });
                     });
                 } else {
                     await window.addDoc(window.collection(window.db, "users"), {
                         name: name,
-                        phone: phone || '',
+                        phone: formattedPhone || '',
                         registeredAt: new Date().toLocaleString()
                     });
                 }
@@ -1455,7 +1476,7 @@
             const inputPhone = document.getElementById('client-phone-input').value.trim();
 
             const nameToSave = clientName || inputName;
-            const phoneToSave = inputPhone;
+            const phoneToSave = formatVenezuelanPhone(inputPhone);
 
             if(!nameToSave || !phoneToSave) {
                 return alert("Por favor completa los datos solicitados.");
@@ -1661,7 +1682,7 @@
 
         async function deleteUserRecord(id) {
             if(confirm("¿Deseas eliminar este usuario del registro?")) {
-                await window.deleteDoc(window.doc(window.doc(window.db, "users", id)));
+                await window.deleteDoc(window.doc(window.db, "users", id));
             }
         }
 
@@ -1686,7 +1707,6 @@
                 document.getElementById('abono-client-name').value = u.name || '';
                 document.getElementById('abono-client-phone').value = u.phone || '';
 
-                // Buscar si tiene un pedido reciente para colocar su producto y total
                 const userOrder = orders.find(o => o.clientName === u.name);
                 if(userOrder) {
                     let itemsStr = userOrder.items ? userOrder.items.map(i => `${i.name} (x${i.qty})`).join(', ') : '';
@@ -1738,7 +1758,8 @@
 
         async function saveAbonoRecord() {
             const clientName = document.getElementById('abono-client-name').value.trim();
-            const clientPhone = document.getElementById('abono-client-phone').value.trim();
+            const clientPhoneRaw = document.getElementById('abono-client-phone').value.trim();
+            const clientPhone = formatVenezuelanPhone(clientPhoneRaw);
             const product = document.getElementById('abono-product').value.trim();
             const total = parseFloat(document.getElementById('abono-total').value) || 0;
             const paid = parseFloat(document.getElementById('abono-paid').value) || 0;
@@ -1804,8 +1825,9 @@
                 alert("Este cliente no tiene un número de teléfono registrado.");
                 return;
             }
+            const cleanPhone = phone.replace(/\D/g, '');
             const msg = `Hola *${clientName}*, te escribimos de *Luxury Scents* para recordarte tu saldo pendiente de *$${debt}* correspondiente a tu producto: *${product}*. Tienes como plazo/fecha límite: *${term}*. Quedamos atentos para coordinar tu abono o pago. ¡Muchas gracias! ✨`;
-            const waUrl = `https://api.whatsapp.com/send?phone=${phone}&text=${encodeURIComponent(msg)}`;
+            const waUrl = `https://api.whatsapp.com/send?phone=${cleanPhone}&text=${encodeURIComponent(msg)}`;
             window.open(waUrl, '_blank');
         }
 
