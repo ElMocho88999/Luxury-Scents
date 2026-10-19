@@ -539,24 +539,9 @@
         .detail-thumb { width: 60px; height: 60px; border-radius: 10px; object-fit: contain; background: rgba(0,0,0,0.25); cursor: pointer; border: 2px solid transparent; opacity: 0.6; }
         .detail-thumb.active { border-color: var(--accent-gold); opacity: 1; }
 
-        .fullscreen-overlay {
-            position: fixed; top: 0; left: 0; right: 0; bottom: 0;
-            background: rgba(0,0,0,0.95); z-index: 5000; display: flex;
-            justify-content: center; align-items: center; opacity: 0;
-            pointer-events: none; transition: opacity 0.2s ease;
-        }
-        .fullscreen-overlay.active { opacity: 1; pointer-events: auto; }
-        .fullscreen-overlay img { max-width: 92%; max-height: 92vh; border-radius: 12px; object-fit: contain; }
-        .fullscreen-close {
-            position: absolute; top: 20px; right: 20px; background: rgba(255,255,255,0.1);
-            color: #fff; border: none; font-size: 1.5rem; width: 45px; height: 45px;
-            border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center;
-        }
-
-        /* METRICAS CAPITAL */
         .metrics-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
             gap: 12px;
             margin-bottom: 1rem;
         }
@@ -612,7 +597,6 @@
 </head>
 <body>
 
-    <!-- CARTEL DE BIENVENIDA MODIFICADO -->
     <div id="welcome-toast"></div>
 
     <div id="bg-video-container">
@@ -665,16 +649,16 @@
     <div class="modal-overlay" id="user-modal">
         <div class="modal">
             <h2 style="font-family:'Playfair Display', serif;" id="user-modal-title">Bienvenido a Luxury Scents</h2>
-            <p style="color:var(--text-secondary); margin-bottom:1rem; font-size:0.9rem;" id="user-modal-desc">Por favor ingresa tus datos para personalizar tu experiencia:</p>
+            <p style="color:var(--text-secondary); margin-bottom:1rem; font-size:0.9rem;" id="user-modal-desc">Por favor ingresa tus datos para continuar:</p>
             
             <div class="form-group" id="group-client-name">
                 <label>Nombre y Apellido:</label>
-                <input type="text" id="client-name-input" placeholder="Ej: Juan Pérez">
+                <input type="text" id="client-name-input">
             </div>
             
             <div class="form-group" id="group-client-phone">
                 <label>Número de Teléfono (WhatsApp):</label>
-                <input type="text" id="client-phone-input" placeholder="Ej: 04249327643">
+                <input type="text" id="client-phone-input">
             </div>
             
             <button class="btn-gold" style="width:100%; margin-top:0.5rem;" onclick="saveClientName()">Ingresar a la tienda</button>
@@ -737,7 +721,7 @@
             </div>
 
             <div style="display: flex; flex-direction: column; gap: 8px; margin-top: 1.5rem;">
-                <button class="btn-ws" onclick="buyNowWhatsApp(event, '584249327643')">Comprar por WhatsApp</button>
+                <button class="btn-ws" onclick="buyNowWhatsApp(event)">Comprar por WhatsApp</button>
                 <button class="btn-secondary" style="width: 100%;" onclick="closeCartModal()">Seguir Viendo</button>
             </div>
         </div>
@@ -748,10 +732,31 @@
             <h2 style="font-family:'Playfair Display', serif;">Acceso Administrativo</h2>
             <div class="form-group">
                 <label>Ingresa tu PIN de 8 dígitos:</label>
-                <input type="password" id="admin-pass-input" maxlength="8" placeholder="********">
+                <input type="password" id="admin-pass-input" maxlength="8">
             </div>
             <button class="btn-gold" style="width: 100%; margin-top: 0.5rem;" onclick="loginWithPass()">Entrar al Panel</button>
             <button class="btn-secondary" style="margin-top: 8px; width: 100%;" onclick="closeLoginModal()">Cancelar</button>
+        </div>
+    </div>
+
+    <!-- MODAL ELIMINAR ABONO (OPCIONES DE CONSERVACIÓN) -->
+    <div class="modal-overlay" id="delete-abono-modal" style="z-index: 1200;">
+        <div class="modal">
+            <h2 style="font-family:'Playfair Display', serif; color: var(--accent-gold);">¿Cómo deseas eliminar este registro?</h2>
+            <p style="color: var(--text-secondary); margin: 10px 0; font-size: 0.9rem;">
+                El cliente abonó un total de: <strong id="del-abono-paid-val" style="color: #4ade80;">$0.00</strong>
+            </p>
+            <div style="display: flex; flex-direction: column; gap: 10px; margin-top: 1rem;">
+                <button class="btn-gold" style="padding: 12px; font-size: 0.85rem;" type="button" onclick="confirmDeleteAbono(true)">
+                    1. Guardar el dinero abonado en ganancias y borrar el registro
+                </button>
+                <button class="btn-danger" style="padding: 12px; font-size: 0.85rem;" type="button" onclick="confirmDeleteAbono(false)">
+                    2. Eliminar todo (Borrar dinero cobrado y registro)
+                </button>
+                <button class="btn-secondary" style="padding: 8px; margin-top: 4px;" type="button" onclick="closeDeleteAbonoModal()">
+                    Cancelar
+                </button>
+            </div>
         </div>
     </div>
 
@@ -787,12 +792,12 @@
                         </select>
                     </div>
 
-                    <div class="form-group"><label>Nombre del Cliente:</label><input type="text" id="abono-client-name" placeholder="Ej: Pedro Pérez"></div>
-                    <div class="form-group"><label>Número de Teléfono (WhatsApp):</label><input type="text" id="abono-client-phone" placeholder="Ej: 04249327643"></div>
-                    <div class="form-group"><label>Producto / Pedido Adquirido:</label><input type="text" id="abono-product" placeholder="Ej: Perfume Yara 100ml"></div>
+                    <div class="form-group"><label>Nombre del Cliente:</label><input type="text" id="abono-client-name"></div>
+                    <div class="form-group"><label>Número de Teléfono (WhatsApp):</label><input type="text" id="abono-client-phone"></div>
+                    <div class="form-group"><label>Producto / Pedido Adquirido:</label><input type="text" id="abono-product"></div>
                     <div style="display:flex; gap:8px;">
-                        <div class="form-group" style="flex:1;"><label>Monto Total ($):</label><input type="number" step="0.5" id="abono-total" placeholder="30.00"></div>
-                        <div class="form-group" style="flex:1;"><label>Monto Abonado ($):</label><input type="number" step="0.5" id="abono-paid" placeholder="10.00"></div>
+                        <div class="form-group" style="flex:1;"><label>Monto Total Venta ($):</label><input type="number" step="0.5" id="abono-total"></div>
+                        <div class="form-group" style="flex:1;"><label>Monto Abonado ($):</label><input type="number" step="0.5" id="abono-paid"></div>
                     </div>
                     <div class="form-group">
                         <label>Plazo / Fecha límite de pago:</label>
@@ -829,16 +834,20 @@
                     <div class="admin-section-title">📊 Resumen General de Capital y Ventas</div>
                     <div class="metrics-grid">
                         <div class="metric-card">
-                            <span class="lbl">Total Vendido (Ventas Brutas)</span>
+                            <span class="lbl">Ventas Brutas Acumuladas</span>
                             <span class="val" id="cap-total-sales">$0.00</span>
                         </div>
                         <div class="metric-card">
-                            <span class="lbl">Dinero Cobrado / Ganancias Reales</span>
+                            <span class="lbl">Dinero Real Cobrado</span>
                             <span class="val" id="cap-total-collected">$0.00</span>
                         </div>
                         <div class="metric-card">
-                            <span class="lbl">Cuentas por Cobrar (Deudas Pendientes)</span>
-                            <span class="val" id="cap-total-debt">$0.00</span>
+                            <span class="lbl">Ganancia Neta Estimada</span>
+                            <span class="val" id="cap-total-profit" style="color:#4ade80;">$0.00</span>
+                        </div>
+                        <div class="metric-card">
+                            <span class="lbl">Por Cobrar (Deudas)</span>
+                            <span class="val" id="cap-total-debt" style="color:#f87171;">$0.00</span>
                         </div>
                     </div>
                 </div>
@@ -856,22 +865,25 @@
             <div id="tab-add-prod" class="admin-tab-content">
                 <div class="admin-section-card">
                     <div class="admin-section-title">➕ Publicar Nuevo Producto</div>
-                    <div class="form-group"><label>Nombre del Producto / Marca:</label><input type="text" id="new-name" placeholder="Ej: Colección Yara"></div>
+                    <div class="form-group"><label>Nombre del Producto / Marca:</label><input type="text" id="new-name"></div>
                     <div class="form-group">
                         <label>Categoría:</label>
                         <select id="new-category"></select>
                     </div>
                     <div style="display:flex; gap:8px;">
-                        <div class="form-group" style="flex:1;"><label>Precio Normal ($):</label><input type="number" id="new-price" step="0.5" placeholder="6.5"></div>
-                        <div class="form-group" style="flex:1;"><label>Cantidad Stock:</label><input type="number" id="new-stock" value="10" placeholder="10"></div>
+                        <div class="form-group" style="flex:1;"><label>Precio / Costo de Compra ($):</label><input type="number" id="new-cost" step="0.5"></div>
+                        <div class="form-group" style="flex:1;"><label>Precio de Venta ($):</label><input type="number" id="new-price" step="0.5"></div>
                     </div>
-                    <div class="form-group"><label>Cuota Inicial Individual ($):</label><input type="number" id="new-initial" step="0.5" placeholder="5.0"></div>
-                    <div class="form-group"><label>Nota / Descripción corta:</label><input type="text" id="new-note" placeholder="Ej: Fragancias orientales Lattafa"></div>
+                    <div style="display:flex; gap:8px;">
+                        <div class="form-group" style="flex:1;"><label>Cantidad Stock:</label><input type="number" id="new-stock" value="10"></div>
+                        <div class="form-group" style="flex:1;"><label>Cuota Inicial ($):</label><input type="number" id="new-initial" step="0.5"></div>
+                    </div>
+                    <div class="form-group"><label>Nota / Descripción corta:</label><input type="text" id="new-note"></div>
                     
                     <div class="form-group" style="background:rgba(239, 68, 68, 0.05); padding:10px; border-radius:10px; border:1px dashed rgba(239, 68, 68, 0.3);">
                         <label><input type="checkbox" id="new-is-offer" onchange="toggleOfferFields('new')"> 🔥 Activar Oferta Especial (Tacha precio base)</label>
                         <div id="new-offer-box" style="display:none; margin-top:8px;">
-                            <div class="form-group"><label>Precio en Oferta ($):</label><input type="number" id="new-offer-price" step="0.5" placeholder="5.0"></div>
+                            <div class="form-group"><label>Precio en Oferta ($):</label><input type="number" id="new-offer-price" step="0.5"></div>
                             <div class="form-group"><label>Fecha y Hora Límite:</label><input type="datetime-local" id="new-offer-until"></div>
                         </div>
                     </div>
@@ -915,12 +927,12 @@
                                 <div class="form-group" style="flex:1;"><label>Color Principal (C1):</label><input type="color" id="new-legendary-c1" value="#e2b714" onchange="updateLivePreview('new')" style="height:40px; padding:2px; cursor:pointer;"></div>
                                 <div class="form-group" style="flex:1;"><label>Color Secundario (C2):</label><input type="color" id="new-legendary-c2" value="#ff007f" onchange="updateLivePreview('new')" style="height:40px; padding:2px; cursor:pointer;"></div>
                             </div>
-                            <div class="form-group"><label>Texto de Etiqueta (Ej: VIP):</label><input type="text" id="new-legendary-badge" placeholder="EJ: EXCLUSIVO" oninput="updateLivePreview('new')"></div>
+                            <div class="form-group"><label>Texto de Etiqueta:</label><input type="text" id="new-legendary-badge" oninput="updateLivePreview('new')"></div>
                             
                             <div class="form-group">
                                 <label style="color:var(--accent-gold);">👁️ Vista Previa en Tiempo Real:</label>
                                 <div id="new-legendary-preview-card" class="card style-aurora tex-marble" style="pointer-events:none; margin-top:4px;">
-                                    <div id="new-preview-badge" class="legendary-badge">✨ EXCLUSIVO</div>
+                                    <div id="new-preview-badge" class="legendary-badge">EXCLUSIVO</div>
                                     <div class="card-title" style="margin-top:10px;">Producto Exclusivo</div>
                                     <div class="card-price">$00.00</div>
                                 </div>
@@ -962,7 +974,7 @@
                     </div>
                     <div class="form-group">
                         <label>O colocar banner (Video solo por enlace URL MP4):</label>
-                        <input type="text" id="new-banner-video-url" placeholder="https://...video.mp4">
+                        <input type="text" id="new-banner-video-url">
                     </div>
                     <div id="new-banner-img-preview" style="height:80px; border:1px dashed var(--border-color); margin-top:6px; display:flex; align-items:center; justify-content:center; overflow:hidden; border-radius:12px;">Vista Previa Banner</div>
                     <button class="btn-secondary" style="width: 100%; margin-top: 1rem;" type="button" onclick="addBannerItem()">Guardar Banner</button>
@@ -977,7 +989,7 @@
                     <div class="form-group">
                         <label>Agregar nueva categoría:</label>
                         <div style="display:flex; gap:8px;">
-                            <input type="text" id="new-category-name" placeholder="Ej: Relojes, Árabes..." style="flex:1;">
+                            <input type="text" id="new-category-name" style="flex:1;">
                             <button class="btn-secondary" type="button" onclick="addCustomCategory()">Agregar</button>
                         </div>
                     </div>
@@ -996,7 +1008,7 @@
                     <div class="form-group">
                         <label>Video de fondo (Enlace URL MP4):</label>
                         <div style="display:flex; gap:8px;">
-                            <input type="text" id="bg-video-url-input" placeholder="https://...video.mp4" style="flex:1;">
+                            <input type="text" id="bg-video-url-input" style="flex:1;">
                             <button class="btn-secondary" type="button" onclick="saveCustomBgVideo()">Usar Video</button>
                         </div>
                     </div>
@@ -1061,10 +1073,13 @@
                 <select id="edit-category"></select>
             </div>
             <div style="display:flex; gap:8px;">
-                <div class="form-group" style="flex:1;"><label>Precio Normal ($):</label><input type="number" step="0.5" id="edit-price"></div>
-                <div class="form-group" style="flex:1;"><label>Stock Disponible:</label><input type="number" id="edit-stock"></div>
+                <div class="form-group" style="flex:1;"><label>Costo de Compra ($):</label><input type="number" step="0.5" id="edit-cost"></div>
+                <div class="form-group" style="flex:1;"><label>Precio de Venta ($):</label><input type="number" step="0.5" id="edit-price"></div>
             </div>
-            <div class="form-group"><label>Inicial Cuota ($):</label><input type="number" step="0.5" id="edit-initial"></div>
+            <div style="display:flex; gap:8px;">
+                <div class="form-group" style="flex:1;"><label>Stock Disponible:</label><input type="number" id="edit-stock"></div>
+                <div class="form-group" style="flex:1;"><label>Inicial Cuota ($):</label><input type="number" step="0.5" id="edit-initial"></div>
+            </div>
             <div class="form-group"><label>Nota / Descripción:</label><input type="text" id="edit-note"></div>
 
             <div class="form-group" style="background:rgba(239, 68, 68, 0.05); padding:10px; border-radius:10px; border:1px dashed rgba(239, 68, 68, 0.3);">
@@ -1114,12 +1129,12 @@
                         <div class="form-group" style="flex:1;"><label>Color Principal (C1):</label><input type="color" id="edit-legendary-c1" value="#e2b714" onchange="updateLivePreview('edit')" style="height:40px; padding:2px; cursor:pointer;"></div>
                         <div class="form-group" style="flex:1;"><label>Color Secundario (C2):</label><input type="color" id="edit-legendary-c2" value="#ff007f" onchange="updateLivePreview('edit')" style="height:40px; padding:2px; cursor:pointer;"></div>
                     </div>
-                    <div class="form-group"><label>Texto de Etiqueta (Ej: VIP):</label><input type="text" id="edit-legendary-badge" placeholder="EJ: EXCLUSIVO" oninput="updateLivePreview('edit')"></div>
+                    <div class="form-group"><label>Texto de Etiqueta:</label><input type="text" id="edit-legendary-badge" oninput="updateLivePreview('edit')"></div>
                     
                     <div class="form-group">
                         <label style="color:var(--accent-gold);">👁️ Vista Previa en Tiempo Real:</label>
                         <div id="edit-legendary-preview-card" class="card style-aurora tex-marble" style="pointer-events:none; margin-top:4px;">
-                            <div id="edit-preview-badge" class="legendary-badge">✨ EXCLUSIVO</div>
+                            <div id="edit-preview-badge" class="legendary-badge">EXCLUSIVO</div>
                             <div class="card-title" style="margin-top:10px;">Producto Exclusivo</div>
                             <div class="card-price">$00.00</div>
                         </div>
@@ -1155,7 +1170,7 @@
             </div>
             <div class="form-group">
                 <label>O Enlace de Video (URL MP4):</label>
-                <input type="text" id="edit-banner-video-url" placeholder="https://...video.mp4">
+                <input type="text" id="edit-banner-video-url">
             </div>
             <div id="edit-banner-img-preview" style="height:90px; border:1px dashed var(--border-color); margin-top:6px; display:flex; align-items:center; justify-content:center; overflow:hidden; border-radius:12px;">Vista Previa</div>
             <button class="btn-primary" style="width: 100%; margin-top: 1rem;" type="button" onclick="saveBannerEdits()">Guardar Cambios</button>
@@ -1164,16 +1179,11 @@
     </div>
 
     <script>
-        // Función de Inteligencia para auto-corregir número a formato +58 424-9327643
         function formatVenezuelanPhone(phoneStr) {
             if (!phoneStr) return '';
             let digits = phoneStr.replace(/\D/g, '');
-            if (digits.startsWith('58')) {
-                digits = digits.substring(2);
-            }
-            if (digits.startsWith('0')) {
-                digits = digits.substring(1);
-            }
+            if (digits.startsWith('58')) digits = digits.substring(2);
+            if (digits.startsWith('0')) digits = digits.substring(1);
             if (digits.length === 10) {
                 const area = digits.substring(0, 3);
                 const part1 = digits.substring(3, 6);
@@ -1189,12 +1199,8 @@
 
         let audioCtx = null;
         function getAudioContext() {
-            if (!audioCtx) {
-                audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-            }
-            if (audioCtx.state === 'suspended') {
-                audioCtx.resume();
-            }
+            if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            if (audioCtx.state === 'suspended') audioCtx.resume();
             return audioCtx;
         }
 
@@ -1202,32 +1208,24 @@
             try {
                 const ctx = getAudioContext();
                 const now = ctx.currentTime;
-
                 if (type === 'spray') {
                     const bufferSize = ctx.sampleRate * 0.25; 
                     const buffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
                     const output = buffer.getChannelData(0);
-                    for (let i = 0; i < bufferSize; i++) {
-                        output[i] = Math.random() * 2 - 1;
-                    }
-
+                    for (let i = 0; i < bufferSize; i++) output[i] = Math.random() * 2 - 1;
                     const whiteNoise = ctx.createBufferSource();
                     whiteNoise.buffer = buffer;
-
                     const filter = ctx.createBiquadFilter();
                     filter.type = 'bandpass';
                     filter.frequency.setValueAtTime(3000, now);
                     filter.Q.setValueAtTime(1.2, now);
-
                     const gain = ctx.createGain();
                     gain.gain.setValueAtTime(0.01, now);
                     gain.gain.linearRampToValueAtTime(0.25, now + 0.04);
                     gain.gain.exponentialRampToValueAtTime(0.001, now + 0.22);
-
                     whiteNoise.connect(filter);
                     filter.connect(gain);
                     gain.connect(ctx.destination);
-
                     whiteNoise.start(now);
                     whiteNoise.stop(now + 0.23);
                 } else if (type === 'click') {
@@ -1246,21 +1244,17 @@
                     const osc1 = ctx.createOscillator();
                     const osc2 = ctx.createOscillator();
                     const gain = ctx.createGain();
-                    osc1.type = 'sine';
-                    osc2.type = 'sine';
+                    osc1.type = 'sine'; osc2.type = 'sine';
                     osc1.frequency.setValueAtTime(523.25, now);
                     osc1.frequency.exponentialRampToValueAtTime(659.25, now + 0.15);
                     osc2.frequency.setValueAtTime(659.25, now + 0.08);
                     osc2.frequency.exponentialRampToValueAtTime(783.99, now + 0.2);
                     gain.gain.setValueAtTime(0.12, now);
                     gain.gain.exponentialRampToValueAtTime(0.001, now + 0.22);
-                    osc1.connect(gain);
-                    osc2.connect(gain);
+                    osc1.connect(gain); osc2.connect(gain);
                     gain.connect(ctx.destination);
-                    osc1.start(now);
-                    osc2.start(now + 0.05);
-                    osc1.stop(now + 0.18);
-                    osc2.stop(now + 0.22);
+                    osc1.start(now); osc2.start(now + 0.05);
+                    osc1.stop(now + 0.18); osc2.stop(now + 0.22);
                 } else if (type === 'buy') {
                     [523.25, 659.25, 783.99, 1046.50].forEach((freq, idx) => {
                         const osc = ctx.createOscillator();
@@ -1270,15 +1264,11 @@
                         osc.frequency.setValueAtTime(freq, startTime);
                         gain.gain.setValueAtTime(0.15, startTime);
                         gain.gain.exponentialRampToValueAtTime(0.001, startTime + 0.15);
-                        osc.connect(gain);
-                        gain.connect(ctx.destination);
-                        osc.start(startTime);
-                        osc.stop(startTime + 0.15);
+                        osc.connect(gain); gain.connect(ctx.destination);
+                        osc.start(startTime); osc.stop(startTime + 0.15);
                     });
                 }
-            } catch (e) {
-                console.log("Audio no permitido aún.");
-            }
+            } catch (e) {}
         }
 
         document.addEventListener('click', (e) => {
@@ -1292,12 +1282,13 @@
         let banners = [];
         let abonos = [];
         let registeredUsers = [];
+        let archivedProfits = 0;
         let categories = ["Árabes", "Diseñador", "Relojes", "Sets"];
         let adminPass = "12345678";
         let layoutMode = "grid";
         let currentCategoryFilter = 'all';
         let cuotasConfig = { numCuotas: 4, frecuencia: "Quincenal" };
-        let payConfig = { pm: true, efectivo: true, cuotas: true, pmBanco: "Banesco", pmTelf: "04120000000", pmCedula: "V-00000000" };
+        let payConfig = { pm: true, efectivo: true, cuotas: true, pmBanco: "", pmTelf: "", pmCedula: "" };
         let cart = JSON.parse(localStorage.getItem('ls_cart')) || [];
         let favorites = JSON.parse(localStorage.getItem('ls_favs')) || [];
         let clientName = localStorage.getItem('ls_client_name') || "";
@@ -1305,6 +1296,9 @@
         let tempImagesList = [];
         let tempBannerBase64Image = "";
         let tempCustomBgBase64 = "";
+
+        let pendingDeleteAbonoId = null;
+        let pendingDeleteAbonoPaid = 0;
 
         let logoClickCount = 0;
         let logoClickTimer = null;
@@ -1315,7 +1309,6 @@
         function switchAdminTab(tabId, btnElement) {
             document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
             document.querySelectorAll('.admin-tab-content').forEach(content => content.classList.remove('active'));
-
             btnElement.classList.add('active');
             document.getElementById(tabId).classList.add('active');
         }
@@ -1325,9 +1318,7 @@
             if(!toast || !name) return;
             toast.innerText = `Bienvenido ${name}`;
             toast.classList.add('show');
-            setTimeout(() => {
-                toast.classList.remove('show');
-            }, 3000);
+            setTimeout(() => { toast.classList.remove('show'); }, 3000);
         }
 
         function checkUserRegistrationState() {
@@ -1339,13 +1330,13 @@
 
             if(!clientName) {
                 title.innerText = "Bienvenido a Luxury Scents";
-                desc.innerText = "Por favor ingresa tu nombre y número de teléfono:";
+                desc.innerText = "Por favor ingresa tus datos:";
                 groupName.style.display = "flex";
                 groupPhone.style.display = "flex";
                 modal.classList.add('active');
             } else if(clientName && !clientPhone) {
                 title.innerText = `Hola de nuevo, ${clientName}`;
-                desc.innerText = "Para continuar, por favor ingresa tu número de WhatsApp:";
+                desc.innerText = "Ingresa tu WhatsApp:";
                 groupName.style.display = "none";
                 groupPhone.style.display = "flex";
                 document.getElementById('client-name-input').value = clientName;
@@ -1361,9 +1352,7 @@
         }
 
         function getSubvariantEffectivePrice(sv, parentProduct) {
-            if (sv.isOffer && sv.offerPrice) {
-                return parseFloat(sv.offerPrice);
-            }
+            if (sv.isOffer && sv.offerPrice) return parseFloat(sv.offerPrice);
             return parseFloat(sv.price || parentProduct.price);
         }
 
@@ -1372,14 +1361,11 @@
                 const el = document.createElement('div');
                 el.className = 'wobble-heart';
                 el.innerText = '❤️';
-                
                 const offsetX = (Math.random() - 0.5) * 60;
                 const wobbleDistance = (Math.random() - 0.5) * 80;
-
                 el.style.left = `${x + offsetX}px`;
                 el.style.top = `${y}px`;
                 el.style.setProperty('--wobble-x', `${wobbleDistance}px`);
-
                 document.body.appendChild(el);
                 setTimeout(() => el.remove(), 1200);
             }
@@ -1388,32 +1374,24 @@
         function animateFlyToCart(imgSrc, startElement) {
             const cartBtn = document.getElementById('header-cart-btn');
             if (!cartBtn) return;
-
             const startRect = startElement ? startElement.getBoundingClientRect() : { left: window.innerWidth / 2, top: window.innerHeight / 2, width: 50, height: 50 };
             const cartRect = cartBtn.getBoundingClientRect();
-
             const flyer = document.createElement('img');
             flyer.src = imgSrc || 'https://images.unsplash.com/photo-1592945403244-b3fbafd7f539?w=400';
             flyer.className = 'flying-product';
-            
             const startX = startRect.left + (startRect.width / 2) - 30;
             const startY = startRect.top + (startRect.height / 2) - 30;
-
             flyer.style.left = `${startX}px`;
             flyer.style.top = `${startY}px`;
             flyer.style.width = '60px';
             flyer.style.height = '60px';
-
             document.body.appendChild(flyer);
-
             const targetX = cartRect.left + (cartRect.width / 2) - 15;
             const targetY = cartRect.top + (cartRect.height / 2) - 15;
-
             requestAnimationFrame(() => {
                 flyer.style.transform = `translate(${targetX - startX}px, ${targetY - startY}px) scale(0.2) rotate(360deg)`;
                 flyer.style.opacity = '0.3';
             });
-
             setTimeout(() => {
                 flyer.remove();
                 cartBtn.style.transform = 'scale(1.2)';
@@ -1437,7 +1415,6 @@
             checkUserRegistrationState();
             updateCartUI();
             updateFavUI();
-
             const checkFirebase = setInterval(() => {
                 if (window.db) {
                     clearInterval(checkFirebase);
@@ -1452,12 +1429,9 @@
             try {
                 const q = window.query(window.collection(window.db, "users"), window.where("name", "==", name));
                 const querySnap = await window.getDocs(q);
-
                 if (!querySnap.empty) {
                     querySnap.forEach(async (userDoc) => {
-                        await window.updateDoc(window.doc(window.db, "users", userDoc.id), {
-                            phone: formattedPhone || ''
-                        });
+                        await window.updateDoc(window.doc(window.db, "users", userDoc.id), { phone: formattedPhone || '' });
                     });
                 } else {
                     await window.addDoc(window.collection(window.db, "users"), {
@@ -1466,28 +1440,19 @@
                         registeredAt: new Date().toLocaleString()
                     });
                 }
-            } catch(e) {
-                console.log("Error registrando usuario:", e);
-            }
+            } catch(e) {}
         }
 
         function saveClientName() {
             const inputName = document.getElementById('client-name-input').value.trim();
             const inputPhone = document.getElementById('client-phone-input').value.trim();
-
             const nameToSave = clientName || inputName;
             const phoneToSave = formatVenezuelanPhone(inputPhone);
-
-            if(!nameToSave || !phoneToSave) {
-                return alert("Por favor completa los datos solicitados.");
-            }
-
+            if(!nameToSave || !phoneToSave) return alert("Por favor completa los datos.");
             clientName = nameToSave;
             clientPhone = phoneToSave;
-
             localStorage.setItem('ls_client_name', clientName);
             localStorage.setItem('ls_client_phone', clientPhone);
-
             registerUserInFirebase(clientName, clientPhone);
             document.getElementById('user-modal').classList.remove('active');
             showWelcomeToast(clientName);
@@ -1513,7 +1478,6 @@
             const c1 = document.getElementById(`${prefix}-legendary-c1`).value;
             const c2 = document.getElementById(`${prefix}-legendary-c2`).value;
             const badgeText = document.getElementById(`${prefix}-legendary-badge`).value.trim() || 'EXCLUSIVO';
-
             const previewCard = document.getElementById(`${prefix}-legendary-preview-card`);
             const previewBadge = document.getElementById(`${prefix}-preview-badge`);
 
@@ -1521,16 +1485,13 @@
                 previewCard.className = `card ${style} ${texture}`;
                 previewCard.style.cssText = `--leg-c1: ${c1}; --leg-c2: ${c2}; pointer-events:none; margin-top:4px;`;
             }
-            if(previewBadge) {
-                previewBadge.innerText = `✨ ${badgeText}`;
-            }
+            if(previewBadge) previewBadge.innerText = `✨ ${badgeText}`;
         }
 
         function applyBgToBody(bgData, isVideo = false) {
             const defaultBg = "https://images.unsplash.com/photo-1506703719100-a0f3a48c0f86?w=1600";
             const videoContainer = document.getElementById('bg-video-container');
             const videoElement = document.getElementById('bg-video-element');
-
             if (isVideo || (bgData && (bgData.includes('.mp4') || bgData.includes('.webm')))) {
                 videoElement.src = bgData;
                 videoContainer.style.display = 'block';
@@ -1586,6 +1547,7 @@
                 renderCatalog();
                 renderAdminInventory();
                 initOfferSlider();
+                calculateCapitalMetrics();
             });
 
             window.onSnapshot(window.collection(window.db, "orders"), (snapshot) => {
@@ -1617,20 +1579,15 @@
             });
 
             window.onSnapshot(window.doc(window.db, "config", "categories"), (docSnap) => {
-                if(docSnap.exists() && docSnap.data().list) {
-                    categories = docSnap.data().list;
-                }
+                if(docSnap.exists() && docSnap.data().list) categories = docSnap.data().list;
                 renderCategoryFilters();
                 renderCategorySelects();
                 renderAdminCategories();
             });
 
             window.onSnapshot(window.doc(window.db, "config", "background"), (docSnap) => {
-                if(docSnap.exists() && docSnap.data().bgUrl) {
-                    applyBgToBody(docSnap.data().bgUrl, docSnap.data().isVideo);
-                } else {
-                    applyBgToBody();
-                }
+                if(docSnap.exists() && docSnap.data().bgUrl) applyBgToBody(docSnap.data().bgUrl, docSnap.data().isVideo);
+                else applyBgToBody();
             });
 
             window.onSnapshot(window.doc(window.db, "config", "cuotas"), (docSnap) => {
@@ -1642,9 +1599,7 @@
             });
 
             window.onSnapshot(window.doc(window.db, "config", "security"), (docSnap) => {
-                if(docSnap.exists() && docSnap.data().pin) {
-                    adminPass = docSnap.data().pin;
-                }
+                if(docSnap.exists() && docSnap.data().pin) adminPass = docSnap.data().pin;
             });
 
             window.onSnapshot(window.doc(window.db, "config", "layout"), (docSnap) => {
@@ -1653,19 +1608,23 @@
                     renderCatalog();
                 }
             });
+
+            window.onSnapshot(window.doc(window.db, "config", "capital_archive"), (docSnap) => {
+                if(docSnap.exists()) {
+                    archivedProfits = parseFloat(docSnap.data().archivedProfits) || 0;
+                    calculateCapitalMetrics();
+                }
+            });
         }
 
-        /* 1. SECCIÓN DE CUENTAS / PERSONAS REGISTRADAS */
         function renderAdminUsers() {
             const container = document.getElementById('admin-users-list');
             if(!container) return;
             container.innerHTML = '';
-
             if(registeredUsers.length === 0) {
                 container.innerHTML = '<div style="font-size:0.85rem; color:var(--text-secondary);">No hay usuarios registrados aún.</div>';
                 return;
             }
-
             registeredUsers.forEach(u => {
                 const row = document.createElement('div');
                 row.className = 'admin-item';
@@ -1686,11 +1645,9 @@
             }
         }
 
-        /* SELECCIÓN DE USUARIO REGISTRADO EN FORMULARIO DE ABONOS */
         function populateRegisteredUsersSelectForAbono() {
             const select = document.getElementById('abono-select-registered');
             if(!select) return;
-            
             select.innerHTML = '<option value="">-- Escribir Manualmente --</option>';
             registeredUsers.forEach(u => {
                 select.innerHTML += `<option value="${u.id}">${u.name} ${u.phone ? '(' + u.phone + ')' : ''}</option>`;
@@ -1701,12 +1658,10 @@
             const select = document.getElementById('abono-select-registered');
             const userId = select.value;
             if(!userId) return;
-
             const u = registeredUsers.find(user => user.id === userId);
             if(u) {
                 document.getElementById('abono-client-name').value = u.name || '';
                 document.getElementById('abono-client-phone').value = u.phone || '';
-
                 const userOrder = orders.find(o => o.clientName === u.name);
                 if(userOrder) {
                     let itemsStr = userOrder.items ? userOrder.items.map(i => `${i.name} (x${i.qty})`).join(', ') : '';
@@ -1716,11 +1671,12 @@
             }
         }
 
-        /* 2. SECCIÓN DE CAPITAL, TOTAL VENDIDO Y GANANCIAS CONECTADO CON ABONOS Y PEDIDOS */
+        /* METRICAS DE CAPITAL REPARADAS (SOLO CUENTA PEDIDOS PEDIDOS O ABONADOS) */
         function calculateCapitalMetrics() {
             let totalSales = 0;
-            let totalCollected = 0;
+            let totalCollected = archivedProfits;
             let totalDebt = 0;
+            let estimatedCostOfSold = 0;
 
             orders.forEach(o => {
                 const amount = parseFloat(o.totalPrice) || 0;
@@ -1730,27 +1686,38 @@
                 } else {
                     totalDebt += amount;
                 }
+
+                if (o.items) {
+                    o.items.forEach(item => {
+                        const prod = products.find(p => p.id === item.id);
+                        if (prod && prod.cost) {
+                            estimatedCostOfSold += (parseFloat(prod.cost) * item.qty);
+                        }
+                    });
+                }
             });
 
             abonos.forEach(a => {
                 const totalAbono = parseFloat(a.total) || 0;
                 const paidAbono = parseFloat(a.paid) || 0;
-                
                 totalSales += totalAbono;
                 totalCollected += paidAbono;
                 totalDebt += Math.max(0, totalAbono - paidAbono);
             });
 
+            let estimatedProfit = Math.max(0, totalCollected - estimatedCostOfSold);
+
             const salesEl = document.getElementById('cap-total-sales');
             const collectedEl = document.getElementById('cap-total-collected');
+            const profitEl = document.getElementById('cap-total-profit');
             const debtEl = document.getElementById('cap-total-debt');
 
             if(salesEl) salesEl.innerText = `$${totalSales.toFixed(2)}`;
             if(collectedEl) collectedEl.innerText = `$${totalCollected.toFixed(2)}`;
+            if(profitEl) profitEl.innerText = `$${estimatedProfit.toFixed(2)}`;
             if(debtEl) debtEl.innerText = `$${totalDebt.toFixed(2)}`;
         }
 
-        /* GESTIÓN DE CLIENTES Y ABONOS */
         function handleAbonoTermChange() {
             const val = document.getElementById('abono-term-select').value;
             document.getElementById('abono-custom-date-box').style.display = val === 'custom' ? 'block' : 'none';
@@ -1810,10 +1777,10 @@
                     <div style="font-size:0.85rem; color:var(--text-secondary);">📦 ${a.product} | Total: $${parseFloat(a.total).toFixed(2)} | Abonado: $${parseFloat(a.paid).toFixed(2)}</div>
                     <div style="font-size:0.75rem; color:var(--accent-gold);">⏳ Plazo de pago: ${a.term || '1 semana'}</div>
                     <div style="display:flex; gap:6px; margin-top:4px; width:100%; flex-wrap:wrap;">
-                        <input type="number" placeholder="Sumar abono $" id="add-abono-${a.id}" style="padding:4px 8px; font-size:0.8rem; flex:1;">
+                        <input type="number" placeholder="Sumar $" id="add-abono-${a.id}" style="padding:4px 8px; font-size:0.8rem; flex:1;">
                         <button class="btn-secondary" style="font-size:0.75rem; padding:4px 8px;" type="button" onclick="updateAbono('${a.id}', ${a.paid})">+ Abonar</button>
                         <button class="btn-ws" style="font-size:0.75rem; padding:4px 8px; flex:1;" type="button" onclick="sendAbonoWhatsApp('${a.clientPhone || ''}', '${a.clientName}', '${a.product}', ${debt.toFixed(2)}, '${a.term || ''}')">💬 Recordar (WhatsApp)</button>
-                        <button class="btn-danger" style="font-size:0.75rem; padding:4px 8px;" type="button" onclick="deleteAbono('${a.id}')">Eliminar</button>
+                        <button class="btn-danger" style="font-size:0.75rem; padding:4px 8px;" type="button" onclick="openDeleteAbonoModal('${a.id}', ${a.paid})">Eliminar</button>
                     </div>
                 `;
                 container.appendChild(row);
@@ -1821,10 +1788,7 @@
         }
 
         function sendAbonoWhatsApp(phone, clientName, product, debt, term) {
-            if(!phone) {
-                alert("Este cliente no tiene un número de teléfono registrado.");
-                return;
-            }
+            if(!phone) return alert("Este cliente no tiene un número registrado.");
             const cleanPhone = phone.replace(/\D/g, '');
             const msg = `Hola *${clientName}*, te escribimos de *Luxury Scents* para recordarte tu saldo pendiente de *$${debt}* correspondiente a tu producto: *${product}*. Tienes como plazo/fecha límite: *${term}*. Quedamos atentos para coordinar tu abono o pago. ¡Muchas gracias! ✨`;
             const waUrl = `https://api.whatsapp.com/send?phone=${cleanPhone}&text=${encodeURIComponent(msg)}`;
@@ -1835,28 +1799,44 @@
             const extraInput = document.getElementById(`add-abono-${id}`);
             const extra = parseFloat(extraInput.value) || 0;
             if(extra <= 0) return alert("Ingresa un monto válido para abonar.");
-
             await window.updateDoc(window.doc(window.db, "abonos", id), { paid: currentPaid + extra });
             alert("Abono actualizado con éxito.");
         }
 
-        async function deleteAbono(id) {
-            if(confirm("¿Deseas borrar este registro de cliente/abono?")) {
-                await window.deleteDoc(window.doc(window.db, "abonos", id));
+        /* MODAL Y ACCIONES DE ELIMINACIÓN DE ABONOS CON CONSERVACIÓN DE GANANCIAS */
+        function openDeleteAbonoModal(id, paidAmount) {
+            pendingDeleteAbonoId = id;
+            pendingDeleteAbonoPaid = parseFloat(paidAmount) || 0;
+            document.getElementById('del-abono-paid-val').innerText = `$${pendingDeleteAbonoPaid.toFixed(2)}`;
+            document.getElementById('delete-abono-modal').classList.add('active');
+        }
+
+        function closeDeleteAbonoModal() {
+            pendingDeleteAbonoId = null;
+            pendingDeleteAbonoPaid = 0;
+            document.getElementById('delete-abono-modal').classList.remove('active');
+        }
+
+        async function confirmDeleteAbono(keepProfit) {
+            if (!pendingDeleteAbonoId) return;
+
+            if (keepProfit && pendingDeleteAbonoPaid > 0) {
+                const newArchived = archivedProfits + pendingDeleteAbonoPaid;
+                await window.setDoc(window.doc(window.db, "config", "capital_archive"), { archivedProfits: newArchived });
             }
+
+            await window.deleteDoc(window.doc(window.db, "abonos", pendingDeleteAbonoId));
+            closeDeleteAbonoModal();
+            alert("Registro procesado correctamente.");
         }
 
         function renderCategoryFilters() {
             const container = document.getElementById('category-filters');
             if(!container) return;
-            container.innerHTML = `
-                <button class="btn-${currentCategoryFilter === 'all' ? 'gold' : 'secondary'} filter-btn" type="button" onclick="filterCategory('all', this)">✨ Todos</button>
-            `;
+            container.innerHTML = `<button class="btn-${currentCategoryFilter === 'all' ? 'gold' : 'secondary'} filter-btn" type="button" onclick="filterCategory('all', this)">✨ Todos</button>`;
             categories.forEach(cat => {
                 const isActive = currentCategoryFilter === cat;
-                container.innerHTML += `
-                    <button class="btn-${isActive ? 'gold' : 'secondary'} filter-btn" type="button" onclick="filterCategory('${cat}', this)">📁 ${cat}</button>
-                `;
+                container.innerHTML += `<button class="btn-${isActive ? 'gold' : 'secondary'} filter-btn" type="button" onclick="filterCategory('${cat}', this)">📁 ${cat}</button>`;
             });
         }
 
@@ -1866,9 +1846,7 @@
                 if(select) {
                     const currentVal = select.value;
                     select.innerHTML = '';
-                    categories.forEach(cat => {
-                        select.innerHTML += `<option value="${cat}">${cat}</option>`;
-                    });
+                    categories.forEach(cat => { select.innerHTML += `<option value="${cat}">${cat}</option>`; });
                     if(categories.includes(currentVal)) select.value = currentVal;
                 }
             });
@@ -1878,7 +1856,6 @@
             const container = document.getElementById('admin-categories-list');
             if(!container) return;
             container.innerHTML = '';
-
             categories.forEach((cat, index) => {
                 const row = document.createElement('div');
                 row.className = 'admin-item';
@@ -1895,7 +1872,6 @@
             const val = input.value.trim();
             if(!val) return alert("Ingresa un nombre de categoría.");
             if(categories.includes(val)) return alert("Esta categoría ya existe.");
-
             categories.push(val);
             input.value = '';
             await window.setDoc(window.doc(window.db, "config", "categories"), { list: categories });
@@ -1940,7 +1916,6 @@
             const videoUrl = document.getElementById('new-banner-video-url').value.trim();
             const img = videoUrl || tempBannerBase64Image;
             if(!img) return alert("Sube una foto de galería o ingresa el enlace de video URL para el banner.");
-
             const isVideo = !!videoUrl;
             await window.addDoc(window.collection(window.db, "banners"), { img, isVideo });
             alert("¡Banner agregado!");
@@ -1970,9 +1945,7 @@
             document.getElementById('edit-banner-modal').classList.add('active');
         }
 
-        function closeEditBannerModal() {
-            document.getElementById('edit-banner-modal').classList.remove('active');
-        }
+        function closeEditBannerModal() { document.getElementById('edit-banner-modal').classList.remove('active'); }
 
         async function saveBannerEdits() {
             const id = document.getElementById('edit-banner-id').value;
@@ -1985,7 +1958,6 @@
                 data.img = tempBannerBase64Image;
                 data.isVideo = false;
             }
-
             await window.updateDoc(window.doc(window.db, "banners", id), data);
             closeEditBannerModal();
             alert("¡Banner actualizado!");
@@ -2015,90 +1987,58 @@
         function initBannerSlider() {
             const sliderContainer = document.getElementById('banner-slider');
             if (sliderInterval) clearInterval(sliderInterval);
-
             if (banners.length === 0) {
                 sliderContainer.style.display = 'none';
                 return;
             }
-
             sliderContainer.style.display = 'block';
             sliderContainer.innerHTML = '';
 
             banners.forEach((b, idx) => {
                 const slide = document.createElement('div');
                 slide.className = `slide-item ${idx === 0 ? 'active' : ''}`;
-                
                 if(b.isVideo) {
-                    slide.innerHTML = `
-                        <video class="slide-video-front banner-vid" src="${b.img}" autoplay muted playsinline></video>
-                        <div class="slide-overlay"></div>
-                    `;
+                    slide.innerHTML = `<video class="slide-video-front banner-vid" src="${b.img}" autoplay muted playsinline></video><div class="slide-overlay"></div>`;
                 } else {
-                    slide.innerHTML = `
-                        <img class="slide-img-front" src="${b.img}" alt="Banner">
-                        <div class="slide-overlay"></div>
-                    `;
+                    slide.innerHTML = `<img class="slide-img-front" src="${b.img}" alt="Banner"><div class="slide-overlay"></div>`;
                 }
                 sliderContainer.appendChild(slide);
             });
 
             let currentSlide = 0;
             const slides = sliderContainer.querySelectorAll('.slide-item');
-
             const nextSlide = () => {
                 if(!slides || slides.length === 0) return;
                 slides[currentSlide].classList.remove('active');
-                
                 const currentVideo = slides[currentSlide].querySelector('video');
                 if(currentVideo) { currentVideo.pause(); currentVideo.currentTime = 0; }
-
                 currentSlide = (currentSlide + 1) % slides.length;
                 slides[currentSlide].classList.add('active');
-
                 const nextVideo = slides[currentSlide].querySelector('video');
-                if(nextVideo) {
-                    nextVideo.currentTime = 0;
-                    nextVideo.play().catch(e => console.log(e));
-                }
+                if(nextVideo) { nextVideo.currentTime = 0; nextVideo.play().catch(e => {}); }
             };
-
             const prevSlide = () => {
                 if(!slides || slides.length === 0) return;
                 slides[currentSlide].classList.remove('active');
-                
                 const currentVideo = slides[currentSlide].querySelector('video');
                 if(currentVideo) { currentVideo.pause(); currentVideo.currentTime = 0; }
-
                 currentSlide = (currentSlide - 1 + slides.length) % slides.length;
                 slides[currentSlide].classList.add('active');
-
                 const prevVideo = slides[currentSlide].querySelector('video');
-                if(prevVideo) {
-                    prevVideo.currentTime = 0;
-                    prevVideo.play().catch(e => console.log(e));
-                }
+                if(prevVideo) { prevVideo.currentTime = 0; prevVideo.play().catch(e => {}); }
             };
 
             setupSwipeSupport(sliderContainer, nextSlide, prevSlide);
-
             slides.forEach((slide, idx) => {
                 const vid = slide.querySelector('video');
-                if(vid) {
-                    vid.onended = () => {
-                        if(idx === currentSlide) {
-                            nextSlide();
-                        }
-                    };
-                }
+                if(vid) { vid.onended = () => { if(idx === currentSlide) nextSlide(); }; }
             });
 
             if (banners.length >= 2) {
                 sliderInterval = setInterval(() => {
                     const activeSlide = sliderContainer.querySelector('.slide-item.active');
                     const activeVid = activeSlide ? activeSlide.querySelector('video') : null;
-                    if(!activeVid) {
-                        nextSlide();
-                    }
+                    if(!activeVid) nextSlide();
                 }, 5000);
             }
         }
@@ -2123,7 +2063,6 @@
                 const slide = document.createElement('div');
                 slide.className = `slide-item ${idx === 0 ? 'active' : ''}`;
                 const mainImg = (p.images && p.images.length > 0) ? p.images[0] : (p.img || '');
-                
                 const timerId = `timer-${p.id}`;
 
                 slide.innerHTML = `
@@ -2145,7 +2084,6 @@
                         const now = new Date().getTime();
                         const target = new Date(p.offerUntil).getTime();
                         const diff = target - now;
-
                         const timerEl = document.getElementById(timerId);
 
                         if (diff <= 0) {
@@ -2154,7 +2092,7 @@
                                 window.updateDoc(window.doc(window.db, "products", p.id), {
                                     isOffer: false,
                                     offerUntil: ""
-                                }).catch(err => console.log(err));
+                                }).catch(err => {});
                             }
                         } else {
                             if (timerEl) {
@@ -2172,14 +2110,12 @@
 
             let currentSlide = 0;
             const slides = sliderContainer.querySelectorAll('.slide-item');
-
             const nextSlide = () => {
                 if (!slides || slides.length === 0) return;
                 slides[currentSlide].classList.remove('active');
                 currentSlide = (currentSlide + 1) % slides.length;
                 slides[currentSlide].classList.add('active');
             };
-
             const prevSlide = () => {
                 if (!slides || slides.length === 0) return;
                 slides[currentSlide].classList.remove('active');
@@ -2188,10 +2124,7 @@
             };
 
             setupSwipeSupport(sliderContainer, nextSlide, prevSlide);
-
-            if (offerProducts.length >= 2) {
-                offerSliderInterval = setInterval(nextSlide, 6000);
-            }
+            if (offerProducts.length >= 2) offerSliderInterval = setInterval(nextSlide, 6000);
         }
 
         function previewMultipleImages(inputElement, previewContainerId) {
@@ -2199,7 +2132,6 @@
             const container = document.getElementById(previewContainerId);
             container.innerHTML = '';
             tempImagesList = [];
-
             if (files && files.length > 0) {
                 Array.from(files).forEach((file) => {
                     const reader = new FileReader();
@@ -2221,9 +2153,9 @@
             row.className = 'subvariant-row';
             row.innerHTML = `
                 <div class="subvariant-row-inputs">
-                    <input type="text" placeholder="Variante / Set (Ej: Set 3 Perfumes)" class="sub-name" value="${name}">
-                    <input type="number" placeholder="Precio $" step="0.5" class="sub-price" value="${price}">
-                    <input type="number" placeholder="Inicial $" step="0.5" class="sub-initial" value="${initial}">
+                    <input type="text" class="sub-name" value="${name}">
+                    <input type="number" step="0.5" class="sub-price" value="${price}">
+                    <input type="number" step="0.5" class="sub-initial" value="${initial}">
                     <button type="button" class="btn-danger" style="padding:6px 10px;" onclick="this.parentElement.parentElement.remove()">X</button>
                 </div>
                 <div style="display:flex; align-items:center; gap:8px; font-size:0.8rem; background:rgba(0,0,0,0.2); padding:6px 8px; border-radius:8px;">
@@ -2232,7 +2164,7 @@
                     </label>
                     <div style="display:${isOffer ? 'flex' : 'none'}; align-items:center; gap:4px; flex:1;">
                         <span style="color:var(--text-secondary);">Precio Oferta $:</span>
-                        <input type="number" placeholder="Oferta $" step="0.5" class="sub-offer-price" value="${offerPrice}" style="padding:4px 8px; font-size:0.8rem; flex:1;">
+                        <input type="number" step="0.5" class="sub-offer-price" value="${offerPrice}" style="padding:4px 8px; font-size:0.8rem; flex:1;">
                     </div>
                 </div>
             `;
@@ -2242,7 +2174,6 @@
         function toggleFavorite(id, event) {
             if(event) event.stopPropagation();
             playSound('fav');
-            
             const clientX = event ? event.clientX : window.innerWidth / 2;
             const clientY = event ? event.clientY : window.innerHeight / 2;
             spawnFloatingEmojis(clientX, clientY);
@@ -2260,7 +2191,6 @@
             const container = document.getElementById('fav-items-container');
             if(!container) return;
             container.innerHTML = '';
-
             favorites.forEach(id => {
                 const p = products.find(prod => prod.id === id);
                 if(p) {
@@ -2290,33 +2220,21 @@
         function renderCatalog() {
             const grid = document.getElementById('catalog-grid');
             grid.innerHTML = '';
-
-            if (layoutMode === 'horizontal') {
-                grid.classList.add('horizontal-layout');
-            } else {
-                grid.classList.remove('horizontal-layout');
-            }
+            if (layoutMode === 'horizontal') grid.classList.add('horizontal-layout');
+            else grid.classList.remove('horizontal-layout');
 
             let displayProducts = [...products];
-
             if (currentCategoryFilter !== 'all') {
                 displayProducts = displayProducts.filter(p => (p.category || categories[0]) === currentCategoryFilter);
             }
 
             const sortMode = document.getElementById('sort-select') ? document.getElementById('sort-select').value : 'default';
-
-            if (sortMode === 'price-asc') {
-                displayProducts.sort((a, b) => getEffectivePrice(a) - getEffectivePrice(b));
-            } else if (sortMode === 'price-desc') {
-                displayProducts.sort((a, b) => getEffectivePrice(b) - getEffectivePrice(a));
-            } else if (sortMode === 'name-asc') {
-                displayProducts.sort((a, b) => a.name.localeCompare(b.name));
-            }
+            if (sortMode === 'price-asc') displayProducts.sort((a, b) => getEffectivePrice(a) - getEffectivePrice(b));
+            else if (sortMode === 'price-desc') displayProducts.sort((a, b) => getEffectivePrice(b) - getEffectivePrice(a));
+            else if (sortMode === 'name-asc') displayProducts.sort((a, b) => a.name.localeCompare(b.name));
 
             if (displayProducts.length === 0) {
-                grid.innerHTML = `<div style="grid-column: 1/-1; text-align: center; color: var(--text-secondary); padding: 3rem 1rem;">
-                    No hay productos registrados en esta categoría aún.
-                </div>`;
+                grid.innerHTML = `<div style="grid-column: 1/-1; text-align: center; color: var(--text-secondary); padding: 3rem 1rem;">No hay productos en esta categoría.</div>`;
                 return;
             }
 
@@ -2333,13 +2251,11 @@
 
                 card.className = cardClasses;
                 if(cardStyle) card.style.cssText = cardStyle;
-
                 card.id = `card-product-${p.id}`;
                 card.onclick = () => openDetailModal(p.id);
 
                 const isFav = favorites.includes(p.id);
                 const mainImg = (p.images && p.images.length > 0) ? p.images[0] : (p.img || 'https://images.unsplash.com/photo-1592945403244-b3fbafd7f539?w=400');
-
                 let legendaryBadgeHTML = (p.isLegendary && p.legendaryBadge) ? `<div class="legendary-badge">✨ ${p.legendaryBadge}</div>` : '';
 
                 let subvariantsHTML = '';
@@ -2373,12 +2289,8 @@
                     ${p.note ? `<div style="font-size:0.85rem; color: var(--text-secondary);">${p.note}</div>` : ''}
                     ${subvariantsHTML}
                     <div style="display:flex; justify-content:space-between; align-items:center; margin-top: auto; padding-top: 8px;">
-                        <div class="card-price">
-                            ${priceDisplay}
-                        </div>
-                        <button class="btn-primary" style="padding: 6px 14px; font-size: 0.85rem;" type="button" onclick="event.stopPropagation(); addToCartWithVariant('${p.id}', this)">
-                            + Añadir
-                        </button>
+                        <div class="card-price">${priceDisplay}</div>
+                        <button class="btn-primary" style="padding: 6px 14px; font-size: 0.85rem;" type="button" onclick="event.stopPropagation(); addToCartWithVariant('${p.id}', this)">+ Añadir</button>
                     </div>
                 `;
                 grid.appendChild(card);
@@ -2388,9 +2300,7 @@
         function openDetailModal(id) {
             const p = products.find(prod => prod.id === id);
             if(!p) return;
-
             let imgs = (p.images && p.images.length > 0) ? p.images : [p.img || 'https://images.unsplash.com/photo-1592945403244-b3fbafd7f539?w=400'];
-
             const priceDisplay = p.isOffer && p.offerPrice ? 
                 `<span class="old-price">$${parseFloat(p.price).toFixed(2)}</span>$${parseFloat(p.offerPrice).toFixed(2)}` : 
                 `$${parseFloat(p.price).toFixed(2)}`;
@@ -2411,21 +2321,15 @@
             container.innerHTML = `
                 ${(p.isLegendary && p.legendaryBadge) ? `<div class="legendary-badge" style="position:relative; top:0; right:0; margin-bottom:10px; width:fit-content;">✨ ${p.legendaryBadge}</div>` : ''}
                 <div style="position:relative; margin-bottom:1rem; border-radius:16px; overflow:hidden; display:flex; align-items:center; justify-content:center; height:260px; background:#0a0e17;">
-                    <img id="detail-active-img" src="${imgs[0]}" onclick="openFullscreen(this.src)" style="position:relative; z-index:1; width:100%; height:100%; object-fit:contain; padding:10px; cursor:pointer;" title="Haz clic para ver en pantalla completa">
+                    <img id="detail-active-img" src="${imgs[0]}" onclick="openFullscreen(this.src)" style="position:relative; z-index:1; width:100%; height:100%; object-fit:contain; padding:10px; cursor:pointer;">
                     <span style="position:absolute; bottom:10px; right:10px; z-index:2; background:rgba(0,0,0,0.6); color:#fff; font-size:0.75rem; padding:4px 8px; border-radius:6px; pointer-events:none;">🔍 Toca para ampliar</span>
                 </div>
-                ${imgs.length > 1 ? `
-                    <div class="detail-gallery">
-                        ${imgs.map((im, idx) => `<img src="${im}" class="detail-thumb ${idx === 0 ? 'active' : ''}" onclick="switchDetailImage('${im}', this)">`).join('')}
-                    </div>
-                ` : ''}
+                ${imgs.length > 1 ? `<div class="detail-gallery">${imgs.map((im, idx) => `<img src="${im}" class="detail-thumb ${idx === 0 ? 'active' : ''}" onclick="switchDetailImage('${im}', this)">`).join('')}</div>` : ''}
                 <h2 style="font-size:1.5rem; font-family:'Playfair Display', serif;">${p.name}</h2>
-                <div style="font-size:1.5rem; font-weight:800; color:var(--accent-gold); margin: 6px 0;">
-                    ${priceDisplay}
-                </div>
+                <div style="font-size:1.5rem; font-weight:800; color:var(--accent-gold); margin: 6px 0;">${priceDisplay}</div>
                 ${p.stock !== undefined ? `<div style="font-size:0.85rem; color:var(--text-secondary);">Stock disponible: ${p.stock} unidades</div>` : ''}
                 ${p.initialPay ? `<div style="font-size:0.85rem; color:var(--text-secondary);">Cuota inicial desde: $${parseFloat(p.initialPay).toFixed(2)}</div>` : ''}
-                <p style="color:var(--text-secondary); line-height: 1.5; margin-top:8px;">${p.note || 'Fragancia importada de alta concentración.'}</p>
+                <p style="color:var(--text-secondary); line-height: 1.5; margin-top:8px;">${p.note || 'Fragancia importada.'}</p>
                 <button class="btn-primary" style="width:100%; margin-top:1.5rem;" type="button" onclick="addToCartWithVariant('${p.id}', this); closeDetailModal();">Agregar al Carrito</button>
             `;
             document.getElementById('detail-modal').classList.add('active');
@@ -2442,17 +2346,13 @@
             document.getElementById('fullscreen-modal').classList.add('active');
         }
 
-        function closeFullscreen() {
-            document.getElementById('fullscreen-modal').classList.remove('active');
-        }
-
+        function closeFullscreen() { document.getElementById('fullscreen-modal').classList.remove('active'); }
         function closeDetailModal() { document.getElementById('detail-modal').classList.remove('active'); }
 
         function addToCartWithVariant(id, btnElement) {
             playSound('spray');
             const p = products.find(prod => prod.id === id);
             if(!p) return;
-
             const mainImg = (p.images && p.images.length > 0) ? p.images[0] : (p.img || '');
             const imgEl = document.getElementById(`img-product-${p.id}`) || document.getElementById(`detail-active-img`);
             animateFlyToCart(mainImg, imgEl || btnElement);
@@ -2471,7 +2371,6 @@
 
             const itemKey = `${p.id}_${itemName}`;
             const existing = cart.find(item => item.key === itemKey);
-            
             if(existing) existing.qty++;
             else cart.push({ key: itemKey, id: p.id, name: itemName, price: itemPrice, initialPay: itemInitial, img: mainImg, qty: 1 });
             
@@ -2485,7 +2384,6 @@
             document.getElementById('cart-count').innerText = cart.reduce((sum, item) => sum + item.qty, 0);
             const container = document.getElementById('cart-items-container');
             container.innerHTML = '';
-
             let totalPrice = 0;
             cart.forEach((item, index) => {
                 const subtotal = item.price * item.qty;
@@ -2503,7 +2401,6 @@
                 `;
                 container.appendChild(row);
             });
-
             document.getElementById('cart-total-price').innerText = totalPrice.toFixed(2);
             updatePayMethodUI(totalPrice);
         }
@@ -2534,15 +2431,14 @@
             document.getElementById('pay-details-cuotas').style.display = val === 'cuotas' ? 'block' : 'none';
 
             if(val === 'pm') {
-                document.getElementById('pm-banco-lbl').innerText = payConfig.pmBanco;
-                document.getElementById('pm-telf-lbl').innerText = payConfig.pmTelf;
-                document.getElementById('pm-cedula-lbl').innerText = payConfig.pmCedula;
+                document.getElementById('pm-banco-lbl').innerText = payConfig.pmBanco || '-';
+                document.getElementById('pm-telf-lbl').innerText = payConfig.pmTelf || '-';
+                document.getElementById('pm-cedula-lbl').innerText = payConfig.pmCedula || '-';
             } else if(val === 'cuotas') {
                 const total = parseFloat(document.getElementById('cart-total-price').innerText) || 0;
                 let requiredInitial = cart.reduce((sum, item) => sum + (parseFloat(item.initialPay || 0) * item.qty), 0);
                 const restante = Math.max(0, total - requiredInitial);
                 const cuotaMonto = (restante / (cuotasConfig.numCuotas || 1)).toFixed(2);
-                
                 document.getElementById('cuotas-inicial-val').innerText = requiredInitial.toFixed(2);
                 document.getElementById('cuotas-num-lbl').innerText = cuotasConfig.numCuotas;
                 document.getElementById('cuotas-frec-lbl').innerText = cuotasConfig.frecuencia;
@@ -2585,9 +2481,7 @@
             const phone = "584249327643";
             const waUrl = `https://api.whatsapp.com/send?phone=${phone}&text=${encodeURIComponent(msg)}`;
 
-            setTimeout(() => {
-                window.location.href = waUrl;
-            }, 300);
+            setTimeout(() => { window.location.href = waUrl; }, 300);
         }
 
         function toggleTheme() {
@@ -2618,14 +2512,12 @@
             populateRegisteredUsersSelectForAbono();
 
             document.getElementById('cfg-layout-mode').value = layoutMode;
-
             document.getElementById('cfg-pay-pm').checked = payConfig.pm;
             document.getElementById('cfg-pay-efectivo').checked = payConfig.efectivo;
             document.getElementById('cfg-pay-cuotas').checked = payConfig.cuotas;
             document.getElementById('cfg-pm-banco').value = payConfig.pmBanco || '';
             document.getElementById('cfg-pm-telf').value = payConfig.pmTelf || '';
             document.getElementById('cfg-pm-cedula').value = payConfig.pmCedula || '';
-
             document.getElementById('cfg-num-cuotas').value = cuotasConfig.numCuotas;
             document.getElementById('cfg-frecuencia').value = cuotasConfig.frecuencia;
         }
@@ -2642,19 +2534,15 @@
             const container = document.getElementById('admin-orders-list');
             if(!container) return;
             container.innerHTML = '';
-
             if(orders.length === 0) {
                 container.innerHTML = '<div style="font-size:0.85rem; color:var(--text-secondary);">No hay pedidos registrados aún.</div>';
                 return;
             }
-
             orders.forEach(o => {
                 const card = document.createElement('div');
                 card.style.cssText = 'background:rgba(255,255,255,0.03); border:1px solid var(--border-color); padding:10px; border-radius:10px; margin-bottom:8px; font-size:0.85rem;';
-                
                 let itemsList = o.items ? o.items.map(i => `${i.name} (x${i.qty})`).join(', ') : '';
                 const isPaid = o.status === 'Pagado';
-
                 card.innerHTML = `
                     <div style="display:flex; justify-content:space-between; align-items:center;">
                         <span style="font-weight:700; color:var(--accent-gold);">👤 ${o.clientName || 'Cliente'} (${o.clientPhone || 'Sin tel'})</span>
@@ -2695,7 +2583,7 @@
                 row.innerHTML = `
                     <div style="flex:1;">
                         <div style="font-weight: 600;">${p.name} <span style="font-size:0.75rem; color:var(--text-secondary);">[${p.category || categories[0]}]</span></div>
-                        <div style="font-size:0.8rem; color:var(--accent-gold);">Stock actual: <strong>${stockVal}</strong> unid.</div>
+                        <div style="font-size:0.8rem; color:var(--accent-gold);">Costo: $${parseFloat(p.cost || 0).toFixed(2)} | Venta: $${parseFloat(p.price || 0).toFixed(2)} | Stock: <strong>${stockVal}</strong></div>
                     </div>
                     <div class="admin-item-controls">
                         <button class="btn-secondary" style="font-size:0.8rem; padding:4px 8px;" type="button" onclick="moveProductOrder(${index}, -1)">⬆️</button>
@@ -2711,10 +2599,8 @@
         async function moveProductOrder(index, direction) {
             const targetIndex = index + direction;
             if(targetIndex < 0 || targetIndex >= products.length) return;
-
             const p1 = products[index];
             const p2 = products[targetIndex];
-
             await window.updateDoc(window.doc(window.db, "products", p1.id), { order: targetIndex });
             await window.updateDoc(window.doc(window.db, "products", p2.id), { order: index });
         }
@@ -2722,6 +2608,7 @@
         async function addNewProduct() {
             const name = document.getElementById('new-name').value.trim();
             const category = document.getElementById('new-category').value;
+            const cost = parseFloat(document.getElementById('new-cost').value) || 0;
             const price = parseFloat(document.getElementById('new-price').value);
             const stock = parseInt(document.getElementById('new-stock').value) || 0;
             const initialPay = parseFloat(document.getElementById('new-initial').value) || 0;
@@ -2748,26 +2635,20 @@
                 const subInitial = parseFloat(row.querySelector('.sub-initial').value) || initialPay;
                 const subIsOffer = row.querySelector('.sub-is-offer') ? row.querySelector('.sub-is-offer').checked : false;
                 const subOfferPrice = row.querySelector('.sub-offer-price') ? parseFloat(row.querySelector('.sub-offer-price').value) || 0 : 0;
-                
                 if(subName) {
-                    subvariants.push({ 
-                        name: subName, 
-                        price: subPrice, 
-                        initialPay: subInitial,
-                        isOffer: subIsOffer,
-                        offerPrice: subOfferPrice
-                    });
+                    subvariants.push({ name: subName, price: subPrice, initialPay: subInitial, isOffer: subIsOffer, offerPrice: subOfferPrice });
                 }
             });
 
             const images = tempImagesList.length > 0 ? tempImagesList : ["https://images.unsplash.com/photo-1592945403244-b3fbafd7f539?w=400"];
 
             await window.addDoc(window.collection(window.db, "products"), {
-                name, category, price, stock, initialPay, note, isOffer, offerPrice, offerUntil, isLegendary, legendaryStyle, legendaryTexture, legendaryC1, legendaryC2, legendaryBadge, images, img: images[0], subvariants, order: products.length
+                name, category, cost, price, stock, initialPay, note, isOffer, offerPrice, offerUntil, isLegendary, legendaryStyle, legendaryTexture, legendaryC1, legendaryC2, legendaryBadge, images, img: images[0], subvariants, order: products.length
             });
 
             alert("¡Producto agregado!");
             document.getElementById('new-name').value = '';
+            document.getElementById('new-cost').value = '';
             document.getElementById('new-price').value = '';
             document.getElementById('new-stock').value = '10';
             document.getElementById('new-initial').value = '';
@@ -2795,6 +2676,7 @@
             document.getElementById('edit-prod-id').value = id;
             document.getElementById('edit-name').value = p.name || '';
             document.getElementById('edit-category').value = p.category || categories[0];
+            document.getElementById('edit-cost').value = p.cost || 0;
             document.getElementById('edit-price').value = p.price || 0;
             document.getElementById('edit-stock').value = p.stock !== undefined ? p.stock : 10;
             document.getElementById('edit-initial').value = p.initialPay || 0;
@@ -2838,6 +2720,7 @@
             const id = document.getElementById('edit-prod-id').value;
             const name = document.getElementById('edit-name').value.trim();
             const category = document.getElementById('edit-category').value;
+            const cost = parseFloat(document.getElementById('edit-cost').value) || 0;
             const price = parseFloat(document.getElementById('edit-price').value);
             const stock = parseInt(document.getElementById('edit-stock').value) || 0;
             const initialPay = parseFloat(document.getElementById('edit-initial').value) || 0;
@@ -2862,19 +2745,12 @@
                 const subInitial = parseFloat(row.querySelector('.sub-initial').value) || initialPay;
                 const subIsOffer = row.querySelector('.sub-is-offer') ? row.querySelector('.sub-is-offer').checked : false;
                 const subOfferPrice = row.querySelector('.sub-offer-price') ? parseFloat(row.querySelector('.sub-offer-price').value) || 0 : 0;
-                
                 if(subName) {
-                    subvariants.push({ 
-                        name: subName, 
-                        price: subPrice, 
-                        initialPay: subInitial,
-                        isOffer: subIsOffer,
-                        offerPrice: subOfferPrice
-                    });
+                    subvariants.push({ name: subName, price: subPrice, initialPay: subInitial, isOffer: subIsOffer, offerPrice: subOfferPrice });
                 }
             });
 
-            let data = { name, category, price, stock, initialPay, note, isOffer, offerPrice, offerUntil, isLegendary, legendaryStyle, legendaryTexture, legendaryC1, legendaryC2, legendaryBadge, subvariants };
+            let data = { name, category, cost, price, stock, initialPay, note, isOffer, offerPrice, offerUntil, isLegendary, legendaryStyle, legendaryTexture, legendaryC1, legendaryC2, legendaryBadge, subvariants };
             if (tempImagesList.length > 0) {
                 data.images = tempImagesList;
                 data.img = tempImagesList[0];
