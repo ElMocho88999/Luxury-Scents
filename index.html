@@ -636,6 +636,34 @@
             opacity: 1;
             transform: scale(1);
         }
+
+        /* ESTILOS GRÁFICA FINANCIERA */
+        .chart-container-box {
+            background: rgba(5, 7, 12, 0.95);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 1rem;
+            margin-top: 1rem;
+            position: relative;
+        }
+        .chart-container-box.fullscreen-chart {
+            position: fixed;
+            top: 0; left: 0; width: 100vw; height: 100vh;
+            z-index: 99999;
+            border-radius: 0;
+            padding: 2rem;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            background: #05070c;
+        }
+        canvas#financeCanvas {
+            width: 100% !important;
+            height: 260px !important;
+        }
+        .fullscreen-chart canvas#financeCanvas {
+            height: calc(100vh - 120px) !important;
+        }
     </style>
 
     <!-- FIREBASE SDKS -->
@@ -991,10 +1019,46 @@
                     </div>
                 </div>
 
+                <!-- DESGLOSE MULTI-CAMPO DE INVERSIÓN -->
+                <div class="admin-section-card">
+                    <div class="admin-section-title">🔍 Desglose Detallado de Inversión por Campos</div>
+                    <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap:12px; margin-bottom:1rem;">
+                        <div class="metric-card">
+                            <span class="lbl">Inversión Productos Base</span>
+                            <span class="val" id="inv-field-base" style="font-size:1.15rem; color:#a855f7;">$0.00</span>
+                        </div>
+                        <div class="metric-card">
+                            <span class="lbl">Inversión Variantes / Sets</span>
+                            <span class="val" id="inv-field-sub" style="font-size:1.15rem; color:#ec4899;">$0.00</span>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group" style="margin-bottom:0;">
+                        <label>Filtrar Inversión por Categoría:</label>
+                        <div style="display:flex; gap:8px;">
+                            <select id="inv-category-select" onchange="updateCategoryInvestmentView()" style="flex:1;"></select>
+                            <div style="background:rgba(255,255,255,0.05); padding:10px 16px; border-radius:var(--radius-btn); border:1px solid var(--border-color); font-weight:800; color:var(--accent-gold);" id="inv-category-val">$0.00</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- GRÁFICA INTERACTIVA FINANCIERA CON PANTALLA COMPLETA -->
+                <div class="admin-section-card">
+                    <div class="admin-section-title" style="display:flex; justify-content:space-between; align-items:center;">
+                        <span>📈 Balance Financiero y Rendimiento</span>
+                        <button class="btn-secondary" style="padding:4px 10px; font-size:0.75rem;" type="button" onclick="toggleFullscreenChart()">⛶ Pantalla Completa</button>
+                    </div>
+                    
+                    <div id="chart-wrapper" class="chart-container-box">
+                        <button id="close-chart-fullscreen-btn" class="btn-gold" style="display:none; position:absolute; top:15px; right:15px; z-index:100000;" onclick="toggleFullscreenChart()">✕ Salir Pantalla Completa</button>
+                        <canvas id="financeCanvas"></canvas>
+                    </div>
+                </div>
+
                 <div class="admin-section-card" style="border-left-color: #ef4444;">
                     <div class="admin-section-title" style="color:#ef4444;">🔄 Reiniciar Inversión y Ganancias</div>
                     <p style="font-size:0.85rem; color:var(--text-secondary); margin-bottom: 12px;">
-                        Presiona este botón cuando realices un **nuevo pedido de mercancía** para reiniciar las ganancias acumuladas y comenzar el conteo de la nueva inversión en base al catálogo actual.
+                        Presiona este botón cuando realices un **nuevo pedido de mercancía** para reiniciar las ganancias acumuladas y comenzar el conteo de la nueva inversión en base al catálogo actual. Se requiere clave de seguridad.
                     </p>
                     <button class="btn-danger" style="width:100%; padding:12px; font-weight:700;" type="button" onclick="resetInvestmentAndProfit()">🔄 Reiniciar Inversión y Ganancias (Nuevo Pedido)</button>
                 </div>
@@ -1733,6 +1797,7 @@
                 renderCategoryFilters();
                 renderCategorySelects();
                 renderAdminCategories();
+                populateCategoryInvSelect();
             });
 
             window.onSnapshot(window.doc(window.db, "config", "background"), (docSnap) => {
@@ -1906,13 +1971,54 @@
             }
         }
 
-        /* METRICAS DE CAPITAL E INVERSIÓN */
+        function populateCategoryInvSelect() {
+            const select = document.getElementById('inv-category-select');
+            if(!select) return;
+            const curr = select.value;
+            select.innerHTML = '';
+            categories.forEach(cat => {
+                select.innerHTML += `<option value="${cat}">${cat}</option>`;
+            });
+            if(curr) select.value = curr;
+            updateCategoryInvestmentView();
+        }
+
+        function updateCategoryInvestmentView() {
+            const catSelect = document.getElementById('inv-category-select');
+            const catValLbl = document.getElementById('inv-category-val');
+            if(!catSelect || !catValLbl) return;
+            const selectedCat = catSelect.value || categories[0];
+
+            let catTotal = 0;
+            products.forEach(p => {
+                if((p.category || categories[0]) === selectedCat) {
+                    const cost = parseFloat(p.cost) || 0;
+                    const stock = parseInt(p.stock) || 0;
+                    catTotal += (cost * stock);
+                }
+            });
+            catValLbl.innerText = `$${catTotal.toFixed(2)}`;
+        }
+
+        /* METRICAS DE CAPITAL E INVERSIÓN CON DESGLOSE Y DIBUJO DE GRÁFICA */
         function calculateCapitalMetrics() {
             let totalInvestment = 0;
+            let invBase = 0;
+            let invSubvariants = 0;
+
             products.forEach(p => {
                 const cost = parseFloat(p.cost) || 0;
                 const stock = parseInt(p.stock) || 0;
-                totalInvestment += (cost * stock);
+                const productBaseTotal = cost * stock;
+                totalInvestment += productBaseTotal;
+                invBase += productBaseTotal;
+
+                if (p.subvariants && p.subvariants.length > 0) {
+                    p.subvariants.forEach(sv => {
+                        const svCost = parseFloat(sv.price) || cost;
+                        invSubvariants += svCost;
+                    });
+                }
             });
 
             let totalSales = 0;
@@ -1967,14 +2073,82 @@
             if(collectedEl) collectedEl.innerText = `$${totalCollected.toFixed(2)}`;
             if(profitEl) profitEl.innerText = `$${estimatedProfit.toFixed(2)}`;
             if(debtEl) debtEl.innerText = `$${totalDebt.toFixed(2)}`;
+
+            const invBaseEl = document.getElementById('inv-field-base');
+            const invSubEl = document.getElementById('inv-field-sub');
+            if(invBaseEl) invBaseEl.innerText = `$${invBase.toFixed(2)}`;
+            if(invSubEl) invSubEl.innerText = `$${invSubvariants.toFixed(2)}`;
+
+            updateCategoryInvestmentView();
+            renderFinanceChart(totalInvestment, totalSales, totalCollected, estimatedProfit, totalDebt);
+        }
+
+        /* DIBUJO DE GRÁFICA CON CANVAS */
+        function renderFinanceChart(inv, sales, collected, profit, debt) {
+            const canvas = document.getElementById('financeCanvas');
+            if (!canvas) return;
+            const ctx = canvas.getContext('2d');
+
+            canvas.width = canvas.parentElement.clientWidth || 500;
+            canvas.height = canvas.parentElement.clientHeight || 260;
+
+            const w = canvas.width;
+            const h = canvas.height;
+
+            ctx.clearRect(0, 0, w, h);
+
+            const data = [
+                { label: 'Inversión', val: inv, color: '#38bdf8' },
+                { label: 'Ventas', val: sales, color: '#e2b714' },
+                { label: 'Cobrado', val: collected, color: '#a855f7' },
+                { label: 'Ganancia', val: profit, color: '#4ade80' },
+                { label: 'Deudas', val: debt, color: '#f87171' }
+            ];
+
+            const maxVal = Math.max(...data.map(d => d.val), 100);
+            const paddingBottom = 40;
+            const paddingTop = 30;
+            const chartHeight = h - paddingBottom - paddingTop;
+            const barWidth = Math.max(20, (w / data.length) - 30);
+
+            data.forEach((d, i) => {
+                const barHeight = (d.val / maxVal) * chartHeight;
+                const x = 20 + i * ((w - 40) / data.length) + (((w - 40) / data.length) - barWidth) / 2;
+                const y = h - paddingBottom - barHeight;
+
+                ctx.fillStyle = d.color;
+                ctx.beginPath();
+                ctx.roundRect(x, y, barWidth, barHeight, [8, 8, 0, 0]);
+                ctx.fill();
+
+                ctx.fillStyle = '#ffffff';
+                ctx.font = 'bold 11px "Plus Jakarta Sans", sans-serif';
+                ctx.textAlign = 'center';
+                ctx.fillText(`$${d.val.toFixed(0)}`, x + barWidth / 2, y - 8);
+
+                ctx.fillStyle = '#94a3b8';
+                ctx.font = '10px "Plus Jakarta Sans", sans-serif';
+                ctx.fillText(d.label, x + barWidth / 2, h - 12);
+            });
+        }
+
+        function toggleFullscreenChart() {
+            const box = document.getElementById('chart-wrapper');
+            const closeBtn = document.getElementById('close-chart-fullscreen-btn');
+            box.classList.toggle('fullscreen-chart');
+            closeBtn.style.display = box.classList.contains('fullscreen-chart') ? 'block' : 'none';
+            calculateCapitalMetrics();
         }
 
         async function resetInvestmentAndProfit() {
-            if (confirm("¿Estás seguro de que deseas reiniciar la inversión y ganancias netas acumuladas?\n\nUsa esta opción únicamente cuando realices un nuevo pedido de mercancía a tus proveedores.")) {
+            const inputPass = prompt("🔐 Por favor ingresa la contraseña para autorizar el reinicio de Inversión y Ganancias:");
+            if (inputPass === "34881341") {
                 await window.setDoc(window.doc(window.db, "config", "capital_archive"), { archivedProfits: 0 });
                 archivedProfits = 0;
                 calculateCapitalMetrics();
-                alert("¡Se ha reiniciado el saldo de inversión y ganancias netas para tu nuevo pedido!");
+                alert("✅ Se ha reiniciado el saldo de inversión y ganancias netas con éxito.");
+            } else if (inputPass !== null) {
+                alert("❌ Contraseña incorrecta. No se realizaron cambios.");
             }
         }
 
@@ -2886,7 +3060,7 @@
             document.getElementById('abono-total').value = order.totalPrice || '';
             document.getElementById('abono-paid').value = '0';
 
-            alert(`✅ El pedido de ${order.clientName} ha sido traslabado al formulario de Abonos.`);
+            alert(`✅ El pedido de ${order.clientName} ha sido trasladado al formulario de Abonos.`);
         }
 
         async function toggleOrderStatus(id, currentStatus) {
