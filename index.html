@@ -637,7 +637,7 @@
             transform: scale(1);
         }
 
-        /* ESTILOS GRÁFICA FINANCIERA */
+        /* ESTILOS DE PANTALLA COMPLETA Y GRÁFICAS CORREGIDOS */
         .chart-container-box {
             background: rgba(5, 7, 12, 0.95);
             border: 1px solid var(--border-color);
@@ -646,23 +646,60 @@
             margin-top: 1rem;
             position: relative;
         }
+
         .chart-container-box.fullscreen-chart {
-            position: fixed;
-            top: 0; left: 0; width: 100vw; height: 100vh;
-            z-index: 99999;
-            border-radius: 0;
-            padding: 2rem;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            background: #05070c;
+            position: fixed !important;
+            top: 0 !important;
+            left: 0 !important;
+            width: 100vw !important;
+            height: 100vh !important;
+            z-index: 999999 !important;
+            border-radius: 0 !important;
+            padding: 2rem !important;
+            display: flex !important;
+            flex-direction: column !important;
+            justify-content: center !important;
+            background: #05070c !important;
         }
+
         canvas#financeCanvas {
             width: 100% !important;
-            height: 260px !important;
+            height: 280px !important;
         }
+
         .fullscreen-chart canvas#financeCanvas {
             height: calc(100vh - 120px) !important;
+        }
+
+        .ai-advisor-box {
+            background: rgba(226, 183, 20, 0.05);
+            border: 1px solid var(--accent-gold);
+            border-radius: 16px;
+            padding: 1rem;
+            margin-top: 1.25rem;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .ai-advisor-header {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: 800;
+            color: var(--accent-gold);
+            font-size: 1.05rem;
+        }
+
+        .ai-advisor-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 8px;
+            font-size: 0.9rem;
+            color: var(--text-primary);
+            background: rgba(0,0,0,0.2);
+            padding: 10px 12px;
+            border-radius: 10px;
         }
     </style>
 
@@ -927,6 +964,7 @@
                 <button class="tab-btn active" onclick="switchAdminTab('tab-clients', this)">💰 Clientes / Abonos</button>
                 <button class="tab-btn" onclick="switchAdminTab('tab-registered-users', this)">👤 Cuentas Registradas</button>
                 <button class="tab-btn" onclick="switchAdminTab('tab-capital', this)">📊 Finanzas y Capital</button>
+                <button class="tab-btn" onclick="switchAdminTab('tab-history', this)">📜 Historial Financiero</button>
                 <button class="tab-btn" onclick="switchAdminTab('tab-inventory', this)">📋 Inventario / Stock</button>
                 <button class="tab-btn" onclick="switchAdminTab('tab-add-prod', this)">➕ Publicar Producto</button>
                 <button class="tab-btn" onclick="switchAdminTab('tab-orders', this)">📦 Pedidos Tienda</button>
@@ -1042,10 +1080,10 @@
                     </div>
                 </div>
 
-                <!-- GRÁFICA INTERACTIVA FINANCIERA CON PANTALLA COMPLETA -->
+                <!-- GRÁFICA DE TENDENCIA FINANCIERA (LÍNEAS Y FLECHAS SUBE/BAJA) -->
                 <div class="admin-section-card">
                     <div class="admin-section-title" style="display:flex; justify-content:space-between; align-items:center;">
-                        <span>📈 Balance Financiero y Rendimiento</span>
+                        <span>📈 Gráfica de Tendencia Financiera (Sube / Baja)</span>
                         <button class="btn-secondary" style="padding:4px 10px; font-size:0.75rem;" type="button" onclick="toggleFullscreenChart()">⛶ Pantalla Completa</button>
                     </div>
                     
@@ -1053,14 +1091,33 @@
                         <button id="close-chart-fullscreen-btn" class="btn-gold" style="display:none; position:absolute; top:15px; right:15px; z-index:100000;" onclick="toggleFullscreenChart()">✕ Salir Pantalla Completa</button>
                         <canvas id="financeCanvas"></canvas>
                     </div>
+
+                    <!-- RECOMENDADOR IA INTEGRADO -->
+                    <div class="ai-advisor-box">
+                        <div class="ai-advisor-header">🤖 Asesor Financiero IA - Diagnóstico de Negocio</div>
+                        <div class="ai-advisor-item" id="ai-status-item">⏳ Analizando estado de ganancias...</div>
+                        <div class="ai-advisor-item" id="ai-collect-item">⏳ Analizando momento de cobro...</div>
+                        <div class="ai-advisor-item" id="ai-order-item">⏳ Analizando mercancía y nuevo pedido...</div>
+                    </div>
                 </div>
 
                 <div class="admin-section-card" style="border-left-color: #ef4444;">
                     <div class="admin-section-title" style="color:#ef4444;">🔄 Reiniciar Inversión y Ganancias</div>
                     <p style="font-size:0.85rem; color:var(--text-secondary); margin-bottom: 12px;">
-                        Presiona este botón cuando realices un **nuevo pedido de mercancía** para reiniciar las ganancias acumuladas y comenzar el conteo de la nueva inversión en base al catálogo actual. Se requiere clave de seguridad.
+                        Presiona este botón cuando realices un **nuevo pedido de mercancía** para reiniciar las ganancias acumuladas y guardar el ciclo actual en el Historial Financiero. Requiere contraseña `34881341`.
                     </p>
-                    <button class="btn-danger" style="width:100%; padding:12px; font-weight:700;" type="button" onclick="resetInvestmentAndProfit()">🔄 Reiniciar Inversión y Ganancias (Nuevo Pedido)</button>
+                    <button class="btn-danger" style="width:100%; padding:12px; font-weight:700;" type="button" onclick="resetInvestmentAndProfit()">🔄 Reiniciar Inversión y Guardar Historial (Clave: 34881341)</button>
+                </div>
+            </div>
+
+            <!-- INTERFAZ HISTORIAL FINANCIERO -->
+            <div id="tab-history" class="admin-tab-content">
+                <div class="admin-section-card">
+                    <div class="admin-section-title">📜 Historial de Ciclos Financieros Anteriores</div>
+                    <p style="font-size:0.85rem; color:var(--text-secondary); margin-bottom:1rem;">
+                        Aquí se guardan todos tus cierres y balances financieros de cada pedido realizado.
+                    </p>
+                    <div id="admin-history-list" style="max-height: 400px; overflow-y: auto;"></div>
                 </div>
             </div>
 
@@ -1493,9 +1550,10 @@
         let banners = [];
         let abonos = [];
         let registeredUsers = [];
+        let capitalHistory = [];
         let archivedProfits = 0;
         let categories = ["Árabes", "Diseñador", "Relojes", "Sets"];
-        let adminPass = "12345678";
+        let adminPass = "34881341";
         let layoutMode = "grid";
         let currentCategoryFilter = 'all';
         let cuotasConfig = { numCuotas: 4, frecuencia: "Quincenal" };
@@ -1792,6 +1850,12 @@
                 populateRegisteredUsersSelectForAbono();
             });
 
+            window.onSnapshot(window.collection(window.db, "capital_history"), (snapshot) => {
+                capitalHistory = [];
+                snapshot.forEach(doc => { capitalHistory.push({ id: doc.id, ...doc.data() }); });
+                renderAdminHistory();
+            });
+
             window.onSnapshot(window.doc(window.db, "config", "categories"), (docSnap) => {
                 if(docSnap.exists() && docSnap.data().list) categories = docSnap.data().list;
                 renderCategoryFilters();
@@ -2081,23 +2145,24 @@
 
             updateCategoryInvestmentView();
             renderFinanceChart(totalInvestment, totalSales, totalCollected, estimatedProfit, totalDebt);
+            updateAIAdvisor(totalInvestment, totalSales, totalCollected, estimatedProfit, totalDebt);
         }
 
-        /* DIBUJO DE GRÁFICA CON CANVAS */
+        /* DIBUJO DE GRÁFICA TIPO LÍNEA CON FLECHAS SUBE / BAJA */
         function renderFinanceChart(inv, sales, collected, profit, debt) {
             const canvas = document.getElementById('financeCanvas');
             if (!canvas) return;
             const ctx = canvas.getContext('2d');
 
             canvas.width = canvas.parentElement.clientWidth || 500;
-            canvas.height = canvas.parentElement.clientHeight || 260;
+            canvas.height = canvas.parentElement.clientHeight || 280;
 
             const w = canvas.width;
             const h = canvas.height;
 
             ctx.clearRect(0, 0, w, h);
 
-            const data = [
+            const points = [
                 { label: 'Inversión', val: inv, color: '#38bdf8' },
                 { label: 'Ventas', val: sales, color: '#e2b714' },
                 { label: 'Cobrado', val: collected, color: '#a855f7' },
@@ -2105,31 +2170,105 @@
                 { label: 'Deudas', val: debt, color: '#f87171' }
             ];
 
-            const maxVal = Math.max(...data.map(d => d.val), 100);
-            const paddingBottom = 40;
-            const paddingTop = 30;
-            const chartHeight = h - paddingBottom - paddingTop;
-            const barWidth = Math.max(20, (w / data.length) - 30);
+            const maxVal = Math.max(...points.map(p => p.val), 100);
+            const paddingX = 40;
+            const paddingTop = 40;
+            const paddingBottom = 50;
+            const chartWidth = w - paddingX * 2;
+            const chartHeight = h - paddingTop - paddingBottom;
 
-            data.forEach((d, i) => {
-                const barHeight = (d.val / maxVal) * chartHeight;
-                const x = 20 + i * ((w - 40) / data.length) + (((w - 40) / data.length) - barWidth) / 2;
-                const y = h - paddingBottom - barHeight;
-
-                ctx.fillStyle = d.color;
+            // Dibujar rejilla horizontal
+            ctx.strokeStyle = 'rgba(255, 255, 255, 0.05)';
+            ctx.lineWidth = 1;
+            for(let i = 0; i <= 4; i++) {
+                const yGrid = paddingTop + (chartHeight / 4) * i;
                 ctx.beginPath();
-                ctx.roundRect(x, y, barWidth, barHeight, [8, 8, 0, 0]);
-                ctx.fill();
+                ctx.moveTo(paddingX, yGrid);
+                ctx.lineTo(w - paddingX, yGrid);
+                ctx.stroke();
+            }
 
+            // Mapear coordenadas de los puntos
+            const coords = points.map((p, i) => {
+                const x = paddingX + (chartWidth / (points.length - 1)) * i;
+                const y = h - paddingBottom - (p.val / maxVal) * chartHeight;
+                return { x, y, ...p };
+            });
+
+            // Dibujar línea conectora brillante
+            ctx.beginPath();
+            ctx.moveTo(coords[0].x, coords[0].y);
+            for(let i = 1; i < coords.length; i++) {
+                ctx.lineTo(coords[i].x, coords[i].y);
+            }
+            ctx.strokeStyle = '#e2b714';
+            ctx.lineWidth = 3;
+            ctx.stroke();
+
+            // Dibujar puntos, flechas y valores
+            coords.forEach((c, idx) => {
+                ctx.beginPath();
+                ctx.arc(c.x, c.y, 6, 0, Math.PI * 2);
+                ctx.fillStyle = c.color;
+                ctx.fill();
+                ctx.strokeStyle = '#ffffff';
+                ctx.lineWidth = 2;
+                ctx.stroke();
+
+                // Flecha sube / baja en relación al punto anterior
+                if(idx > 0) {
+                    const prevY = coords[idx - 1].y;
+                    const isUp = c.y < prevY; // En canvas, Y menor es hacia arriba
+                    const arrowSymbol = isUp ? '⬆️' : '⬇️';
+                    ctx.font = '12px sans-serif';
+                    ctx.textAlign = 'center';
+                    ctx.fillText(arrowSymbol, c.x, c.y - 20);
+                }
+
+                // Texto del valor
                 ctx.fillStyle = '#ffffff';
                 ctx.font = 'bold 11px "Plus Jakarta Sans", sans-serif';
                 ctx.textAlign = 'center';
-                ctx.fillText(`$${d.val.toFixed(0)}`, x + barWidth / 2, y - 8);
+                ctx.fillText(`$${c.val.toFixed(0)}`, c.x, c.y - 8);
 
+                // Etiquetas inferiores
                 ctx.fillStyle = '#94a3b8';
                 ctx.font = '10px "Plus Jakarta Sans", sans-serif';
-                ctx.fillText(d.label, x + barWidth / 2, h - 12);
+                ctx.fillText(c.label, c.x, h - 15);
             });
+        }
+
+        /* DIAGNÓSTICO INTELIGENTE IA */
+        function updateAIAdvisor(inv, sales, collected, profit, debt) {
+            const statusEl = document.getElementById('ai-status-item');
+            const collectEl = document.getElementById('ai-collect-item');
+            const orderEl = document.getElementById('ai-order-item');
+
+            if(!statusEl || !collectEl || !orderEl) return;
+
+            // Evaluador de Pérdida / Ganancia
+            if (profit > 0) {
+                statusEl.innerHTML = `🟢 <strong>Estado Financiero:</strong> Vas en **buen camino (+Ganancia)**. Tu margen neto actual es de <strong style="color:#4ade80;">+$${profit.toFixed(2)}</strong>.`;
+            } else if (profit === 0 && collected === 0) {
+                statusEl.innerHTML = `🟡 <strong>Estado Financiero:</strong> En punto de inicio. Aún no has registrado cobros suficientes para recuperar la inversión.`;
+            } else {
+                statusEl.innerHTML = `🔴 <strong>Estado Financiero:</strong> Alerta de **posible pérdida temporal**. Tus cobros aún están por debajo de los costos invertidos.`;
+            }
+
+            // Evaluador de Momento de Cobro
+            if (debt > 50) {
+                collectEl.innerHTML = `⚠️ <strong>Límite de Crédito:</strong> ¡Es un **EXCELENTE MOMENTO PARA COBRAR**! Tienes <strong>$${debt.toFixed(2)}</strong> pendientes en la calle. Presiona "Recordar" por WhatsApp a tus clientes.`;
+            } else {
+                collectEl.innerHTML = `✅ <strong>Límite de Crédito:</strong> Tus cuentas por cobrar se mantienen estables ($${debt.toFixed(2)} en deuda).`;
+            }
+
+            // Evaluador de Nuevo Pedido
+            let totalStock = products.reduce((acc, p) => acc + (parseInt(p.stock) || 0), 0);
+            if (totalStock <= 5 || (collected >= inv && inv > 0)) {
+                orderEl.innerHTML = `🛍️ <strong>Surtido de Mercancía:</strong> ¡Es **BUEN MOMENTO PARA HACER NUEVO PEDIDO**! Tu stock actual es de ${totalStock} unidades o tu capital cobrado ya cubrió la inversión previa.`;
+            } else {
+                orderEl.innerHTML = `📦 <strong>Surtido de Mercancía:</strong> Cuentas con suficiente stock disponible (${totalStock} unidades). Prioriza vender las existentes antes del próximo pedido.`;
+            }
         }
 
         function toggleFullscreenChart() {
@@ -2141,14 +2280,61 @@
         }
 
         async function resetInvestmentAndProfit() {
-            const inputPass = prompt("🔐 Por favor ingresa la contraseña para autorizar el reinicio de Inversión y Ganancias:");
+            const inputPass = prompt("🔐 Por favor ingresa la contraseña para autorizar el reinicio (Clave: 34881341):");
             if (inputPass === "34881341") {
+                // Guardar ciclo en el Historial Financiero antes de reiniciar
+                const currentRecord = {
+                    date: new Date().toLocaleString(),
+                    investment: document.getElementById('cap-total-investment').innerText,
+                    sales: document.getElementById('cap-total-sales').innerText,
+                    collected: document.getElementById('cap-total-collected').innerText,
+                    profit: document.getElementById('cap-total-profit').innerText,
+                    debt: document.getElementById('cap-total-debt').innerText
+                };
+
+                await window.addDoc(window.collection(window.db, "capital_history"), currentRecord);
                 await window.setDoc(window.doc(window.db, "config", "capital_archive"), { archivedProfits: 0 });
                 archivedProfits = 0;
                 calculateCapitalMetrics();
-                alert("✅ Se ha reiniciado el saldo de inversión y ganancias netas con éxito.");
+                alert("✅ Se ha guardado el ciclo en tu Historial Financiero y la inversión/ganancias se han reiniciado a cero con éxito.");
             } else if (inputPass !== null) {
-                alert("❌ Contraseña incorrecta. No se realizaron cambios.");
+                alert("❌ Contraseña incorrecta. Se requiere '34881341' para realizar esta acción.");
+            }
+        }
+
+        function renderAdminHistory() {
+            const container = document.getElementById('admin-history-list');
+            if(!container) return;
+            container.innerHTML = '';
+
+            if(capitalHistory.length === 0) {
+                container.innerHTML = '<div style="font-size:0.85rem; color:var(--text-secondary);">No hay cierres guardados en el historial aún.</div>';
+                return;
+            }
+
+            capitalHistory.forEach((h, index) => {
+                const card = document.createElement('div');
+                card.style.cssText = 'background:rgba(255,255,255,0.03); border:1px solid var(--border-color); padding:12px; border-radius:12px; margin-bottom:10px; font-size:0.85rem;';
+                card.innerHTML = `
+                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
+                        <strong style="color:var(--accent-gold);">📅 Cierre del: ${h.date || 'Fecha desconocida'}</strong>
+                        <button class="btn-danger" style="font-size:0.7rem; padding:2px 6px;" onclick="deleteHistoryRecord('${h.id}')">Borrar</button>
+                    </div>
+                    <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(110px, 1fr)); gap:6px; color:var(--text-secondary);">
+                        <div>Inversión: <strong style="color:#38bdf8;">${h.investment}</strong></div>
+                        <div>Ventas: <strong>${h.sales}</strong></div>
+                        <div>Cobrado: <strong>${h.collected}</strong></div>
+                        <div>Ganancia: <strong style="color:#4ade80;">${h.profit}</strong></div>
+                        <div>Deudas: <strong style="color:#f87171;">${h.debt}</strong></div>
+                    </div>
+                `;
+                container.appendChild(card);
+            });
+        }
+
+        async function deleteHistoryRecord(id) {
+            if(confirm("¿Deseas eliminar este registro del historial?")) {
+                await window.deleteDoc(window.doc(window.db, "capital_history", id));
             }
         }
 
@@ -2985,6 +3171,7 @@
             renderAdminBanners();
             renderAdminAbonos();
             renderAdminUsers();
+            renderAdminHistory();
             calculateCapitalMetrics();
             renderCategorySelects();
             populateRegisteredUsersSelectForAbono();
