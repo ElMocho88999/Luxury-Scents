@@ -570,7 +570,6 @@
             color: var(--text-secondary);
         }
 
-        /* MINI CATÁLOGO PARA SELECCIÓN EN ABONOS */
         .mini-catalog-grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
@@ -970,6 +969,10 @@
                     <div class="admin-section-title">📊 Resumen General de Capital y Ventas</div>
                     <div class="metrics-grid">
                         <div class="metric-card">
+                            <span class="lbl">Inversión Total en Stock</span>
+                            <span class="val" id="cap-total-investment" style="color:#38bdf8;">$0.00</span>
+                        </div>
+                        <div class="metric-card">
                             <span class="lbl">Ventas Brutas Acumuladas</span>
                             <span class="val" id="cap-total-sales">$0.00</span>
                         </div>
@@ -986,6 +989,14 @@
                             <span class="val" id="cap-total-debt" style="color:#f87171;">$0.00</span>
                         </div>
                     </div>
+                </div>
+
+                <div class="admin-section-card" style="border-left-color: #ef4444;">
+                    <div class="admin-section-title" style="color:#ef4444;">🔄 Reiniciar Inversión y Ganancias</div>
+                    <p style="font-size:0.85rem; color:var(--text-secondary); margin-bottom: 12px;">
+                        Presiona este botón cuando realices un **nuevo pedido de mercancía** para reiniciar las ganancias acumuladas y comenzar el conteo de la nueva inversión en base al catálogo actual.
+                    </p>
+                    <button class="btn-danger" style="width:100%; padding:12px; font-weight:700;" type="button" onclick="resetInvestmentAndProfit()">🔄 Reiniciar Inversión y Ganancias (Nuevo Pedido)</button>
                 </div>
             </div>
 
@@ -1756,7 +1767,6 @@
             });
         }
 
-        /* FUNCIONALIDAD DEL MINI CATÁLOGO MÚLTIPLE EN ABONOS */
         function openMiniCatalogModal(targetContext) {
             miniCatTargetContext = targetContext;
             selectedMiniCatProducts = [];
@@ -1896,8 +1906,15 @@
             }
         }
 
-        /* METRICAS DE CAPITAL */
+        /* METRICAS DE CAPITAL E INVERSIÓN */
         function calculateCapitalMetrics() {
+            let totalInvestment = 0;
+            products.forEach(p => {
+                const cost = parseFloat(p.cost) || 0;
+                const stock = parseInt(p.stock) || 0;
+                totalInvestment += (cost * stock);
+            });
+
             let totalSales = 0;
             let totalCollected = archivedProfits;
             let totalDebt = 0;
@@ -1939,15 +1956,26 @@
 
             let estimatedProfit = Math.max(0, totalCollected - estimatedCostOfSold);
 
+            const investmentEl = document.getElementById('cap-total-investment');
             const salesEl = document.getElementById('cap-total-sales');
             const collectedEl = document.getElementById('cap-total-collected');
             const profitEl = document.getElementById('cap-total-profit');
             const debtEl = document.getElementById('cap-total-debt');
 
+            if(investmentEl) investmentEl.innerText = `$${totalInvestment.toFixed(2)}`;
             if(salesEl) salesEl.innerText = `$${totalSales.toFixed(2)}`;
             if(collectedEl) collectedEl.innerText = `$${totalCollected.toFixed(2)}`;
             if(profitEl) profitEl.innerText = `$${estimatedProfit.toFixed(2)}`;
             if(debtEl) debtEl.innerText = `$${totalDebt.toFixed(2)}`;
+        }
+
+        async function resetInvestmentAndProfit() {
+            if (confirm("¿Estás seguro de que deseas reiniciar la inversión y ganancias netas acumuladas?\n\nUsa esta opción únicamente cuando realices un nuevo pedido de mercancía a tus proveedores.")) {
+                await window.setDoc(window.doc(window.db, "config", "capital_archive"), { archivedProfits: 0 });
+                archivedProfits = 0;
+                calculateCapitalMetrics();
+                alert("¡Se ha reiniciado el saldo de inversión y ganancias netas para tu nuevo pedido!");
+            }
         }
 
         function handleAbonoTermChange() {
@@ -2827,7 +2855,8 @@
                     <div style="margin-top:4px;"><strong>Items:</strong> ${itemsList}</div>
                     <div><strong>Total:</strong> $${o.totalPrice} | <strong>Pago:</strong> ${o.payMethod}</div>
                     <div style="font-size:0.75rem; color:var(--text-secondary); margin-top:4px;">📅 ${o.date || ''}</div>
-                    <div style="display:flex; gap:6px; margin-top:8px;">
+                    <div style="display:flex; gap:6px; margin-top:8px; flex-wrap:wrap;">
+                        <button class="btn-gold" style="font-size:0.75rem; padding:4px 8px;" type="button" onclick="moveOrderToAbonos('${o.id}')">➡️ Pasar a Abono</button>
                         <button class="btn-secondary" style="font-size:0.75rem; padding:4px 8px;" type="button" onclick="toggleOrderStatus('${o.id}', '${o.status || 'Pendiente'}')">
                             ${isPaid ? 'Marcar Pendiente' : 'Marcar Pagado'}
                         </button>
@@ -2836,6 +2865,28 @@
                 `;
                 container.appendChild(card);
             });
+        }
+
+        function moveOrderToAbonos(orderId) {
+            const order = orders.find(o => o.id === orderId);
+            if(!order) return;
+
+            switchAdminTab('tab-clients', document.querySelector('.admin-nav-tabs .tab-btn'));
+
+            document.getElementById('abono-client-name').value = order.clientName || '';
+            document.getElementById('abono-client-phone').value = order.clientPhone || '';
+
+            let itemsStr = order.items ? order.items.map(i => `${i.name} (x${i.qty})`).join(', ') : '';
+            document.getElementById('abono-product').value = itemsStr;
+
+            if (order.items && order.items.length > 0) {
+                document.getElementById('abono-product').setAttribute('data-prod-id', order.items[0].id || '');
+            }
+
+            document.getElementById('abono-total').value = order.totalPrice || '';
+            document.getElementById('abono-paid').value = '0';
+
+            alert(`✅ El pedido de ${order.clientName} ha sido traslabado al formulario de Abonos.`);
         }
 
         async function toggleOrderStatus(id, currentStatus) {
