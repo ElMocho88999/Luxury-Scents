@@ -1038,6 +1038,10 @@
                             <span class="val" id="cap-total-investment" style="color:#38bdf8;">$0.00</span>
                         </div>
                         <div class="metric-card">
+                            <span class="lbl">Ganancia Total del Catálogo</span>
+                            <span class="val" id="cap-total-catalog-profit" style="color:#e2b714;">$0.00</span>
+                        </div>
+                        <div class="metric-card">
                             <span class="lbl">Ventas Brutas Acumuladas</span>
                             <span class="val" id="cap-total-sales">$0.00</span>
                         </div>
@@ -1083,11 +1087,10 @@
                 <div class="admin-section-card">
                     <div class="admin-section-title" style="display:flex; justify-content:space-between; align-items:center;">
                         <span>📈 Gráfica de Tendencia Financiera (Sube / Baja)</span>
-                        <button class="btn-secondary" style="padding:4px 10px; font-size:0.75rem;" type="button" onclick="toggleFullscreenChart()">⛶ Pantalla Completa</button>
                     </div>
                     
                     <div id="chart-wrapper" class="chart-container-box">
-                        <button id="close-chart-fullscreen-btn" class="btn-gold" style="display:none; position:absolute; top:15px; right:15px; z-index:100000;" onclick="toggleFullscreenChart()">✕ Salir Pantalla Completa</button>
+                        <button class="btn-secondary" style="position:absolute; top:12px; right:12px; z-index:10; padding:4px 10px; font-size:0.75rem;" type="button" onclick="toggleFullscreenChart()">⛶ Pantalla Completa</button>
                         <canvas id="financeCanvas"></canvas>
                     </div>
 
@@ -2063,27 +2066,37 @@
             catValLbl.innerText = `$${catTotal.toFixed(2)}`;
         }
 
-        /* MÉTRICAS DE CAPITAL CALCULADAS DINÁMICAMENTE CON LOS COSTOS DEL CATÁLOGO */
+        /* MÉTRICAS DE CAPITAL CALCULADAS DINÁMICAMENTE CON LOS COSTOS Y PRECIOS DEL CATÁLOGO */
         function calculateCapitalMetrics() {
             let totalInvestment = 0;
+            let totalCatalogPotentialSales = 0;
             let invBase = 0;
             let invSubvariants = 0;
 
             products.forEach(p => {
                 const cost = parseFloat(p.cost) || 0;
+                const price = parseFloat(p.price) || 0;
                 const stock = parseInt(p.stock) || 1;
                 const prodTotalCost = cost * stock;
+                const prodTotalSale = price * stock;
+
                 invBase += prodTotalCost;
                 totalInvestment += prodTotalCost;
+                totalCatalogPotentialSales += prodTotalSale;
 
                 if (p.subvariants && p.subvariants.length > 0) {
                     p.subvariants.forEach(sv => {
-                        const svCost = parseFloat(sv.price) || 0;
+                        const svCost = parseFloat(sv.price) || 0; // Costo o precio asignado en variante
+                        const svSalePrice = parseFloat(sv.price) || price;
                         invSubvariants += svCost;
                         totalInvestment += svCost;
+                        totalCatalogPotentialSales += svSalePrice;
                     });
                 }
             });
+
+            // Ganancia de todo el catálogo = (Potencial de venta total) - (Inversión total)
+            let totalCatalogProfit = Math.max(0, totalCatalogPotentialSales - totalInvestment);
 
             let totalSales = 0;
             let totalCollected = archivedProfits;
@@ -2110,12 +2123,14 @@
             let estimatedProfit = Math.max(0, totalCollected - totalInvestment);
 
             const investmentEl = document.getElementById('cap-total-investment');
+            const catalogProfitEl = document.getElementById('cap-total-catalog-profit');
             const salesEl = document.getElementById('cap-total-sales');
             const collectedEl = document.getElementById('cap-total-collected');
             const profitEl = document.getElementById('cap-total-profit');
             const debtEl = document.getElementById('cap-total-debt');
 
             if(investmentEl) investmentEl.innerText = `$${totalInvestment.toFixed(2)}`;
+            if(catalogProfitEl) catalogProfitEl.innerText = `$${totalCatalogProfit.toFixed(2)}`;
             if(salesEl) salesEl.innerText = `$${totalSales.toFixed(2)}`;
             if(collectedEl) collectedEl.innerText = `$${totalCollected.toFixed(2)}`;
             if(profitEl) profitEl.innerText = `$${estimatedProfit.toFixed(2)}`;
@@ -2245,9 +2260,7 @@
 
         function toggleFullscreenChart() {
             const box = document.getElementById('chart-wrapper');
-            const closeBtn = document.getElementById('close-chart-fullscreen-btn');
             box.classList.toggle('fullscreen-chart');
-            closeBtn.style.display = box.classList.contains('fullscreen-chart') ? 'block' : 'none';
             calculateCapitalMetrics();
         }
 
