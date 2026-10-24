@@ -2120,10 +2120,7 @@
 
                 if (p.subvariants && p.subvariants.length > 0) {
                     p.subvariants.forEach(sv => {
-                        const svCost = parseFloat(sv.price) || 0;
                         const svSalePrice = parseFloat(sv.price) || price;
-                        invSubvariants += svCost;
-                        totalInvestment += svCost;
                         totalCatalogPotentialSales += svSalePrice;
                     });
                 }
