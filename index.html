@@ -1848,6 +1848,7 @@
         }
 
         function initFirebaseListeners() {
+            // Carga inicial optimizada (solo catálogo, banners y configuraciones esenciales)
             window.onSnapshot(window.collection(window.db, "products"), (snapshot) => {
                 products = [];
                 snapshot.forEach(doc => { products.push({ id: doc.id, ...doc.data() }); });
@@ -1858,38 +1859,11 @@
                 calculateCapitalMetrics();
             });
 
-            window.onSnapshot(window.collection(window.db, "orders"), (snapshot) => {
-                orders = [];
-                snapshot.forEach(doc => { orders.push({ id: doc.id, ...doc.data() }); });
-                renderAdminOrders();
-                calculateCapitalMetrics();
-            });
-
             window.onSnapshot(window.collection(window.db, "banners"), (snapshot) => {
                 banners = [];
                 snapshot.forEach(doc => { banners.push({ id: doc.id, ...doc.data() }); });
                 initBannerSlider();
                 renderAdminBanners();
-            });
-
-            window.onSnapshot(window.collection(window.db, "abonos"), (snapshot) => {
-                abonos = [];
-                snapshot.forEach(doc => { abonos.push({ id: doc.id, ...doc.data() }); });
-                renderAdminAbonos();
-                calculateCapitalMetrics();
-            });
-
-            window.onSnapshot(window.collection(window.db, "users"), (snapshot) => {
-                registeredUsers = [];
-                snapshot.forEach(doc => { registeredUsers.push({ id: doc.id, ...doc.data() }); });
-                renderAdminUsers();
-                populateRegisteredUsersSelectForAbono();
-            });
-
-            window.onSnapshot(window.collection(window.db, "capital_history"), (snapshot) => {
-                capitalHistory = [];
-                snapshot.forEach(doc => { capitalHistory.push({ id: doc.id, ...doc.data() }); });
-                renderAdminHistory();
             });
 
             window.onSnapshot(window.doc(window.db, "config", "categories"), (docSnap) => {
@@ -3176,6 +3150,35 @@
 
         function showAdminPanel() {
             document.getElementById('admin-panel').classList.add('active');
+
+            // Carga diferida (datos pesados del panel se conectan solo al abrir el panel con el PIN)
+            window.onSnapshot(window.collection(window.db, "orders"), (snapshot) => {
+                orders = [];
+                snapshot.forEach(doc => { orders.push({ id: doc.id, ...doc.data() }); });
+                renderAdminOrders();
+                calculateCapitalMetrics();
+            });
+
+            window.onSnapshot(window.collection(window.db, "abonos"), (snapshot) => {
+                abonos = [];
+                snapshot.forEach(doc => { abonos.push({ id: doc.id, ...doc.data() }); });
+                renderAdminAbonos();
+                calculateCapitalMetrics();
+            });
+
+            window.onSnapshot(window.collection(window.db, "users"), (snapshot) => {
+                registeredUsers = [];
+                snapshot.forEach(doc => { registeredUsers.push({ id: doc.id, ...doc.data() }); });
+                renderAdminUsers();
+                populateRegisteredUsersSelectForAbono();
+            });
+
+            window.onSnapshot(window.collection(window.db, "capital_history"), (snapshot) => {
+                capitalHistory = [];
+                snapshot.forEach(doc => { capitalHistory.push({ id: doc.id, ...doc.data() }); });
+                renderAdminHistory();
+            });
+
             renderAdminInventory();
             renderAdminOrders();
             renderAdminCategories();
