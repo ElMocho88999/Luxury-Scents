@@ -20,8 +20,6 @@
             --glass-shadow: 0 10px 25px rgba(0, 0, 0, 0.4);
             --radius-main: 20px;
             --radius-btn: 12px;
-            --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
-            --ease-smooth: cubic-bezier(0.4, 0, 0.2, 1);
         }
 
         [data-theme="light"] {
@@ -53,6 +51,34 @@
             background-attachment: scroll;
             overflow-x: hidden;
             position: relative;
+        }
+
+        /* RUEDITA DE CARGA GLOBAL */
+        #global-loader {
+            position: fixed;
+            top: 0; left: 0; width: 100vw; height: 100vh;
+            background: var(--bg-base);
+            z-index: 999999;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 16px;
+            transition: opacity 0.4s ease;
+        }
+
+        .spinner {
+            width: 50px;
+            height: 50px;
+            border: 4px solid rgba(226, 183, 20, 0.2);
+            border-top-color: var(--accent-gold);
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
         }
 
         #welcome-toast {
@@ -402,7 +428,6 @@
 
         .modal-overlay.active { opacity: 1; pointer-events: auto; }
 
-        /* ESTILOS DE VISTA EN PANTALLA COMPLETA DE FOTOS */
         .fullscreen-overlay {
             position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
             background: rgba(0, 0, 0, 0.92);
@@ -767,6 +792,12 @@
 </head>
 <body>
 
+    <!-- RUEDITA DE CARGA INICIAL -->
+    <div id="global-loader">
+        <div class="spinner"></div>
+        <div style="font-family:'Playfair Display', serif; color:var(--accent-gold); font-size:1.15rem; font-weight:700;">Luxury Scents</div>
+    </div>
+
     <div id="welcome-toast"></div>
 
     <div id="bg-video-container">
@@ -814,7 +845,7 @@
     <!-- MODAL PANTALLA COMPLETA DE IMAGEN -->
     <div class="fullscreen-overlay" id="fullscreen-modal" onclick="closeFullscreen()">
         <button class="fullscreen-close" onclick="closeFullscreen()">&times;</button>
-        <img id="fullscreen-img" src="" alt="Pantalla completa" onclick="event.stopPropagation()">
+        <img id="fullscreen-img" src="" alt="Pantalla completa" loading="lazy" onclick="event.stopPropagation()">
     </div>
 
     <div class="modal-overlay" id="user-modal">
@@ -1483,6 +1514,14 @@
     </div>
 
     <script>
+        function hideGlobalLoader() {
+            const loader = document.getElementById('global-loader');
+            if (loader) {
+                loader.style.opacity = '0';
+                setTimeout(() => loader.remove(), 400);
+            }
+        }
+
         function formatVenezuelanPhone(phoneStr) {
             if (!phoneStr) return '';
             let digits = phoneStr.replace(/\D/g, '');
@@ -1686,6 +1725,7 @@
             const cartRect = cartBtn.getBoundingClientRect();
             const flyer = document.createElement('img');
             flyer.src = imgSrc || 'https://images.unsplash.com/photo-1592945403244-b3fbafd7f539?w=400';
+            flyer.loading = 'lazy';
             flyer.className = 'flying-product';
             const startX = startRect.left + (startRect.width / 2) - 30;
             const startY = startRect.top + (startRect.height / 2) - 30;
@@ -1818,7 +1858,7 @@
                 const reader = new FileReader();
                 reader.onload = function(e) {
                     tempCustomBgBase64 = e.target.result;
-                    document.getElementById('bg-preview-container').innerHTML = `<img src="${tempCustomBgBase64}" style="width:100%; height:100%; object-fit:cover;">`;
+                    document.getElementById('bg-preview-container').innerHTML = `<img src="${tempCustomBgBase64}" loading="lazy" style="width:100%; height:100%; object-fit:cover;">`;
                 };
                 reader.readAsDataURL(file);
             }
@@ -1848,7 +1888,6 @@
         }
 
         function initFirebaseListeners() {
-            // Carga inicial optimizada (solo catálogo, banners y configuraciones esenciales)
             window.onSnapshot(window.collection(window.db, "products"), (snapshot) => {
                 products = [];
                 snapshot.forEach(doc => { products.push({ id: doc.id, ...doc.data() }); });
@@ -1857,6 +1896,7 @@
                 renderAdminInventory();
                 initOfferSlider();
                 calculateCapitalMetrics();
+                hideGlobalLoader(); // Oculta la ruedita de carga al recibir datos
             });
 
             window.onSnapshot(window.collection(window.db, "banners"), (snapshot) => {
@@ -1938,7 +1978,7 @@
 
                 card.innerHTML = `
                     <div class="mini-card-check">✓</div>
-                    <img src="${mainImg}" alt="${p.name}">
+                    <img src="${mainImg}" loading="lazy" alt="${p.name}">
                     <div class="mini-card-title">${p.name}</div>
                     <div class="mini-card-price">$${priceEff.toFixed(2)}</div>
                 `;
@@ -2074,7 +2114,6 @@
             catValLbl.innerText = `$${catTotal.toFixed(2)}`;
         }
 
-        /* MÉTRICAS DE CAPITAL CALCULADAS DINÁMICAMENTE CON LOS COSTOS Y PRECIOS DEL CATÁLOGO */
         function calculateCapitalMetrics() {
             let totalInvestment = 0;
             let totalCatalogPotentialSales = 0;
@@ -2150,7 +2189,6 @@
             updateAIAdvisor(totalInvestment, totalSales, totalCollected, estimatedProfit, totalDebt);
         }
 
-        /* GRÁFICA MULTI-LÍNEA NÍTIDA CON FECHAS Y PICOS */
         function renderFinanceChart(inv, sales, collected, profit, debt) {
             const canvas = document.getElementById('financeCanvas');
             if (!canvas) return;
@@ -2554,7 +2592,7 @@
             if (file) {
                 const reader = new FileReader();
                 reader.onload = function(e) {
-                    document.getElementById(previewId).innerHTML = `<img src="${e.target.result}" style="width:100%; height:100%; object-fit:contain;">`;
+                    document.getElementById(previewId).innerHTML = `<img src="${e.target.result}" loading="lazy" style="width:100%; height:100%; object-fit:contain;">`;
                     tempBannerBase64Image = e.target.result;
                 };
                 reader.readAsDataURL(file);
@@ -2588,7 +2626,7 @@
                 document.getElementById('edit-banner-img-preview').innerHTML = 'Video configurado por URL';
             } else {
                 document.getElementById('edit-banner-video-url').value = '';
-                document.getElementById('edit-banner-img-preview').innerHTML = b.img ? `<img src="${b.img}" style="width:100%; height:100%; object-fit:contain;">` : 'Vista Previa';
+                document.getElementById('edit-banner-img-preview').innerHTML = b.img ? `<img src="${b.img}" loading="lazy" style="width:100%; height:100%; object-fit:contain;">` : 'Vista Previa';
             }
             tempBannerBase64Image = "";
             document.getElementById('edit-banner-modal').classList.add('active');
@@ -2649,7 +2687,7 @@
                 if(b.isVideo) {
                     slide.innerHTML = `<video class="slide-video-front banner-vid" src="${b.img}" autoplay muted playsinline></video><div class="slide-overlay"></div>`;
                 } else {
-                    slide.innerHTML = `<img class="slide-img-front" src="${b.img}" alt="Banner"><div class="slide-overlay"></div>`;
+                    slide.innerHTML = `<img class="slide-img-front" src="${b.img}" loading="lazy" alt="Banner"><div class="slide-overlay"></div>`;
                 }
                 sliderContainer.appendChild(slide);
             });
@@ -2715,7 +2753,7 @@
                 const timerId = `timer-${p.id}`;
 
                 slide.innerHTML = `
-                    <img class="slide-img-front" src="${mainImg}" alt="${p.name}">
+                    <img class="slide-img-front" src="${mainImg}" loading="lazy" alt="${p.name}">
                     <div class="slide-overlay">
                         <span class="slide-badge-offer">🔥 Oferta Limitada</span>
                         <div class="slide-title" style="font-size:1.4rem;">${p.name}</div>
@@ -2788,6 +2826,7 @@
                         tempImagesList.push(e.target.result);
                         const imgBox = document.createElement('img');
                         imgBox.src = e.target.result;
+                        imgBox.loading = 'lazy';
                         imgBox.style.cssText = 'width:60px; height:60px; object-fit:contain; background:rgba(0,0,0,0.2); border-radius:8px; border:1px solid var(--border-highlight);';
                         container.appendChild(imgBox);
                     };
@@ -2848,7 +2887,7 @@
                     const row = document.createElement('div');
                     row.className = 'cart-item';
                     row.innerHTML = `
-                        <img src="${mainImg}">
+                        <img src="${mainImg}" loading="lazy">
                         <div style="flex:1;"><div style="font-weight:600;">${p.name}</div><div style="font-size:0.85rem; color:var(--text-secondary);">$${priceShow.toFixed(2)}</div></div>
                         <button class="btn-primary" style="padding:4px 10px; font-size:0.8rem;" type="button" onclick="addToCart('${p.id}')">+ Añadir</button>
                     `;
@@ -2931,7 +2970,7 @@
                     ${legendaryBadgeHTML}
                     <div class="card-img-wrapper">
                         <div class="fav-btn-card ${isFav ? 'active' : ''}" onclick="toggleFavorite('${p.id}', event)">${isFav ? '❤️' : '🤍'}</div>
-                        <img id="img-product-${p.id}" src="${mainImg}" alt="${p.name}">
+                        <img id="img-product-${p.id}" src="${mainImg}" loading="lazy" alt="${p.name}">
                     </div>
                     <div class="card-title">${p.name}</div>
                     ${stockBadge}
@@ -2970,10 +3009,10 @@
             container.innerHTML = `
                 ${(p.isLegendary && p.legendaryBadge) ? `<div class="legendary-badge" style="position:relative; top:0; right:0; margin-bottom:10px; width:fit-content;">✨ ${p.legendaryBadge}</div>` : ''}
                 <div style="position:relative; margin-bottom:1rem; border-radius:16px; overflow:hidden; display:flex; align-items:center; justify-content:center; height:260px; background:#0a0e17;">
-                    <img id="detail-active-img" src="${imgs[0]}" onclick="openFullscreen(this.src)" style="position:relative; z-index:1; width:100%; height:100%; object-fit:contain; padding:10px; cursor:pointer;">
+                    <img id="detail-active-img" src="${imgs[0]}" loading="lazy" onclick="openFullscreen(this.src)" style="position:relative; z-index:1; width:100%; height:100%; object-fit:contain; padding:10px; cursor:pointer;">
                     <span style="position:absolute; bottom:10px; right:10px; z-index:2; background:rgba(0,0,0,0.6); color:#fff; font-size:0.75rem; padding:4px 8px; border-radius:6px; pointer-events:none;">🔍 Toca para ampliar</span>
                 </div>
-                ${imgs.length > 1 ? `<div class="detail-gallery">${imgs.map((im, idx) => `<img src="${im}" class="detail-thumb ${idx === 0 ? 'active' : ''}" onclick="switchDetailImage('${im}', this)">`).join('')}</div>` : ''}
+                ${imgs.length > 1 ? `<div class="detail-gallery">${imgs.map((im, idx) => `<img src="${im}" loading="lazy" class="detail-thumb ${idx === 0 ? 'active' : ''}" onclick="switchDetailImage('${im}', this)">`).join('')}</div>` : ''}
                 <h2 style="font-size:1.5rem; font-family:'Playfair Display', serif;">${p.name}</h2>
                 <div style="font-size:1.5rem; font-weight:800; color:var(--accent-gold); margin: 6px 0;">${priceDisplay}</div>
                 ${p.stock !== undefined ? `<div style="font-size:0.85rem; color:var(--text-secondary);">Stock disponible: ${p.stock} unidades</div>` : ''}
@@ -3040,7 +3079,7 @@
                 const row = document.createElement('div');
                 row.className = 'cart-item';
                 row.innerHTML = `
-                    <img src="${item.img}">
+                    <img src="${item.img}" loading="lazy">
                     <div style="flex:1;"><div style="font-weight:600;">${item.name}</div><div style="font-size:0.85rem; color:var(--text-secondary);">$${parseFloat(item.price).toFixed(2)} c/u</div></div>
                     <div class="cart-controls">
                         <button class="btn-secondary" style="padding:2px 8px;" type="button" onclick="changeQty(${index}, -1)">-</button>
@@ -3151,7 +3190,6 @@
         function showAdminPanel() {
             document.getElementById('admin-panel').classList.add('active');
 
-            // Carga diferida (datos pesados del panel se conectan solo al abrir el panel con el PIN)
             window.onSnapshot(window.collection(window.db, "orders"), (snapshot) => {
                 orders = [];
                 snapshot.forEach(doc => { orders.push({ id: doc.id, ...doc.data() }); });
@@ -3409,6 +3447,7 @@
             tempImagesList.forEach(im => {
                 const imgBox = document.createElement('img');
                 imgBox.src = im;
+                imgBox.loading = 'lazy';
                 imgBox.style.cssText = 'width:60px; height:60px; object-fit:contain; background:rgba(0,0,0,0.2); border-radius:8px; border:1px solid var(--border-highlight);';
                 previewContainer.appendChild(imgBox);
             });
