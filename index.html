@@ -815,7 +815,7 @@
 </head>
 <body>
 
-    <!-- RUEDITA Y BARRA DE CARGA INICIAL -->
+    <!-- RUEDITA Y BARRA DE CARGA GLOBAL -->
     <div id="global-loader">
         <div class="spinner"></div>
         <div style="font-family:'Playfair Display', serif; color:var(--accent-gold); font-size:1.15rem; font-weight:700;">Luxury Scents</div>
@@ -1558,8 +1558,14 @@
             if (txt) txt.innerText = `Cargando tienda... ${percent}%`;
         }
 
+        // SEGURIDAD: Si en 4 segundos Firebase no responde, quita el loader por completo para que nunca se quede trabado
+        const safetyLoaderTimeout = setTimeout(() => {
+            hideGlobalLoader();
+        }, 4000);
+
         function hideGlobalLoader() {
             clearInterval(loaderIntervalTimer);
+            clearTimeout(safetyLoaderTimeout);
             updateLoaderProgress(100);
             const loader = document.getElementById('global-loader');
             if (loader) {
