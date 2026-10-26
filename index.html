@@ -64,16 +64,16 @@
             align-items: center;
             justify-content: center;
             gap: 12px;
-            transition: opacity 0.4s ease;
+            transition: opacity 0.3s ease;
         }
 
         .spinner {
-            width: 48px;
-            height: 48px;
+            width: 44px;
+            height: 44px;
             border: 4px solid rgba(226, 183, 20, 0.2);
             border-top-color: var(--accent-gold);
             border-radius: 50%;
-            animation: spin 0.8s linear infinite;
+            animation: spin 0.7s linear infinite;
         }
 
         @keyframes spin {
@@ -82,12 +82,12 @@
         }
 
         .loader-progress-container {
-            width: 220px;
+            width: 200px;
             height: 6px;
             background: rgba(255, 255, 255, 0.08);
             border-radius: 4px;
             overflow: hidden;
-            margin-top: 6px;
+            margin-top: 4px;
             border: 1px solid var(--border-color);
         }
 
@@ -95,7 +95,7 @@
             width: 0%;
             height: 100%;
             background: var(--accent-gold);
-            transition: width 0.3s ease;
+            transition: width 0.2s ease;
         }
 
         .loader-percentage-text {
@@ -258,7 +258,7 @@
             position: absolute;
             top: 0; left: 0; width: 100%; height: 100%;
             opacity: 0;
-            transition: opacity 0.5s ease-in-out;
+            transition: opacity 0.4s ease-in-out;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -1541,15 +1541,15 @@
     </div>
 
     <script>
-        // ANIMACIÓN DE LA BARRA DE CARGA Y PORCENTAJE
+        // ANIMACIÓN DE CARGA RÁPIDA (De menos a más peso sin trabarse)
         let currentLoadPercent = 0;
         const loaderIntervalTimer = setInterval(() => {
-            if (currentLoadPercent < 90) {
-                currentLoadPercent += Math.floor(Math.random() * 15) + 5;
-                if (currentLoadPercent > 90) currentLoadPercent = 90;
+            if (currentLoadPercent < 95) {
+                currentLoadPercent += Math.floor(Math.random() * 25) + 10;
+                if (currentLoadPercent > 95) currentLoadPercent = 95;
                 updateLoaderProgress(currentLoadPercent);
             }
-        }, 150);
+        }, 80);
 
         function updateLoaderProgress(percent) {
             const bar = document.getElementById('loader-progress-bar');
@@ -1558,10 +1558,10 @@
             if (txt) txt.innerText = `Cargando tienda... ${percent}%`;
         }
 
-        // SEGURIDAD: Si en 4 segundos Firebase no responde, quita el loader por completo para que nunca se quede trabado
+        // SEGURIDAD MÁXIMA: Si en 3 segundos Firebase no responde, la tienda abre de golpe para que nadie se quede esperando
         const safetyLoaderTimeout = setTimeout(() => {
             hideGlobalLoader();
-        }, 4000);
+        }, 3000);
 
         function hideGlobalLoader() {
             clearInterval(loaderIntervalTimer);
@@ -1571,8 +1571,8 @@
             if (loader) {
                 setTimeout(() => {
                     loader.style.opacity = '0';
-                    setTimeout(() => loader.remove(), 400);
-                }, 200);
+                    setTimeout(() => loader.remove(), 300);
+                }, 150);
             }
         }
 
@@ -1822,7 +1822,7 @@
                     clearInterval(checkFirebase);
                     initFirebaseListeners();
                 }
-            }, 100);
+            }, 50);
         });
 
         async function registerUserInFirebase(name, phone) {
@@ -1950,7 +1950,7 @@
                 renderAdminInventory();
                 initOfferSlider();
                 calculateCapitalMetrics();
-                hideGlobalLoader(); // Oculta la ruedita y barra de carga al recibir datos
+                hideGlobalLoader(); // Oculta loader apenas llegan los productos
             });
 
             window.onSnapshot(window.collection(window.db, "banners"), (snapshot) => {
